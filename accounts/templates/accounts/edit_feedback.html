@@ -1,0 +1,301 @@
+{% extends 'user_base.html' %}
+
+{% block title %}Editar Feedback - FitCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-feedback-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .edit-feedback-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .edit-feedback-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 8px;
+    }
+    
+    .edit-feedback-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    .edit-feedback-form {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e3e6ee;
+    }
+    
+    .exercise-preview {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .exercise-preview-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    
+    .exercise-preview-info h4 {
+        margin: 0 0 5px 0;
+        color: #222;
+        font-size: 1.1rem;
+    }
+    
+    .exercise-preview-info p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 8px;
+    }
+    
+    .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #fff;
+        transition: border-color 0.2s ease;
+    }
+    
+    .form-select:focus {
+        outline: none;
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+    
+    .form-textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 100px;
+        transition: border-color 0.2s ease;
+    }
+    
+    .form-textarea:focus {
+        outline: none;
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 30px;
+    }
+    
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-primary {
+        background: #1976d2;
+        color: #fff;
+    }
+    
+    .btn-primary:hover {
+        background: #1565c0;
+        color: #fff;
+    }
+    
+    .btn-secondary {
+        background: #f5f5f5;
+        color: #666;
+        border: 1px solid #ddd;
+    }
+    
+    .btn-secondary:hover {
+        background: #e0e0e0;
+        color: #333;
+    }
+    
+    .back-btn {
+        margin-bottom: 20px;
+    }
+    
+    .rating-options {
+        display: flex;
+        gap: 10px;
+        margin-top: 8px;
+    }
+    
+    .rating-option {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .rating-option:hover {
+        background: #f0f0f0;
+    }
+    
+    .rating-option.selected {
+        background: #e3f2fd;
+        border-color: #1976d2;
+        color: #1976d2;
+    }
+    
+    .rating-option input {
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            justify-content: center;
+        }
+        
+        .exercise-preview {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-feedback-container">
+    <a href="{% url 'user_feedbacks' %}" class="btn btn-secondary back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Voltar para Feedbacks
+    </a>
+    
+    <div class="edit-feedback-header">
+        <h1 class="edit-feedback-title">Editar Feedback</h1>
+        <p class="edit-feedback-subtitle">Atualize sua avaliação do exercício</p>
+    </div>
+    
+    <div class="exercise-preview">
+        {% if feedback.aparelho.image %}
+            <img src="{{ feedback.aparelho.image.url }}" alt="{{ feedback.aparelho.exercise_name }}" class="exercise-preview-image">
+        {% else %}
+            <div class="exercise-preview-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                💪
+            </div>
+        {% endif %}
+        <div class="exercise-preview-info">
+            <h4>{{ feedback.aparelho.exercise_name }}</h4>
+            <p>{{ feedback.aparelho.grupo_muscular.name }}</p>
+        </div>
+    </div>
+    
+    <form method="post" class="edit-feedback-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.rating.id_for_label }}">{{ form.rating.label }}</label>
+            {{ form.rating }}
+            <div class="rating-options">
+                {% for choice in form.rating %}
+                    <label class="rating-option" for="{{ choice.id_for_label }}">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }} ⭐</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.comment.id_for_label }}">{{ form.comment.label }}</label>
+            {{ form.comment }}
+        </div>
+        
+        <div class="form-actions">
+            <a href="{% url 'user_feedbacks' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                Salvar Alterações
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Adicionar funcionalidade de seleção visual para rating
+document.addEventListener('DOMContentLoaded', function() {
+    const ratingOptions = document.querySelectorAll('.rating-option');
+    const ratingSelect = document.querySelector('#{{ form.rating.id_for_label }}');
+    
+    ratingOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remover seleção anterior
+            ratingOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Adicionar seleção atual
+            this.classList.add('selected');
+            
+            // Atualizar select
+            const input = this.querySelector('input');
+            if (input) {
+                input.checked = true;
+            }
+        });
+    });
+    
+    // Marcar opção selecionada inicialmente
+    const selectedInput = ratingSelect.querySelector('option:checked');
+    if (selectedInput) {
+        const selectedOption = Array.from(ratingOptions).find(opt => 
+            opt.querySelector('input').value === selectedInput.value
+        );
+        if (selectedOption) {
+            selectedOption.classList.add('selected');
+        }
+    }
+});
+</script>
+{% endblock %}

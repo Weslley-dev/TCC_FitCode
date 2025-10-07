@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - FitCode</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,600,700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background: #f7f8fa; 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .login-container { 
+            max-width: 380px; 
+            margin: 60px auto; 
+            background: #fff; 
+            border-radius: 16px; 
+            box-shadow: 0 2px 12px #0002; 
+            padding: 32px 28px; 
+            text-align: center;
+            width: 90%;
+            box-sizing: border-box;
+        }
+        
+        /* Mobile First - Ocupar toda a tela em dispositivos móveis */
+        @media (max-width: 768px) {
+            .login-container {
+                max-width: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 60px 30px 40px 30px !important;
+                min-height: 100vh !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+        }
+        
+        .logo { margin-bottom: 18px; }
+        .logo svg { width: 56px; height: 56px; background: #ffe066; border-radius: 50%; padding: 8px; }
+        .title { font-size: 2rem; font-weight: 700; color: #ffd43b; margin-bottom: 8px; }
+        .subtitle { color: #666; font-size: 1.1rem; margin-bottom: 28px; }
+        form { display: flex; flex-direction: column; gap: 18px; }
+        .form-group { display: flex; flex-direction: column; align-items: stretch; text-align: left; }
+        label { font-weight: 600; color: #222; margin-bottom: 4px; }
+        input { 
+            padding: 10px; 
+            border-radius: 8px; 
+            border: 1px solid #e3e6ee; 
+            font-size: 1rem; 
+            background: #f7f8fa;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .login-btn { 
+            background: linear-gradient(90deg, #ffd43b 0%, #ffb700 100%); 
+            color: #222; 
+            border: none; 
+            border-radius: 8px; 
+            padding: 12px 0; 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            margin-top: 10px;
+            width: 100%;
+        }
+        .errorlist { color: red; margin-bottom: 8px; }
+        .register-link { margin-top: 18px; }
+        .register-link a { color: #ffd43b; font-weight: 600; text-decoration: none; }
+        
+        /* Responsividade Mobile - Elementos */
+        @media (max-width: 768px) {
+            
+            .title {
+                font-size: 2.2rem;
+                margin-bottom: 15px;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 40px;
+            }
+            
+            .logo svg {
+                width: 64px;
+                height: 64px;
+                margin-bottom: 25px;
+            }
+            
+            input {
+                padding: 16px;
+                font-size: 16px; /* Previne zoom no iOS */
+                margin-bottom: 8px;
+            }
+            
+            .login-btn {
+                padding: 18px 0;
+                font-size: 1.1rem;
+                margin-top: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 0;
+                padding: 30px 25px;
+                width: 100%;
+                max-width: none;
+                min-height: 100vh;
+                border-radius: 0;
+            }
+            
+            .title {
+                font-size: 1.6rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .logo svg {
+                width: 44px;
+                height: 44px;
+            }
+            
+            form {
+                gap: 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 5px;
+            }
+            
+            input {
+                padding: 10px;
+                font-size: 16px;
+            }
+            
+            .login-btn {
+                padding: 12px 0;
+                font-size: 0.95rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .login-container {
+                margin: 0 auto;
+                padding: 20px 15px;
+                width: 100%;
+                max-width: none;
+                min-height: 100vh;
+                border-radius: 0;
+            }
+            
+            .title {
+                font-size: 1.4rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+            }
+            
+            .logo svg {
+                width: 40px;
+                height: 40px;
+            }
+            
+            form {
+                gap: 18px;
+            }
+            
+            .form-group {
+                margin-bottom: 3px;
+            }
+            
+            input {
+                padding: 8px;
+                font-size: 16px;
+            }
+            
+            .login-btn {
+                padding: 10px 0;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <svg viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="22" fill="#ffe066" stroke="#ffd43b" stroke-width="4"/>
+                <g>
+                    <rect x="14" y="22" width="20" height="4" rx="2" fill="#222"/>
+                    <rect x="16" y="18" width="4" height="12" rx="2" fill="#222"/>
+                    <rect x="28" y="18" width="4" height="12" rx="2" fill="#222"/>
+                </g>
+            </svg>
+        </div>
+        <div class="title">FitCode</div>
+        <div class="subtitle">Sistema de Instruções para Academia</div>
+        <form method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="errorlist">
+                    <span style="color: red;">
+                        Usuário e senha inválidos. Caso não tenha conta, clique no botão <strong>Cadastrar</strong>.
+                    </span>
+                </div>
+            {% endif %}
+            <div class="form-group">
+                <label for="id_username">Email</label>
+                <input type="text" name="username" id="id_username" placeholder="seu@email.com" value="{{ form.username.value|default_if_none:'' }}">
+                {% if form.username.errors %}
+                    <div class="errorlist">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="id_password">Senha</label>
+                <input type="password" name="password" id="id_password" placeholder="••••••••">
+                {% if form.password.errors %}
+                    <div class="errorlist">{{ form.password.errors }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="login-btn">Entrar</button>
+        </form>
+        <div class="register-link">
+            <a href="{% url 'register' %}">Cadastrar-se</a>
+        </div>
+    </div>
+</body>
+</html>

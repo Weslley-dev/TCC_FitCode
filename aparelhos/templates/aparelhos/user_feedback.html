@@ -1,0 +1,535 @@
+{% extends 'user_base.html' %}
+
+{% block title %}Feedback - {{ aparelho.exercise_name }} - FitCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .feedback-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .feedback-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .feedback-title {
+        font-size: 2rem;
+        font-weight: 700; 
+        color: #222; 
+        margin-bottom: 8px;
+    }
+    
+    .exercise-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1976d2;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #1976d2;
+    }
+    
+    .feedback-form {
+            background: #fff; 
+            border-radius: 12px; 
+        padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        border: 1px solid #e3e6ee; 
+    }
+    
+    .form-group { 
+        margin-bottom: 30px;
+    }
+    
+    .form-label {
+        display: block; 
+        font-weight: 600; 
+        color: #222; 
+        margin-bottom: 15px; 
+        font-size: 1.1rem;
+    }
+    
+    .rating-dropdown-container {
+        margin-bottom: 20px;
+    }
+    
+    .rating-dropdown {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e3e6ee;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #fff;
+        color: #333;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+        padding-right: 40px;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .rating-dropdown:focus {
+        outline: none;
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+    
+    .star-rating {
+        display: flex; 
+        justify-content: center;
+        gap: 10px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+    }
+    
+    .star {
+        font-size: 2.5rem;
+        color: #ddd;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+        min-width: 40px;
+        text-align: center;
+        line-height: 1;
+    }
+    
+    .star:hover,
+    .star.active {
+        color: #ffd43b;
+        transform: scale(1.1);
+    }
+    
+    .star.selected {
+        color: #ffd43b;
+    }
+    
+    .rating-text {
+        text-align: center;
+        margin-top: 10px;
+        font-weight: 500;
+        color: #666;
+        min-height: 24px;
+    }
+    
+    .form-textarea {
+        width: 100%; 
+        padding: 15px; 
+        border: 2px solid #e3e6ee;
+        border-radius: 8px; 
+            font-size: 1rem; 
+        font-family: inherit;
+        resize: vertical;
+        min-height: 120px;
+        transition: border-color 0.2s ease;
+    }
+    
+    .form-textarea:focus {
+        outline: none; 
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+    
+    .form-actions { 
+        display: flex; 
+        gap: 12px;
+        justify-content: center; 
+        margin-top: 40px;
+    }
+    
+    /* Botões estilo administrador */
+        .btn { 
+        background: #f7f8fa;
+        border: none;
+            border-radius: 8px; 
+        padding: 8px 18px;
+            font-size: 1rem; 
+        color: #222;
+            font-weight: 600; 
+            cursor: pointer; 
+        display: flex;
+            align-items: center; 
+        gap: 6px;
+            transition: all 0.2s ease;
+        text-decoration: none;
+        justify-content: center;
+        min-width: 120px;
+    }
+    
+    .btn-primary {
+        background: #1976d2;
+        color: #fff;
+    }
+    
+    .btn-primary:hover {
+        background: #1565c0;
+        color: #fff;
+    }
+    
+        .btn-secondary { 
+            background: #6c757d; 
+            color: #fff; 
+        }
+    
+        .btn-secondary:hover { 
+        background: #5c636a;
+            color: #fff;
+    }
+    
+    .btn svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .hidden-rating {
+        display: none;
+    }
+    
+    /* Garantir que dropdowns nativos sejam responsivos */
+    select {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Forçar quebra de linha em opções longas */
+    option {
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    
+    /* Responsividade Mobile */
+    @media (max-width: 768px) {
+        .feedback-container {
+            padding: 15px;
+            overflow-x: hidden;
+        }
+        
+        .rating-dropdown-container {
+            position: relative;
+            overflow: visible;
+        }
+        
+        .rating-dropdown {
+            max-width: calc(100vw - 30px);
+            word-wrap: break-word;
+            white-space: normal;
+        }
+        
+        .feedback-title {
+            font-size: 1.5rem;
+        }
+        
+        .exercise-name {
+            font-size: 1.2rem;
+            padding: 12px;
+        }
+        
+        .feedback-form {
+            padding: 20px;
+        }
+        
+        .star {
+            font-size: 2rem;
+            min-width: 35px;
+        }
+        
+        .star-rating {
+            gap: 8px;
+        }
+        
+        .form-actions { 
+            flex-direction: column; 
+            gap: 12px;
+        }
+        
+        .btn { 
+            width: 100%;
+            padding: 12px 18px;
+            font-size: 0.9rem;
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+        }
+        
+        .rating-dropdown {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            padding-right: 35px;
+            background-size: 14px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .feedback-container {
+            padding: 10px;
+            overflow-x: hidden;
+        }
+        
+        .rating-dropdown {
+            max-width: calc(100vw - 20px);
+            font-size: 0.85rem;
+        }
+        
+        .feedback-form {
+            padding: 15px;
+        }
+        
+        .star {
+            font-size: 1.8rem;
+            min-width: 30px;
+        }
+        
+        .star-rating {
+            gap: 6px;
+            margin: 15px 0;
+        }
+        
+        .feedback-title {
+            font-size: 1.3rem;
+        }
+        
+        .exercise-name {
+            font-size: 1.1rem;
+            padding: 10px;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            font-size: 0.85rem;
+        }
+        
+        .form-label {
+            font-size: 1rem;
+        }
+        
+        .rating-dropdown {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            padding-right: 30px;
+            background-size: 12px;
+        }
+        
+        .form-textarea {
+            padding: 12px;
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media (max-width: 360px) {
+        .feedback-container {
+            padding: 8px;
+            overflow-x: hidden;
+        }
+        
+        .rating-dropdown {
+            max-width: calc(100vw - 16px);
+            font-size: 0.8rem;
+        }
+        
+        .feedback-form {
+            padding: 12px;
+        }
+        
+        .star {
+            font-size: 1.6rem;
+            min-width: 28px;
+        }
+        
+        .star-rating {
+            gap: 4px;
+            margin: 12px 0;
+        }
+        
+        .btn {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+        }
+        
+        .feedback-title {
+            font-size: 1.2rem;
+        }
+        
+        .exercise-name {
+            font-size: 1rem;
+            padding: 8px;
+        }
+        
+        .rating-dropdown {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            padding-right: 28px;
+            background-size: 10px;
+        }
+        }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="feedback-container">
+        <div class="feedback-header">
+            <h1 class="feedback-title">{% if existing_feedback %}Editar Feedback{% else %}Avaliar Exercício{% endif %}</h1>
+            <div class="exercise-name">{{ aparelho.exercise_name }}</div>
+            </div>
+            
+        <form method="post" class="feedback-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                <label class="form-label">Avaliação (1 a 5 estrelas)</label>
+                
+                <!-- Filtro Dropdown -->
+                <div class="rating-dropdown-container">
+                    <select class="rating-dropdown" id="ratingDropdown">
+                        <option value="">Selecione uma avaliação</option>
+                        <option value="1">1 estrela - Péssimo</option>
+                        <option value="2">2 estrelas - Ruim</option>
+                        <option value="3">3 estrelas - Regular</option>
+                        <option value="4">4 estrelas - Bom</option>
+                        <option value="5">5 estrelas - Excelente</option>
+                    </select>
+                </div>
+
+                <!-- Estrelas Interativas -->
+                <div class="star-rating" id="starRating">
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
+                </div>
+                <div class="rating-text" id="ratingText">Selecione uma avaliação</div>
+                <input type="hidden" name="rating" id="ratingInput" value="{% if form.rating.value %}{{ form.rating.value }}{% endif %}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.comment.id_for_label }}">Comentário (opcional)</label>
+                <textarea 
+                    name="comment" 
+                    id="{{ form.comment.id_for_label }}" 
+                    class="form-textarea" 
+                    placeholder="Compartilhe sua experiência com este exercício..."
+                >{% if form.comment.value %}{{ form.comment.value }}{% endif %}</textarea>
+                </div>
+
+                <div class="form-actions">
+                <a href="{% url 'user_exercises_list' %}" class="btn btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Cancelar
+                    </a>
+                <button type="submit" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                    {% if existing_feedback %}Atualizar{% else %}Salvar{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.star');
+    const ratingText = document.getElementById('ratingText');
+    const ratingInput = document.getElementById('ratingInput');
+    const ratingDropdown = document.getElementById('ratingDropdown');
+    
+    // Textos para cada avaliação
+    const ratingTexts = {
+        1: 'Péssimo - Não recomendo',
+        2: 'Ruim - Precisa melhorar',
+        3: 'Regular - Mais ou menos',
+        4: 'Bom - Recomendo',
+        5: 'Excelente - Muito bom!'
+    };
+    
+    // Inicializar com valor existente se houver
+    const currentRating = ratingInput.value;
+    if (currentRating) {
+        highlightStars(parseInt(currentRating));
+        ratingText.textContent = ratingTexts[parseInt(currentRating)];
+        ratingDropdown.value = currentRating;
+    }
+    
+    // Event listeners para as estrelas
+    stars.forEach((star, index) => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            setRating(rating);
+        });
+        
+        star.addEventListener('mouseenter', function() {
+            const rating = parseInt(this.dataset.rating);
+            highlightStars(rating);
+            ratingText.textContent = ratingTexts[rating];
+        });
+    });
+    
+    // Event listener para o dropdown
+    ratingDropdown.addEventListener('change', function() {
+        const rating = parseInt(this.value);
+        if (rating) {
+            setRating(rating);
+        } else {
+            clearRating();
+        }
+    });
+    
+    // Reset ao sair do hover das estrelas
+    document.getElementById('starRating').addEventListener('mouseleave', function() {
+        const currentRating = parseInt(ratingInput.value) || 0;
+        if (currentRating > 0) {
+            highlightStars(currentRating);
+            ratingText.textContent = ratingTexts[currentRating];
+        } else {
+            highlightStars(0);
+            ratingText.textContent = 'Selecione uma avaliação';
+        }
+    });
+    
+    function setRating(rating) {
+        highlightStars(rating);
+        ratingInput.value = rating;
+        ratingText.textContent = ratingTexts[rating];
+        ratingDropdown.value = rating;
+    }
+    
+    function clearRating() {
+        highlightStars(0);
+        ratingInput.value = '';
+        ratingText.textContent = 'Selecione uma avaliação';
+    }
+    
+    function highlightStars(rating) {
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('selected');
+            } else {
+                star.classList.remove('selected');
+            }
+        });
+    }
+    
+    // Validação do formulário
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!ratingInput.value) {
+            e.preventDefault();
+            alert('Por favor, selecione uma avaliação de 1 a 5 estrelas.');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

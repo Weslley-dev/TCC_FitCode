@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FitCode{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css?family=Inter:400,600,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f7f8fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Menu Lateral */
+        .sidebar {
+            width: 280px;
+            background: #2c3e50;
+            position: fixed;
+            height: 100vh;
+            left: -280px; /* Escondido por padrão */
+            top: 0;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+        }
+        
+        .sidebar.open {
+            left: 0; /* Mostra quando aberto */
+        }
+        
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid #34495e;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #ffd43b;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        
+        .sidebar-subtitle {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+        
+        .user-info {
+            padding: 20px;
+            border-bottom: 1px solid #34495e;
+            background: #34495e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 12px;
+            border: 3px solid #2c3e50;
+            object-fit: cover;
+            background: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #bdc3c7;
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .user-role {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+        
+        .menu {
+            padding: 20px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-right: 12px;
+            border-radius: 0 25px 25px 0;
+        }
+        
+        .menu-item:hover {
+            background: #34495e;
+            color: #fff;
+        }
+        
+        .menu-item.active {
+            background: #34495e;
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .menu-item.disabled {
+            color: #7f8c8d;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .menu-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            stroke: currentColor;
+        }
+        
+        .menu-text {
+            font-size: 1rem;
+        }
+        
+        /* Conteúdo Principal */
+        .main-content {
+            flex: 1;
+            margin-left: 0; /* Sem margem quando menu fechado */
+            padding: 0;
+            min-height: 100vh;
+            width: 100%;
+        }
+        
+        .content-header {
+            background: #fff;
+            padding: 20px 32px;
+            border-bottom: 1px solid #e3e6ee;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .content-body {
+            padding: 32px;
+        }
+        
+        /* Botão Menu */
+        .mobile-menu-btn {
+            display: block;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: #ffd43b;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-btn:hover {
+            background: #ffb700;
+            transform: scale(1.05);
+        }
+        
+        .mobile-menu-btn svg {
+            width: 20px;
+            height: 20px;
+            color: #222;
+        }
+        
+        /* Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        
+        .mobile-overlay.show {
+            display: block;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .content-body {
+                padding: 20px 16px;
+                padding-top: 80px; /* Espaço para o botão */
+            }
+            
+            .page-header {
+                margin-bottom: 24px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .page-subtitle {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .mobile-menu-btn {
+                top: 15px;
+                right: 15px;
+                padding: 8px;
+            }
+            
+            .mobile-menu-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+            
+            .content-body {
+                padding: 16px 12px;
+                padding-top: 70px;
+            }
+            
+            .page-title {
+                font-size: 1.3rem;
+            }
+        }
+        
+        /* Estilos específicos para páginas */
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Menu Lateral -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="2">
+                    <path d="M6 8h12M6 12h12M6 16h12"/>
+                </svg>
+            </div>
+            <div>
+                <div class="sidebar-title">FitCode</div>
+                <div class="sidebar-subtitle">Admin Panel</div>
+            </div>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar">
+                {% if user_profile and user_profile.profile_picture %}
+                    <img src="{{ user_profile.profile_picture.url }}" alt="Foto de perfil">
+                {% else %}
+                    👤
+                {% endif %}
+            </div>
+            <div class="user-name">{{ user.get_full_name|default:user.username|default:"Usuário" }}</div>
+            <div class="user-role">Administração</div>
+        </div>
+        
+        <nav class="menu">
+            <a href="{% url 'aparelhos_list' %}" class="menu-item {% if request.resolver_match.url_name == 'aparelhos_list' %}active{% endif %}">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 8h12M6 12h12M6 16h12"/>
+                </svg>
+                <span class="menu-text">Exercícios</span>
+            </a>
+            
+            <a href="{% url 'aparelho_create' %}" class="menu-item {% if request.resolver_match.url_name == 'aparelho_create' %}active{% endif %}">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                <span class="menu-text">Novo Exercício</span>
+            </a>
+            
+            <a href="#" class="menu-item disabled">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3v18h18V3H3zm16 16H5V5h14v14z"/>
+                    <path d="M9 9h6v6H9V9z"/>
+                </svg>
+                <span class="menu-text">Relatórios</span>
+            </a>
+            
+            <a href="{% url 'admin_feedbacks_list' %}" class="menu-item {% if request.resolver_match.url_name == 'admin_feedbacks_list' %}active{% endif %}">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span class="menu-text">Feedbacks</span>
+            </a>
+        </nav>
+    </div>
+    
+    <!-- Overlay para mobile -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+    
+    <!-- Conteúdo Principal -->
+    <div class="main-content">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()" id="mobileMenuBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+        
+        <div class="content-body">
+            <div class="page-container">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            const isOpen = sidebar.classList.contains('open');
+            
+            if (isOpen) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        }
+        
+        function openSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            sidebar.classList.add('open');
+            overlay.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Previne scroll do body
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+            document.body.style.overflow = ''; // Restaura scroll do body
+        }
+        
+        // Fechar sidebar ao clicar no overlay
+        document.getElementById('mobileOverlay').addEventListener('click', closeSidebar);
+        
+        // Fechar sidebar ao clicar em um item do menu
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                closeSidebar();
+            });
+        });
+        
+        // Prevenir scroll quando menu estiver aberto
+        document.addEventListener('touchmove', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('open')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

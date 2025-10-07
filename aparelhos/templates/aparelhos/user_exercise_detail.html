@@ -1,0 +1,235 @@
+{% extends 'user_base.html' %}
+
+{% block title %}{{ aparelho.exercise_name }} - FitCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .exercise-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+        .exercise-header { 
+            display: flex; 
+        gap: 30px;
+        margin-bottom: 40px;
+        align-items: flex-start;
+    }
+    
+    .exercise-image-container {
+        flex: 0 0 400px;
+    }
+    
+    .exercise-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+            border-radius: 12px; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .exercise-info {
+        flex: 1;
+    }
+    
+        .exercise-title { 
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 12px;
+    }
+    
+    .exercise-group {
+            display: flex; 
+            align-items: center; 
+        gap: 8px;
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+    
+    .exercise-group svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .exercise-description {
+        color: #555;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+    
+    .exercise-actions {
+            display: flex; 
+            gap: 12px; 
+        margin-bottom: 30px;
+        }
+    
+        .btn { 
+        padding: 12px 24px;
+            border-radius: 8px; 
+            font-size: 1rem; 
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+    
+    .btn-primary {
+        background: #1976d2;
+            color: #fff; 
+        }
+    
+    .btn-primary:hover {
+        background: #1565c0;
+            color: #fff; 
+        }
+    
+    .btn-secondary {
+        background: #f5f5f5;
+        color: #666;
+        border: 1px solid #ddd;
+    }
+    
+    .btn-secondary:hover {
+        background: #e0e0e0;
+        color: #333;
+    }
+    
+    .stats-section {
+        background: #f8f9fa;
+        padding: 20px;
+            border-radius: 12px; 
+        margin-bottom: 30px;
+    }
+    
+    .stats-title {
+        font-size: 1.3rem;
+            font-weight: 600; 
+            color: #222; 
+        margin-bottom: 15px;
+    }
+    
+        .stats-grid { 
+            display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px; 
+    }
+    
+    .stat-item {
+            text-align: center; 
+        }
+    
+        .stat-number { 
+            font-size: 2rem; 
+            font-weight: 700; 
+        color: #1976d2;
+        margin-bottom: 5px;
+        }
+    
+        .stat-label { 
+            color: #666; 
+            font-size: 0.9rem; 
+    }
+    
+    .back-btn {
+        margin-bottom: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .exercise-header {
+            flex-direction: column;
+        }
+        
+        .exercise-image-container {
+            flex: none;
+        }
+        
+        .exercise-actions {
+                flex-direction: column; 
+        }
+        
+            .btn { 
+            justify-content: center;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+            }
+        }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="exercise-detail-container">
+    <a href="{% url 'user_exercises_list' %}" class="btn btn-secondary back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Voltar para Lista
+    </a>
+    
+        <div class="exercise-header">
+        <div class="exercise-image-container">
+            {% if aparelho.image %}
+                <img src="{{ aparelho.image.url }}" alt="{{ aparelho.exercise_name }}" class="exercise-image">
+            {% else %}
+                <div class="exercise-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
+                    💪
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="exercise-info">
+            <h1 class="exercise-title">{{ aparelho.exercise_name }}</h1>
+            
+            <div class="exercise-group">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                {{ aparelho.grupo_muscular.name }}
+            </div>
+            
+            {% if aparelho.description %}
+                <div class="exercise-description">{{ aparelho.description }}</div>
+            {% endif %}
+            
+            <div class="exercise-actions">
+                <a href="{% url 'user_feedback' aparelho.pk %}" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        <path d="M8 9h8"/>
+                        <path d="M8 13h6"/>
+                    </svg>
+                    {% if user_feedback %}Atualizar Feedback{% else %}Enviar Feedback{% endif %}
+                </a>
+            </div>
+                </div>
+            </div>
+
+    <div class="stats-section">
+        <h3 class="stats-title">Estatísticas do Exercício</h3>
+                <div class="stats-grid">
+            <div class="stat-item">
+                        <div class="stat-number">{{ total_visualizacoes }}</div>
+                        <div class="stat-label">Visualizações</div>
+                    </div>
+            <div class="stat-item">
+                        <div class="stat-number">{{ total_feedbacks }}</div>
+                        <div class="stat-label">Feedbacks</div>
+                    </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ media_rating }}</div>
+                <div class="stat-label">Avaliação Média</div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Exercício - FitCode{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 2rem; font-weight: 700; color: #222; margin-bottom: 8px; }
+        .page-subtitle { color: #666; font-size: 1.1rem; }
+        .form-container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); padding: 32px; }
+        .form-group { margin-bottom: 24px; }
+        .form-group label { display: block; font-weight: 600; color: #222; margin-bottom: 8px; font-size: 1rem; }
+        .form-group input, .form-group textarea, .form-group select { 
+            width: 100%; 
+            padding: 12px 16px; 
+            border-radius: 8px; 
+            border: 1px solid #e3e6ee; 
+            font-size: 1rem; 
+            transition: border-color 0.2s ease;
+            box-sizing: border-box;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
+            outline: none; 
+            border-color: #3a7bd5; 
+            box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.1);
+        }
+        .form-group textarea { 
+            min-height: 120px; 
+            resize: vertical; 
+        }
+        .video-preview { 
+            background: #f8f9fa; 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 24px; 
+            border: 1px solid #e3e6ee; 
+        }
+        .video-preview label { 
+            font-weight: 600; 
+            color: #222; 
+            margin-bottom: 12px; 
+            display: block; 
+        }
+        .video-preview video { 
+            width: 100%; 
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 8px; 
+            background: #000; 
+        }
+        .video-preview a { 
+            color: #3a7bd5; 
+            text-decoration: none; 
+            font-weight: 500; 
+        }
+        .video-preview a:hover { 
+            text-decoration: underline; 
+        }
+        .form-actions { 
+            display: flex; 
+            gap: 16px; 
+            justify-content: flex-end; 
+            margin-top: 32px; 
+        }
+        .btn { 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            font-weight: 600; 
+            cursor: pointer; 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            transition: all 0.2s ease;
+            border: none;
+        }
+        .btn-primary { 
+            background: #3a7bd5; 
+            color: #fff; 
+        }
+        .btn-primary:hover { 
+            background: #2c5aa0; 
+        }
+        .btn-secondary { 
+            background: #6c757d; 
+            color: #fff; 
+        }
+        .btn-secondary:hover { 
+            background: #5a6268; 
+        }
+        .errorlist { 
+            color: #dc3545; 
+            margin: 8px 0 0 0; 
+            font-size: 0.875rem; 
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .form-container { 
+                margin: 16px; 
+                padding: 24px 20px; 
+            }
+            .page-title { 
+                font-size: 1.75rem; 
+            }
+            .form-actions { 
+                flex-direction: column; 
+                gap: 12px; 
+            }
+            .btn { 
+                width: 100%; 
+                justify-content: center; 
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-container { 
+                margin: 8px; 
+                padding: 20px 16px; 
+            }
+            .page-title { 
+                font-size: 1.5rem; 
+            }
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <h1 class="page-title">Editar Exercício</h1>
+        <p class="page-subtitle">Modifique as informações do exercício</p>
+    </div>
+    
+    <div class="form-container">
+        {% if aparelho.video %}
+            <div class="video-preview">
+                <label>Vídeo atual:</label>
+                {% if aparelho.video.url|lower|slice:"-4:" == ".mp4" %}
+                    <video controls preload="metadata">
+                        <source src="{{ aparelho.video.url }}" type="video/mp4">
+                        Seu navegador não suporta vídeo.
+                    </video>
+                {% else %}
+                    <a href="{{ aparelho.video.url }}" target="_blank">{{ aparelho.video.url }}</a>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="errorlist">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <div class="form-actions">
+                <a href="{% url 'aparelhos_list' %}" class="btn btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12,19 5,12 12,5"></polyline>
+                    </svg>
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17,21 17,13 7,13 7,21"></polyline>
+                        <polyline points="7,3 7,8 15,8"></polyline>
+                    </svg>
+                    Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

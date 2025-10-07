@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+
+{% block title %}Criar Novo Exercício - FitCode{% endblock %}
+
+{% block extra_css %}
+<style>
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 2rem; font-weight: 700; color: #222; margin-bottom: 8px; }
+        .page-subtitle { color: #666; font-size: 1.1rem; }
+        .form-container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 12px #0002; padding: 32px 28px; }
+        
+        /* Responsividade para formulário */
+        @media (max-width: 768px) {
+            .form-container { 
+                padding: 20px 16px; 
+                margin: 0 16px; 
+            }
+            .section { 
+                padding: 16px 12px; 
+                margin-bottom: 20px; 
+            }
+            .video-upload-label { 
+                padding: 30px 16px; 
+            }
+            .upload-icon { 
+                font-size: 2.5rem; 
+            }
+            .upload-text { 
+                font-size: 1rem; 
+            }
+            .upload-subtext { 
+                font-size: 0.8rem; 
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-container { 
+                padding: 16px 12px; 
+                margin: 0 8px; 
+                border-radius: 12px; 
+            }
+            .section { 
+                padding: 12px 8px; 
+                margin-bottom: 16px; 
+            }
+            .video-upload-label { 
+                padding: 24px 12px; 
+            }
+            .upload-icon { 
+                font-size: 2rem; 
+            }
+            .btns { 
+                gap: 8px; 
+            }
+            .create-btn, .cancel-btn { 
+                padding: 10px 0; 
+                font-size: 1rem; 
+            }
+        }
+        .back-btn { background: #ffe066; border: none; border-radius: 8px; padding: 8px 12px; font-size: 1.2rem; cursor: pointer; margin-bottom: 18px; }
+        .section { background: #f7f8fa; border-radius: 12px; padding: 18px 16px; margin-bottom: 24px; border: 1px solid #ffe066; }
+        .section-title { display: flex; align-items: center; font-size: 1.2rem; font-weight: 700; color: #222; margin-bottom: 12px; }
+        .section-title svg { width: 24px; height: 24px; margin-right: 8px; color: #ffd43b; }
+        label { font-weight: 600; color: #222; margin-bottom: 4px; display: block; }
+        .form-input, .form-textarea, .form-select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e3e6ee; font-size: 1rem; background: #f7f8fa; margin-bottom: 8px; box-sizing: border-box; }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        
+        /* Estilos para upload de vídeo */
+        .video-upload-container { position: relative; margin-bottom: 8px; }
+        .video-upload-input { display: none; }
+        .video-upload-label { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 40px 20px; 
+            border: 2px dashed #ffd43b; 
+            border-radius: 12px; 
+            background: #fff; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .video-upload-label:hover { 
+            border-color: #ffb700; 
+            background: #fffbf0; 
+        }
+        .video-upload-label.dragover { 
+            border-color: #ffb700; 
+            background: #fffbf0; 
+            transform: scale(1.02);
+        }
+        .upload-icon { 
+            font-size: 3rem; 
+            color: #ffd43b; 
+            margin-bottom: 12px; 
+        }
+        .upload-text { 
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            color: #222; 
+            margin-bottom: 4px; 
+        }
+        .upload-subtext { 
+            font-size: 0.9rem; 
+            color: #666; 
+        }
+        .file-info { 
+            background: #e8f5e8; 
+            border: 1px solid #4caf50; 
+            border-radius: 8px; 
+            padding: 12px; 
+            margin-top: 8px; 
+            display: none; 
+        }
+        .file-info.show { display: block; }
+        .file-name { font-weight: 600; color: #2e7d32; }
+        .file-size { color: #666; font-size: 0.9rem; }
+        .remove-file { 
+            background: #ff5252; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            padding: 4px 8px; 
+            font-size: 0.8rem; 
+            cursor: pointer; 
+            margin-top: 8px; 
+        }
+        
+        .btns { display: flex; flex-direction: column; gap: 10px; }
+        .create-btn { background: linear-gradient(90deg, #ffd43b 0%, #ffb700 100%); color: #222; border: none; border-radius: 8px; padding: 12px 0; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
+        .cancel-btn { background: #f7f8fa; color: #222; border: 1px solid #e3e6ee; border-radius: 8px; padding: 12px 0; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
+        .errorlist { color: #ff5252; margin-bottom: 8px; font-size: 0.9rem; }
+        .help-text { color: #666; font-size: 0.9rem; margin-top: 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1 class="page-title">Criar Novo Exercício</h1>
+        <p class="page-subtitle">Adicione um novo exercício à biblioteca da academia</p>
+    </div>
+    
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 4h16v16H4z" stroke="#ffd43b" stroke-width="2" fill="#ffe066"/>
+                        <path d="M8 8h8v2H8z" fill="#ffd43b"/>
+                    </svg>
+                    Informações Básicas
+                </div>
+                <label for="id_exercise_name">Nome do Exercício *</label>
+                {{ form.exercise_name }}
+                {% if form.exercise_name.errors %}
+                    <div class="errorlist">{{ form.exercise_name.errors }}</div>
+                {% endif %}
+                <label for="id_grupo_muscular">Grupo Muscular *</label>
+                {{ form.grupo_muscular }}
+                {% if form.grupo_muscular.errors %}
+                    <div class="errorlist">{{ form.grupo_muscular.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="#ffd43b" stroke-width="2" fill="#ffe066"/>
+                        <path d="M9 9h6v6H9z" fill="#ffd43b"/>
+                    </svg>
+                    Vídeo Demonstrativo
+                </div>
+                <label for="video-upload">Selecionar Vídeo *</label>
+                <div class="video-upload-container">
+                    {{ form.video }}
+                    <label for="video-upload" class="video-upload-label" id="video-upload-label">
+                        <div class="upload-icon">📹</div>
+                        <div class="upload-text">Clique para selecionar um vídeo</div>
+                        <div class="upload-subtext">ou arraste e solte aqui</div>
+                    </label>
+                    <div class="file-info" id="file-info">
+                        <div class="file-name" id="file-name"></div>
+                        <div class="file-size" id="file-size"></div>
+                        <button type="button" class="remove-file" id="remove-file">Remover arquivo</button>
+                    </div>
+                </div>
+                {% if form.video.errors %}
+                    <div class="errorlist">{{ form.video.errors }}</div>
+                {% endif %}
+                <div class="help-text">Formatos aceitos: MP4, AVI, MOV, WMV, FLV, WebM, MKV (máx. 100MB)</div>
+            </div>
+            <div class="section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 4h16v16H4z" stroke="#ffd43b" stroke-width="2" fill="#ffe066"/>
+                        <path d="M8 8h8v2H8z" fill="#ffd43b"/>
+                    </svg>
+                    Instruções de Execução
+                </div>
+                <label for="id_instructions">Instruções Detalhadas *</label>
+                {{ form.instructions }}
+                {% if form.instructions.errors %}
+                    <div class="errorlist">{{ form.instructions.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="btns">
+                <button type="submit" class="create-btn">
+                    &#128221; Criar Exercício
+                </button>
+                <button type="button" class="cancel-btn" onclick="window.history.back()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoInput = document.getElementById('video-upload');
+            const uploadLabel = document.getElementById('video-upload-label');
+            const fileInfo = document.getElementById('file-info');
+            const fileName = document.getElementById('file-name');
+            const fileSize = document.getElementById('file-size');
+            const removeFile = document.getElementById('remove-file');
+
+            // Função para formatar tamanho do arquivo
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Função para mostrar informações do arquivo
+            function showFileInfo(file) {
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileInfo.classList.add('show');
+                uploadLabel.style.display = 'none';
+            }
+
+            // Função para esconder informações do arquivo
+            function hideFileInfo() {
+                fileInfo.classList.remove('show');
+                uploadLabel.style.display = 'flex';
+                videoInput.value = '';
+            }
+
+            // Event listener para mudança no input de arquivo
+            videoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validar tipo de arquivo
+                    const allowedTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm', 'video/x-msvideo', 'video/quicktime'];
+                    const fileExtension = file.name.toLowerCase().split('.').pop();
+                    const allowedExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv'];
+                    
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        alert('Formato de vídeo não suportado. Use: MP4, AVI, MOV, WMV, FLV, WebM ou MKV.');
+                        hideFileInfo();
+                        return;
+                    }
+                    
+                    // Validar tamanho do arquivo (100MB)
+                    if (file.size > 100 * 1024 * 1024) {
+                        alert('O arquivo de vídeo deve ter no máximo 100MB.');
+                        hideFileInfo();
+                        return;
+                    }
+                    
+                    showFileInfo(file);
+                }
+            });
+
+            // Event listener para remover arquivo
+            removeFile.addEventListener('click', function() {
+                hideFileInfo();
+            });
+
+            // Drag and drop functionality
+            uploadLabel.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadLabel.classList.add('dragover');
+            });
+
+            uploadLabel.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadLabel.classList.remove('dragover');
+            });
+
+            uploadLabel.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadLabel.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    // Simular mudança no input
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    videoInput.files = dataTransfer.files;
+                    
+                    // Disparar evento change
+                    const event = new Event('change', { bubbles: true });
+                    videoInput.dispatchEvent(event);
+                }
+            });
+
+            // Click no label para abrir seletor de arquivo
+            uploadLabel.addEventListener('click', function(e) {
+                if (e.target === uploadLabel || e.target.closest('.upload-icon, .upload-text, .upload-subtext')) {
+                    videoInput.click();
+                }
+            });
+        });
+    </script>
+{% endblock %}
