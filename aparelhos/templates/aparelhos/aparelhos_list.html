@@ -315,6 +315,58 @@
         .icon-btn svg { width: 20px; height: 20px; color: #e74c3c; }
         .icon-btn.delete svg { color: #e74c3c; }
         .icon-btn.edit svg { color: #222; }
+        .icon-btn.qr svg { color: #1976d2; }
+        .icon-btn.qr:hover { background: #e8f5e8; }
+        
+        /* Modal para QR Code */
+        .qr-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .qr-modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .qr-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .qr-modal-close:hover {
+            color: #000;
+        }
+        
+        .qr-modal-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+        
+        .qr-modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 10px;
+        }
 </style>
 {% endblock %}
 
@@ -421,9 +473,28 @@
                         <path d="M4 20h4l10-10a2.828 2.828 0 0 0-4-4L4 16v4z" stroke="#222" stroke-width="2"/>
                     </svg>
                 </a>
+                {% if aparelho.qr_code %}
+                <button class="icon-btn qr" title="Ver QR Code" onclick="showQRCode('{{ aparelho.qr_code.url }}', '{{ aparelho.exercise_name }}')">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="3" width="6" height="6" stroke="#222" stroke-width="2"/>
+                        <rect x="15" y="3" width="6" height="6" stroke="#222" stroke-width="2"/>
+                        <rect x="3" y="15" width="6" height="6" stroke="#222" stroke-width="2"/>
+                        <rect x="15" y="15" width="6" height="6" stroke="#222" stroke-width="2"/>
+                    </svg>
+                </button>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
+        
+        <!-- Modal para QR Code -->
+        <div id="qrModal" class="qr-modal">
+            <div class="qr-modal-content">
+                <span class="qr-modal-close" onclick="closeQRCode()">&times;</span>
+                <div class="qr-modal-title" id="qrModalTitle"></div>
+                <img id="qrModalImage" class="qr-modal-image" src="" alt="QR Code">
+            </div>
+        </div>
 {% endblock %}
 
 {% block extra_js %}
@@ -504,6 +575,25 @@
                 instructions.style.display = 'none';
                 text.textContent = 'Ver Detalhes';
                 button.classList.remove('active');
+            }
+        }
+        
+        // Funções para o modal de QR Code
+        function showQRCode(qrCodeUrl, exerciseName) {
+            document.getElementById('qrModalImage').src = qrCodeUrl;
+            document.getElementById('qrModalTitle').textContent = 'QR Code - ' + exerciseName;
+            document.getElementById('qrModal').style.display = 'block';
+        }
+        
+        function closeQRCode() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+        
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('qrModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
             }
         }
     </script>

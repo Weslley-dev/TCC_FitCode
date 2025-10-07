@@ -10,6 +10,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
+from django.contrib.auth import login
+from django.conf import settings
 
 
 @admin_required
@@ -267,3 +269,64 @@ def admin_feedbacks_list(request):
     }
     
     return render(request, 'aparelhos/admin_feedbacks_list.html', context)
+
+# Views para fluxo do QR Code
+def qr_code_redirect(request, pk):
+    """
+    View para redirecionar QR Code para login
+    Salva o ID do exercício na sessão para redirecionamento após login
+    """
+    aparelho = get_object_or_404(Aparelho, pk=pk)
+    
+    # Salva o ID do exercício na sessão para redirecionamento após login
+    request.session['qr_exercise_id'] = pk
+    request.session['qr_redirect'] = True
+    
+    # Redireciona para login
+    return redirect('login')
+
+@user_required
+def qr_exercise_detail(request, pk):
+    """
+    View para exibir exercício específico do QR Code
+    Acessível apenas após login via QR Code
+    """
+    aparelho = get_object_or_404(Aparelho, pk=pk)
+    
+    # Verifica se o usuário veio do fluxo do QR Code
+    if not request.session.get('qr_redirect', False):
+        return redirect('user_exercises_list')
+    
+    # Remove a flag de redirecionamento QR da sessão
+    request.session.pop('qr_redirect', None)
+    request.session.pop('qr_exercise_id', None)
+    
+    # Busca feedback do usuário para este exercício
+    user_feedback = None
+    if request.user.is_authenticated:
+        try:
+            user_feedback = Feedback.objects.get(user=request.user, aparelho=aparelho)
+        except Feedback.DoesNotExist:
+            user_feedback = None
+    
+    # Estatísticas do exercício
+    total_visualizacoes = Visualizacao.objects.filter(aparelho=aparelho).aggregate(
+        total=Count('count')
+    )['total'] or 0
+    
+    total_feedbacks = Feedback.objects.filter(aparelho=aparelho).count()
+    
+    avg_rating = Feedback.objects.filter(aparelho=aparelho).aggregate(
+        avg=Avg('rating')
+    )['avg'] or 0
+    
+    context = {
+        'aparelho': aparelho,
+        'user_feedback': user_feedback,
+        'total_visualizacoes': total_visualizacoes,
+        'total_feedbacks': total_feedbacks,
+        'media_rating': round(avg_rating, 1) if avg_rating else 0,
+        'is_qr_flow': True,  # Flag para identificar que veio do QR Code
+    }
+    
+    return render(request, 'aparelhos/qr_exercise_detail.html', context)

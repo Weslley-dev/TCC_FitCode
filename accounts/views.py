@@ -12,8 +12,16 @@ def register_view(request):
     if request.method == 'POST':
         user_form = CustomUserCreationForm(request.POST)
         if user_form.is_valid():
-            user_form.save()
-            return redirect('login')  # redireciona para login após registro
+            user = user_form.save()
+            auth_login(request, user)  # Login automático após registro
+            
+            # Verificar se veio do fluxo do QR Code
+            if request.session.get('qr_redirect', False) and request.session.get('qr_exercise_id'):
+                exercise_id = request.session.get('qr_exercise_id')
+                return redirect('qr_exercise_detail', pk=exercise_id)
+            
+            # Redirecionar para lista de exercícios após registro
+            return redirect('user_exercises_list')
     else:
         user_form = CustomUserCreationForm()
     return render(request, 'register.html', {'user_form': user_form})
@@ -24,6 +32,12 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
+            
+            # Verificar se veio do fluxo do QR Code
+            if request.session.get('qr_redirect', False) and request.session.get('qr_exercise_id'):
+                exercise_id = request.session.get('qr_exercise_id')
+                return redirect('qr_exercise_detail', pk=exercise_id)
+            
             # Redirecionar baseado em permissões - apenas WeslleyDev tem acesso admin
             if user.username == 'WeslleyDev' and (user.is_superuser or user.is_staff):
                 return redirect('aparelhos_list')  # Admin vai para lista de exercícios com permissões

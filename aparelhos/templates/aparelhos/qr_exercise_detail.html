@@ -10,8 +10,28 @@
         padding: 20px;
     }
     
-        .exercise-header { 
-            display: flex; 
+    .qr-flow-header {
+        background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .qr-flow-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .qr-flow-subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+    
+    .exercise-header { 
+        display: flex; 
         gap: 30px;
         margin-bottom: 40px;
         align-items: flex-start;
@@ -25,7 +45,7 @@
         width: 100%;
         height: 300px;
         object-fit: cover;
-            border-radius: 12px; 
+        border-radius: 12px; 
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
@@ -33,7 +53,7 @@
         flex: 1;
     }
     
-        .exercise-title { 
+    .exercise-title { 
         font-size: 2.5rem;
         font-weight: 700;
         color: #222;
@@ -41,8 +61,8 @@
     }
     
     .exercise-group {
-            display: flex; 
-            align-items: center; 
+        display: flex; 
+        align-items: center; 
         gap: 8px;
         color: #666;
         font-size: 1.1rem;
@@ -62,34 +82,34 @@
     }
     
     .exercise-actions {
-            display: flex; 
-            gap: 12px; 
+        display: flex; 
+        gap: 12px; 
         margin-bottom: 30px;
-        }
+    }
     
-        .btn { 
+    .btn { 
         padding: 12px 24px;
-            border-radius: 8px; 
-            font-size: 1rem; 
+        border-radius: 8px; 
+        font-size: 1rem; 
         font-weight: 500;
         text-decoration: none;
         transition: all 0.2s ease;
         border: none;
-            cursor: pointer; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-        }
+        cursor: pointer; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 8px; 
+    }
     
     .btn-primary {
         background: #1976d2;
-            color: #fff; 
-        }
+        color: #fff; 
+    }
     
     .btn-primary:hover {
         background: #1565c0;
-            color: #fff; 
-        }
+        color: #fff; 
+    }
     
     .btn-secondary {
         background: #f5f5f5;
@@ -102,75 +122,50 @@
         color: #333;
     }
     
+    .btn-back {
+        background: #6c757d;
+        color: #fff;
+    }
+    
+    .btn-back:hover {
+        background: #5a6268;
+        color: #fff;
+    }
+    
     .stats-section {
         background: #f8f9fa;
         padding: 20px;
-            border-radius: 12px; 
+        border-radius: 12px; 
         margin-bottom: 30px;
-    }
-    
-    .qr-section {
-        background: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 30px;
-        border: 1px solid #e0e0e0;
-        text-align: center;
-    }
-    
-    .qr-title {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #222;
-        margin-bottom: 15px;
-    }
-    
-    .qr-code-container {
-        display: inline-block;
-        padding: 15px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .qr-code-image {
-        max-width: 200px;
-        height: auto;
-    }
-    
-    .qr-description {
-        color: #666;
-        font-size: 0.9rem;
-        margin-top: 10px;
     }
     
     .stats-title {
         font-size: 1.3rem;
-            font-weight: 600; 
-            color: #222; 
+        font-weight: 600; 
+        color: #222; 
         margin-bottom: 15px;
     }
     
-        .stats-grid { 
-            display: grid; 
+    .stats-grid { 
+        display: grid; 
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px; 
+        gap: 20px; 
     }
     
     .stat-item {
-            text-align: center; 
-        }
+        text-align: center; 
+    }
     
-        .stat-number { 
-            font-size: 2rem; 
-            font-weight: 700; 
+    .stat-number { 
+        font-size: 2rem; 
+        font-weight: 700; 
         color: #1976d2;
         margin-bottom: 5px;
-        }
+    }
     
-        .stat-label { 
-            color: #666; 
-            font-size: 0.9rem; 
+    .stat-label { 
+        color: #666; 
+        font-size: 0.9rem; 
     }
     
     .back-btn {
@@ -187,30 +182,36 @@
         }
         
         .exercise-actions {
-                flex-direction: column; 
+            flex-direction: column; 
         }
         
-            .btn { 
+        .btn { 
             justify-content: center;
         }
         
         .stats-grid {
             grid-template-columns: 1fr;
-            }
         }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="exercise-detail-container">
-    <a href="{% url 'user_exercises_list' %}" class="btn btn-secondary back-btn">
+    <!-- Header específico para fluxo QR Code -->
+    <div class="qr-flow-header">
+        <h2 class="qr-flow-title">Exercício Acessado via QR Code</h2>
+        <p class="qr-flow-subtitle">Você foi direcionado para este exercício através de um QR Code</p>
+    </div>
+    
+    <a href="{% url 'user_exercises_list' %}" class="btn btn-back back-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
-        Voltar para Lista
+        Ver Todos os Exercícios
     </a>
     
-        <div class="exercise-header">
+    <div class="exercise-header">
         <div class="exercise-image-container">
             {% if aparelho.image %}
                 <img src="{{ aparelho.image.url }}" alt="{{ aparelho.exercise_name }}" class="exercise-image">
@@ -232,8 +233,8 @@
                 {{ aparelho.grupo_muscular.name }}
             </div>
             
-            {% if aparelho.description %}
-                <div class="exercise-description">{{ aparelho.description }}</div>
+            {% if aparelho.instructions %}
+                <div class="exercise-description">{{ aparelho.instructions }}</div>
             {% endif %}
             
             <div class="exercise-actions">
@@ -246,37 +247,41 @@
                     {% if user_feedback %}Atualizar Feedback{% else %}Enviar Feedback{% endif %}
                 </a>
             </div>
-                </div>
-            </div>
-
-    {% if aparelho.qr_code %}
-    <div class="qr-section">
-        <h3 class="qr-title">QR Code do Exercício</h3>
-        <div class="qr-code-container">
-            <img src="{{ aparelho.qr_code.url }}" alt="QR Code para {{ aparelho.exercise_name }}" class="qr-code-image">
         </div>
-        <div class="qr-description">
-            Escaneie este QR Code para acessar rapidamente este exercício
+    </div>
+
+    <!-- Seção de vídeo -->
+    {% if aparelho.video %}
+    <div class="video-section" style="margin-bottom: 30px;">
+        <h3 style="font-size: 1.3rem; font-weight: 600; color: #222; margin-bottom: 15px;">Vídeo do Exercício</h3>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
+            <video controls style="width: 100%; max-width: 600px; border-radius: 8px;">
+                <source src="{{ aparelho.video.url }}" type="video/mp4">
+                <source src="{{ aparelho.video.url }}" type="video/avi">
+                <source src="{{ aparelho.video.url }}" type="video/mov">
+                <source src="{{ aparelho.video.url }}" type="video/webm">
+                Seu navegador não suporta a reprodução de vídeo.
+            </video>
         </div>
     </div>
     {% endif %}
 
     <div class="stats-section">
         <h3 class="stats-title">Estatísticas do Exercício</h3>
-                <div class="stats-grid">
+        <div class="stats-grid">
             <div class="stat-item">
-                        <div class="stat-number">{{ total_visualizacoes }}</div>
-                        <div class="stat-label">Visualizações</div>
-                    </div>
+                <div class="stat-number">{{ total_visualizacoes }}</div>
+                <div class="stat-label">Visualizações</div>
+            </div>
             <div class="stat-item">
-                        <div class="stat-number">{{ total_feedbacks }}</div>
-                        <div class="stat-label">Feedbacks</div>
-                    </div>
+                <div class="stat-number">{{ total_feedbacks }}</div>
+                <div class="stat-label">Feedbacks</div>
+            </div>
             <div class="stat-item">
                 <div class="stat-number">{{ media_rating }}</div>
                 <div class="stat-label">Avaliação Média</div>
             </div>
         </div>
     </div>
-    </div>
+</div>
 {% endblock %}

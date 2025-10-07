@@ -15,6 +15,9 @@ SECRET_KEY = 'django-insecure-36a13o0%3$!o)j=7uui-9p5+lo_)g^a_kn^=*teu73=8d&7h1)
 DEBUG = True
 ALLOWED_HOSTS = []
 
+# URL base para QR Codes
+BASE_URL = 'http://localhost:8000'
+
 # Apps
 INSTALLED_APPS = [
     'django.contrib.admin',

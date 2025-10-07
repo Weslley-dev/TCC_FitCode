@@ -9,7 +9,9 @@ from .views import (
     user_feedback,
     user_visualization,
     admin_feedbacks_list,
-    admin_reports
+    admin_reports,
+    qr_code_redirect,
+    qr_exercise_detail
 )
 
 urlpatterns = [
@@ -26,4 +28,8 @@ urlpatterns = [
     path('user/exercicio/<int:pk>/', user_exercise_detail, name='user_exercise_detail'),
     path('user/feedback/<int:pk>/', user_feedback, name='user_feedback'),
     path('user/visualizacao/<int:pk>/', user_visualization, name='user_visualization'),
+    
+    # URLs para fluxo do QR Code
+    path('qr/<int:pk>/', qr_code_redirect, name='qr_code_redirect'),
+    path('qr/exercicio/<int:pk>/', qr_exercise_detail, name='qr_exercise_detail'),
 ]
