@@ -8,7 +8,8 @@ from .views import (
     user_exercise_detail,
     user_feedback,
     user_visualization,
-    admin_feedbacks_list
+    admin_feedbacks_list,
+    admin_reports
 )
 
 urlpatterns = [
@@ -18,6 +19,7 @@ urlpatterns = [
     path('delete/<int:pk>/', aparelho_delete, name='aparelho_delete'),
     path('edit/<int:pk>/', aparelho_edit, name='aparelho_edit'),
     path('feedbacks/', admin_feedbacks_list, name='admin_feedbacks_list'),
+    path('relatorios/', admin_reports, name='admin_reports'),
     
     # URLs para usuários comuns
     path('user/', user_exercises_list, name='user_exercises_list'),

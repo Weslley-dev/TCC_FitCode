@@ -55,6 +55,7 @@ class Visualizacao(models.Model):
     count = models.PositiveIntegerField(default=1, help_text="Número de visualizações")
     viewed_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    last_clicked = models.DateTimeField(null=True, blank=True, help_text="Última vez que o usuário clicou no botão")
     
     class Meta:
         ordering = ["-viewed_at"]
@@ -62,4 +63,27 @@ class Visualizacao(models.Model):
     
     def __str__(self):
         return f"{self.user.username} visualizou {self.aparelho.exercise_name} ({self.count}x)"
+    
+    def can_click_again(self):
+        """Verifica se o usuário pode clicar novamente (cooldown de 1min30s)"""
+        if not self.last_clicked:
+            return True
+        
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        cooldown_time = self.last_clicked + timedelta(minutes=1, seconds=30)
+        return timezone.now() > cooldown_time
+    
+    def get_remaining_cooldown(self):
+        """Retorna o tempo restante do cooldown em segundos"""
+        if not self.last_clicked:
+            return 0
+            
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        cooldown_time = self.last_clicked + timedelta(minutes=1, seconds=30)
+        remaining = cooldown_time - timezone.now()
+        return max(0, int(remaining.total_seconds()))
 

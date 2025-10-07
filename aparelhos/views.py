@@ -160,22 +160,76 @@ def user_visualization(request, pk):
     """View para contar visualização de um exercício"""
     aparelho = get_object_or_404(Aparelho, pk=pk)
     
-    # Criar ou atualizar visualização
-    visualizacao, created = Visualizacao.objects.get_or_create(
+    # Verificar se existe visualização anterior
+    visualizacao = Visualizacao.objects.filter(
         aparelho=aparelho,
-        user=request.user,
-        defaults={'count': 1}
-    )
+        user=request.user
+    ).first()
     
-    if not created:
+    # Verificar cooldown
+    if visualizacao and not visualizacao.can_click_again():
+        remaining_time = visualizacao.get_remaining_cooldown()
+        minutes = remaining_time // 60
+        seconds = remaining_time % 60
+        
+        return JsonResponse({
+            'success': False,
+            'message': f'Aguarde {minutes:02d}:{seconds:02d} para contar visualização novamente!',
+            'cooldown': remaining_time
+        })
+    
+    # Criar ou atualizar visualização
+    if not visualizacao:
+        visualizacao = Visualizacao.objects.create(
+            aparelho=aparelho,
+            user=request.user,
+            count=1
+        )
+    else:
         visualizacao.count += 1
         visualizacao.save()
+    
+    # Atualizar timestamp do último clique
+    from django.utils import timezone
+    visualizacao.last_clicked = timezone.now()
+    visualizacao.save()
     
     return JsonResponse({
         'success': True,
         'message': 'Visualização contada com sucesso!',
         'count': visualizacao.count
     })
+
+@admin_required
+def admin_reports(request):
+    """Tela de relatórios para o administrador"""
+    from django.db.models import Count, Avg, Sum
+    
+    # Buscar exercícios com estatísticas
+    exercicios_stats = Aparelho.objects.annotate(
+        total_visualizacoes=Sum('visualizacoes__count'),
+        media_rating=Avg('feedbacks__rating'),
+        total_feedbacks=Count('feedbacks')
+    ).filter(total_visualizacoes__gt=0).order_by('-total_visualizacoes')
+    
+    # Preparar dados para o template
+    exercicios_ranking = []
+    for i, aparelho in enumerate(exercicios_stats, 1):
+        exercicios_ranking.append({
+            'posicao': i,
+            'nome': aparelho.exercise_name,
+            'visualizacoes': aparelho.total_visualizacoes or 0,
+            'nota': round(aparelho.media_rating or 0, 1),
+            'total_feedbacks': aparelho.total_feedbacks or 0
+        })
+    
+    context = {
+        'exercicios_ranking': exercicios_ranking,
+        'total_exercicios': exercicios_stats.count(),
+        'total_visualizacoes_geral': sum(item['visualizacoes'] for item in exercicios_ranking)
+    }
+    
+    return render(request, 'aparelhos/admin_reports.html', context)
 
 @admin_required
 def admin_feedbacks_list(request):

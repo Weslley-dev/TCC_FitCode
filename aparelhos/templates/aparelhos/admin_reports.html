@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Relatórios - FitCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reports-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f8f9fa;
+        min-height: 100vh;
+    }
+
+    .reports-header {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .reports-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin: 0 0 10px 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .reports-subtitle {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+        margin: 0;
+    }
+
+    .hamburger-menu {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #2c3e50;
+        cursor: pointer;
+        margin-right: 15px;
+    }
+
+    .exercises-section {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin: 0 0 25px 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .chart-icon {
+        width: 32px;
+        height: 32px;
+        fill: #f39c12;
+    }
+
+    .exercise-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .exercise-item {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .exercise-item:hover {
+        background: #e9ecef;
+        border-color: #f39c12;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.2);
+    }
+
+    .ranking-badge {
+        background: #f39c12;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .exercise-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .exercise-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+    }
+
+    .exercise-stats {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #7f8c8d;
+        font-size: 0.95rem;
+    }
+
+    .views-count {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .rating-display {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .star-icon {
+        color: #f39c12;
+        font-size: 1.1rem;
+    }
+
+    .rating-value {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #7f8c8d;
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+    }
+
+    .empty-state p {
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .stats-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #f39c12;
+        margin: 0 0 5px 0;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        margin: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .reports-container {
+            padding: 15px;
+        }
+
+        .reports-header {
+            padding: 20px;
+        }
+
+        .reports-title {
+            font-size: 2rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .hamburger-menu {
+        display: block;
+        }
+
+        .exercises-section {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+
+        .exercise-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .exercise-stats {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .ranking-badge {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+        }
+
+        .exercise-name {
+            font-size: 1.1rem;
+        }
+
+        .stats-summary {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .reports-title {
+            font-size: 1.8rem;
+        }
+
+        .exercise-stats {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .stat-item {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reports-container">
+    <!-- Header -->
+    <div class="reports-header">
+        <button class="hamburger-menu">☰</button>
+        <h1 class="reports-title">
+            <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18"/>
+                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+            </svg>
+            Relatórios
+        </h1>
+        <p class="reports-subtitle">Acompanhe o uso dos aparelhos e performance dos exercícios</p>
+    </div>
+
+    <!-- Estatísticas Gerais -->
+    <div class="stats-summary">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_exercicios }}</div>
+            <div class="stat-label">Exercícios Ativos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ total_visualizacoes_geral }}</div>
+            <div class="stat-label">Total de Visualizações</div>
+        </div>
+    </div>
+
+    <!-- Seção de Exercícios -->
+    <div class="exercises-section">
+        <h2 class="section-title">
+            <svg class="chart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18"/>
+                <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
+            </svg>
+            Exercícios Acessados
+        </h2>
+
+        {% if exercicios_ranking %}
+            <div class="exercise-list">
+                {% for exercicio in exercicios_ranking %}
+                <div class="exercise-item">
+                    <div class="ranking-badge">{{ exercicio.posicao }}</div>
+                    <div class="exercise-info">
+                        <h3 class="exercise-name">{{ exercicio.nome }}</h3>
+                        <div class="exercise-stats">
+                            <div class="stat-item">
+                                <span class="views-count">{{ exercicio.visualizacoes }}</span>
+                                <span>visualizações</span>
+                            </div>
+                            <div class="rating-display">
+                                <span class="star-icon">★</span>
+                                <span class="rating-value">{{ exercicio.nota }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>Nenhum exercício visualizado ainda</h3>
+                <p>Os exercícios aparecerão aqui conforme os usuários começarem a visualizá-los.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-refresh da página a cada 30 segundos para manter dados atualizados
+    setInterval(function() {
+        location.reload();
+    }, 30000);
+
+    // Adicionar animação de entrada aos itens
+    document.addEventListener('DOMContentLoaded', function() {
+        const items = document.querySelectorAll('.exercise-item');
+        items.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+</script>
+{% endblock %}
