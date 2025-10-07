@@ -632,7 +632,13 @@
             const button = document.getElementById('visualization-btn-' + aparelhoId);
             const originalText = button.innerHTML;
             
-            // Desabilitar botão temporariamente
+            // Verificar se o botão já está processando
+            if (button.disabled || button.dataset.processing === 'true') {
+                return;
+            }
+            
+            // Marcar como processando
+            button.dataset.processing = 'true';
             button.disabled = true;
             button.style.opacity = '0.6';
             
@@ -668,6 +674,7 @@
                 button.disabled = false;
                 button.style.opacity = '1';
                 button.innerHTML = originalText;
+                button.dataset.processing = 'false';
                 showTemporaryMessage('Erro ao contar visualização. Tente novamente.', 'error');
             });
         }
@@ -688,6 +695,7 @@
                     button.disabled = false;
                     button.style.opacity = '1';
                     button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Contar Visualização';
+                    button.dataset.processing = 'false'; // Resetar flag de processamento
                     return;
                 }
                 

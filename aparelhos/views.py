@@ -95,15 +95,14 @@ def user_exercise_detail(request, pk):
     """Detalhes do exercício para usuários comuns"""
     aparelho = get_object_or_404(Aparelho, pk=pk)
     
-    # Registrar visualização
-    if not Visualizacao.objects.filter(user=request.user, aparelho=aparelho).exists():
-        Visualizacao.objects.create(user=request.user, aparelho=aparelho)
-    
     # Verificar se o usuário já deu feedback
     user_feedback = Feedback.objects.filter(user=request.user, aparelho=aparelho).first()
     
-    # Estatísticas do exercício
-    total_visualizacoes = Visualizacao.objects.filter(aparelho=aparelho).count()
+    # Estatísticas do exercício (usando Sum para contar visualizações corretamente)
+    from django.db.models import Sum
+    total_visualizacoes = Visualizacao.objects.filter(aparelho=aparelho).aggregate(
+        total=Sum('count')
+    )['total'] or 0
     total_feedbacks = Feedback.objects.filter(aparelho=aparelho).count()
     media_rating = Feedback.objects.filter(aparelho=aparelho).aggregate(Avg('rating'))['rating__avg'] or 0
     
@@ -178,21 +177,23 @@ def user_visualization(request, pk):
             'cooldown': remaining_time
         })
     
-    # Criar ou atualizar visualização
-    if not visualizacao:
-        visualizacao = Visualizacao.objects.create(
-            aparelho=aparelho,
-            user=request.user,
-            count=1
-        )
-    else:
-        visualizacao.count += 1
-        visualizacao.save()
-    
-    # Atualizar timestamp do último clique
+    # Criar ou atualizar visualização usando get_or_create para evitar duplicação
     from django.utils import timezone
-    visualizacao.last_clicked = timezone.now()
-    visualizacao.save()
+    
+    visualizacao, created = Visualizacao.objects.get_or_create(
+        aparelho=aparelho,
+        user=request.user,
+        defaults={
+            'count': 1,
+            'last_clicked': timezone.now()
+        }
+    )
+    
+    if not created:
+        # Se já existe, incrementar contador e atualizar timestamp
+        visualizacao.count += 1
+        visualizacao.last_clicked = timezone.now()
+        visualizacao.save()
     
     return JsonResponse({
         'success': True,
