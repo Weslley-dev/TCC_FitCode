@@ -14,7 +14,7 @@ urlpatterns = [
     path('profile/feedbacks/', user_feedbacks, name='user_feedbacks'),
     path('profile/feedbacks/edit/<int:pk>/', edit_feedback, name='edit_feedback'),
     path('profile/feedbacks/delete/<int:pk>/', delete_feedback, name='delete_feedback'),
-    path('admin/profile/', admin_profile, name='admin_profile'),
+    path('profile/admin/', admin_profile, name='admin_profile'),
     path('aparelhos/', include('aparelhos.urls')),
 ]
 
