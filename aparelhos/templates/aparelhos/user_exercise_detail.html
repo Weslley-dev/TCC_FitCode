@@ -109,40 +109,6 @@
         margin-bottom: 30px;
     }
     
-    .qr-section {
-        background: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 30px;
-        border: 1px solid #e0e0e0;
-        text-align: center;
-    }
-    
-    .qr-title {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #222;
-        margin-bottom: 15px;
-    }
-    
-    .qr-code-container {
-        display: inline-block;
-        padding: 15px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .qr-code-image {
-        max-width: 200px;
-        height: auto;
-    }
-    
-    .qr-description {
-        color: #666;
-        font-size: 0.9rem;
-        margin-top: 10px;
-    }
     
     .stats-title {
         font-size: 1.3rem;
@@ -177,27 +143,38 @@
         margin-bottom: 20px;
     }
     
+    
     @media (max-width: 768px) {
+        .exercise-detail-container {
+            padding: 15px;
+        }
+        
         .exercise-header {
             flex-direction: column;
+            gap: 20px;
         }
         
         .exercise-image-container {
             flex: none;
         }
         
-        .exercise-actions {
-                flex-direction: column; 
+        .exercise-title {
+            font-size: 2rem;
         }
         
-            .btn { 
+        .exercise-actions {
+            flex-direction: column; 
+        }
+        
+        .btn { 
             justify-content: center;
         }
         
         .stats-grid {
             grid-template-columns: 1fr;
-            }
         }
+        
+    }
 </style>
 {% endblock %}
 
@@ -249,17 +226,6 @@
                 </div>
             </div>
 
-    {% if aparelho.qr_code %}
-    <div class="qr-section">
-        <h3 class="qr-title">QR Code do Exercício</h3>
-        <div class="qr-code-container">
-            <img src="{{ aparelho.qr_code.url }}" alt="QR Code para {{ aparelho.exercise_name }}" class="qr-code-image">
-        </div>
-        <div class="qr-description">
-            Escaneie este QR Code para acessar rapidamente este exercício
-        </div>
-    </div>
-    {% endif %}
 
     <div class="stats-section">
         <h3 class="stats-title">Estatísticas do Exercício</h3>

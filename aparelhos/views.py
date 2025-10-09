@@ -12,6 +12,9 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.conf import settings
+from django.http import HttpResponse
+from django.utils import timezone
+from io import BytesIO
 
 
 @admin_required
@@ -159,43 +162,40 @@ def user_feedback(request, pk):
 @require_POST
 def user_visualization(request, pk):
     """View para contar visualização de um exercício"""
-    aparelho = get_object_or_404(Aparelho, pk=pk)
-    
-    # Verificar se existe visualização anterior
-    visualizacao = Visualizacao.objects.filter(
-        aparelho=aparelho,
-        user=request.user
-    ).first()
-    
-    # Verificar cooldown
-    if visualizacao and not visualizacao.can_click_again():
-        remaining_time = visualizacao.get_remaining_cooldown()
-        minutes = remaining_time // 60
-        seconds = remaining_time % 60
-        
-        return JsonResponse({
-            'success': False,
-            'message': f'Aguarde {minutes:02d}:{seconds:02d} para contar visualização novamente!',
-            'cooldown': remaining_time
-        })
-    
-    # Criar ou atualizar visualização usando get_or_create para evitar duplicação
+    from django.db import transaction
     from django.utils import timezone
     
-    visualizacao, created = Visualizacao.objects.get_or_create(
-        aparelho=aparelho,
-        user=request.user,
-        defaults={
-            'count': 1,
-            'last_clicked': timezone.now()
-        }
-    )
+    aparelho = get_object_or_404(Aparelho, pk=pk)
     
-    if not created:
-        # Se já existe, incrementar contador e atualizar timestamp
-        visualizacao.count += 1
-        visualizacao.last_clicked = timezone.now()
-        visualizacao.save()
+    # Usar transação atômica para evitar race conditions
+    with transaction.atomic():
+        # Criar ou buscar visualização existente
+        visualizacao, created = Visualizacao.objects.get_or_create(
+            aparelho=aparelho,
+            user=request.user,
+            defaults={
+                'count': 1,
+                'last_clicked': timezone.now()
+            }
+        )
+        
+        # Se já existe, verificar cooldown
+        if not created:
+            if not visualizacao.can_click_again():
+                remaining_time = visualizacao.get_remaining_cooldown()
+                minutes = remaining_time // 60
+                seconds = remaining_time % 60
+                
+                return JsonResponse({
+                    'success': False,
+                    'message': f'Aguarde {minutes:02d}:{seconds:02d} para contar visualização novamente!',
+                    'cooldown': remaining_time
+                })
+            
+            # Incrementar contador e atualizar timestamp
+            visualizacao.count += 1
+            visualizacao.last_clicked = timezone.now()
+            visualizacao.save()
     
     return JsonResponse({
         'success': True,
@@ -310,8 +310,9 @@ def qr_exercise_detail(request, pk):
             user_feedback = None
     
     # Estatísticas do exercício
+    from django.db.models import Sum
     total_visualizacoes = Visualizacao.objects.filter(aparelho=aparelho).aggregate(
-        total=Count('count')
+        total=Sum('count')
     )['total'] or 0
     
     total_feedbacks = Feedback.objects.filter(aparelho=aparelho).count()
@@ -330,3 +331,89 @@ def qr_exercise_detail(request, pk):
     }
     
     return render(request, 'aparelhos/qr_exercise_detail.html', context)
+
+@admin_required
+def download_qr_pdf(request, pk):
+    """
+    View para baixar QR Code em PDF
+    """
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import mm
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.utils import ImageReader
+    except ImportError:
+        messages.error(request, 'Biblioteca ReportLab não encontrada. Entre em contato com o administrador.')
+        return redirect('aparelhos_list')
+    
+    aparelho = get_object_or_404(Aparelho, pk=pk)
+    
+    if not aparelho.qr_code:
+        messages.error(request, 'QR Code não encontrado para este exercício.')
+        return redirect('aparelhos_list')
+    
+    # Criar buffer para o PDF
+    buffer = BytesIO()
+    
+    # Criar canvas do PDF
+    c = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+    
+    # Configurações
+    qr_size = 80 * mm  # Tamanho do QR Code
+    margin = 20 * mm   # Margem
+    
+    # Título
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(margin, height - margin - 20, "QR Code do Exercício")
+    
+    # Nome do exercício
+    c.setFont("Helvetica", 14)
+    exercise_name = aparelho.exercise_name or "Sem nome"
+    c.drawString(margin, height - margin - 50, f"Exercício: {exercise_name}")
+    
+    # Grupo muscular
+    if aparelho.grupo_muscular:
+        c.setFont("Helvetica", 12)
+        c.drawString(margin, height - margin - 70, f"Grupo Muscular: {aparelho.grupo_muscular.name}")
+    
+    # Centralizar QR Code na página
+    qr_x = (width - qr_size) / 2
+    qr_y = (height - qr_size) / 2 - 50
+    
+    # Adicionar QR Code
+    try:
+        qr_image = ImageReader(aparelho.qr_code.path)
+        c.drawImage(qr_image, qr_x, qr_y, width=qr_size, height=qr_size)
+    except Exception as e:
+        # Se houver erro ao carregar a imagem, desenhar um retângulo
+        c.setStrokeColorRGB(0.8, 0.8, 0.8)
+        c.setFillColorRGB(0.9, 0.9, 0.9)
+        c.rect(qr_x, qr_y, qr_size, qr_size, fill=1, stroke=1)
+        c.setFillColorRGB(0, 0, 0)
+        c.setFont("Helvetica", 10)
+        c.drawString(qr_x + 10, qr_y + qr_size/2, "QR Code não disponível")
+    
+    # Instruções de uso
+    c.setFont("Helvetica", 10)
+    instructions_y = qr_y - 30
+    c.drawString(margin, instructions_y, "Instruções:")
+    c.drawString(margin, instructions_y - 15, "1. Escaneie o QR Code com seu celular")
+    c.drawString(margin, instructions_y - 30, "2. Faça login no sistema")
+    c.drawString(margin, instructions_y - 45, "3. Acesse as informações do exercício")
+    
+    # Rodapé
+    c.setFont("Helvetica", 8)
+    c.drawString(margin, margin, f"Gerado em: {timezone.now().strftime('%d/%m/%Y às %H:%M')}")
+    c.drawString(margin, margin - 10, "Sistema FitCode - QR Code para Exercícios")
+    
+    # Finalizar PDF
+    c.showPage()
+    c.save()
+    
+    # Preparar resposta
+    buffer.seek(0)
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="qr_code_{aparelho.id}_{exercise_name.replace(" ", "_")}.pdf"'
+    
+    return response

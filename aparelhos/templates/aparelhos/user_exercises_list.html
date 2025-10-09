@@ -211,6 +211,14 @@
             border: 1px solid #bbdefb;
         }
         .card-header .qr { width: 22px; height: 22px; color: #bbb; }
+        .card-header .qr.qr-clickable { 
+            color: #1976d2; 
+            transition: all 0.2s ease;
+        }
+        .card-header .qr.qr-clickable:hover { 
+            color: #1565c0; 
+            transform: scale(1.1);
+        }
         .video-box { background: #f7f8fa; border-radius: 10px; padding: 16px; margin-bottom: 12px; border: 1px solid #e3e6ee; }
         .video-box svg { width: 48px; height: 48px; color: #ffd43b; margin-bottom: 8px; }
         .video-label { font-size: 1rem; color: #888; font-weight: 600; margin-bottom: 12px; }
@@ -418,10 +426,109 @@
             color: #333;
         }
         
+        
+        /* Modal para QR Code */
+        .qr-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .qr-modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .qr-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .qr-modal-close:hover {
+            color: #000;
+        }
+        
+        .qr-modal-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+        
+        .qr-modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 10px;
+        }
+        
+        
         .user-action-btn svg {
             width: 18px;
             height: 18px;
             flex-shrink: 0;
+        }
+        
+        /* Responsividade do modal */
+        @media (min-width: 769px) {
+            .qr-modal-content {
+                margin: 10% auto;
+                max-width: 500px;
+                padding: 30px;
+            }
+            
+            .qr-modal-image {
+                max-width: 300px;
+                margin: 20px auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .qr-modal-content {
+                margin: 10% auto;
+                width: 95%;
+                max-width: 400px;
+                padding: 20px;
+            }
+            
+            .qr-modal-image {
+                max-width: 250px;
+                margin: 15px auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .qr-modal-content {
+                margin: 5% auto;
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .qr-modal-image {
+                max-width: 200px;
+                margin: 10px auto;
+            }
+            
+            .qr-modal-title {
+                font-size: 1.1rem;
+            }
         }
 </style>
 {% endblock %}
@@ -478,12 +585,21 @@
                     {% if aparelho.grupo_muscular %}
                     <span class="grupo-muscular-tag">{{ aparelho.grupo_muscular.name }}</span>
                     {% endif %}
+                {% if aparelho.qr_code %}
+                <svg class="qr qr-clickable" viewBox="0 0 24 24" fill="none" onclick="showQRCode('{{ aparelho.qr_code.url }}', '{{ aparelho.exercise_name }}', {{ aparelho.id }})" style="cursor: pointer;">
+                    <rect x="3" y="3" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
+                    <rect x="15" y="3" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
+                    <rect x="3" y="15" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
+                    <rect x="15" y="15" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
+                </svg>
+                {% else %}
                 <svg class="qr" viewBox="0 0 24 24" fill="none">
                     <rect x="3" y="3" width="6" height="6" stroke="#bbb" stroke-width="2"/>
                     <rect x="15" y="3" width="6" height="6" stroke="#bbb" stroke-width="2"/>
                     <rect x="3" y="15" width="6" height="6" stroke="#bbb" stroke-width="2"/>
                     <rect x="15" y="15" width="6" height="6" stroke="#bbb" stroke-width="2"/>
                 </svg>
+                {% endif %}
                 </div>
             </div>
             <div class="video-box">
@@ -540,10 +656,20 @@
                         </svg>
                         Feedback
                     </a>
+                    
                 </div>
             </div>
         </div>
         {% endfor %}
+        
+        <!-- Modal para QR Code -->
+        <div id="qrModal" class="qr-modal">
+            <div class="qr-modal-content">
+                <span class="qr-modal-close" onclick="closeQRCode()">&times;</span>
+                <div class="qr-modal-title" id="qrModalTitle"></div>
+                <img id="qrModalImage" class="qr-modal-image" src="" alt="QR Code">
+            </div>
+        </div>
 {% endblock %}
 
 {% block extra_js %}
@@ -634,49 +760,53 @@
             
             // Verificar se o botão já está processando
             if (button.disabled || button.dataset.processing === 'true') {
+                console.log('Botão já está processando, ignorando clique');
                 return;
             }
             
-            // Marcar como processando
+            // Marcar como processando IMEDIATAMENTE
             button.dataset.processing = 'true';
             button.disabled = true;
             button.style.opacity = '0.6';
             
-            // Fazer requisição para o servidor
-            fetch(`/aparelhos/user/visualizacao/${aparelhoId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Sucesso - mostrar mensagem e iniciar cooldown
-                    button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Visualização Contada!';
-                    showTemporaryMessage(data.message, 'success');
-                    
-                    // Iniciar cooldown de 1min30s
-                    startCooldown(button, aparelhoId, 90); // 90 segundos = 1min30s
-                } else {
-                    // Erro - mostrar mensagem de cooldown
-                    button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Aguarde...';
-                    showTemporaryMessage(data.message, 'error');
-                    
-                    // Iniciar cooldown com tempo restante
-                    const cooldownTime = data.cooldown || 90;
-                    startCooldown(button, aparelhoId, cooldownTime);
-                }
-            })
-            .catch(error => {
-                console.log('Erro ao salvar visualização:', error);
-                button.disabled = false;
-                button.style.opacity = '1';
-                button.innerHTML = originalText;
-                button.dataset.processing = 'false';
-                showTemporaryMessage('Erro ao contar visualização. Tente novamente.', 'error');
-            });
+            // Adicionar um pequeno delay para evitar cliques duplos acidentais
+            setTimeout(() => {
+                // Fazer requisição para o servidor
+                fetch(`/aparelhos/user/visualizacao/${aparelhoId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Sucesso - mostrar mensagem e iniciar cooldown
+                        button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Visualização Contada!';
+                        showTemporaryMessage(data.message, 'success');
+                        
+                        // Iniciar cooldown de 1min30s
+                        startCooldown(button, aparelhoId, 90); // 90 segundos = 1min30s
+                    } else {
+                        // Erro - mostrar mensagem de cooldown
+                        button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Aguarde...';
+                        showTemporaryMessage(data.message, 'error');
+                        
+                        // Iniciar cooldown com tempo restante
+                        const cooldownTime = data.cooldown || 90;
+                        startCooldown(button, aparelhoId, cooldownTime);
+                    }
+                })
+                .catch(error => {
+                    console.log('Erro ao salvar visualização:', error);
+                    button.disabled = false;
+                    button.style.opacity = '1';
+                    button.innerHTML = originalText;
+                    button.dataset.processing = 'false';
+                    showTemporaryMessage('Erro ao contar visualização. Tente novamente.', 'error');
+                });
+            }, 100); // 100ms de delay para evitar cliques duplos
         }
 
         // Função para iniciar cooldown
@@ -774,6 +904,26 @@
                 }
             }
             return cookieValue;
+        }
+        
+        // Funções para o modal de QR Code
+        function showQRCode(qrCodeUrl, exerciseName, exerciseId) {
+            document.getElementById('qrModalImage').src = qrCodeUrl;
+            document.getElementById('qrModalTitle').textContent = 'QR Code - ' + exerciseName;
+            
+            document.getElementById('qrModal').style.display = 'block';
+        }
+        
+        function closeQRCode() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+        
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('qrModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
         }
     </script>
 {% endblock %}

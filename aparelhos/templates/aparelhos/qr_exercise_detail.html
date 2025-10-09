@@ -8,6 +8,7 @@
         max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
+        min-height: 100vh;
     }
     
     .qr-flow-header {
@@ -172,13 +173,24 @@
         margin-bottom: 20px;
     }
     
+    
+    
     @media (max-width: 768px) {
+        .exercise-detail-container {
+            padding: 15px;
+        }
+        
         .exercise-header {
             flex-direction: column;
+            gap: 20px;
         }
         
         .exercise-image-container {
             flex: none;
+        }
+        
+        .exercise-title {
+            font-size: 2rem;
         }
         
         .exercise-actions {
@@ -192,6 +204,7 @@
         .stats-grid {
             grid-template-columns: 1fr;
         }
+        
     }
 </style>
 {% endblock %}
@@ -249,6 +262,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Seção de vídeo -->
     {% if aparelho.video %}

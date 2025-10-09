@@ -11,7 +11,8 @@ from .views import (
     admin_feedbacks_list,
     admin_reports,
     qr_code_redirect,
-    qr_exercise_detail
+    qr_exercise_detail,
+    download_qr_pdf
 )
 
 urlpatterns = [
@@ -32,4 +33,7 @@ urlpatterns = [
     # URLs para fluxo do QR Code
     path('qr/<int:pk>/', qr_code_redirect, name='qr_code_redirect'),
     path('qr/exercicio/<int:pk>/', qr_exercise_detail, name='qr_exercise_detail'),
+    
+    # URLs para download de PDF
+    path('download-qr/<int:pk>/', download_qr_pdf, name='download_qr_pdf'),
 ]

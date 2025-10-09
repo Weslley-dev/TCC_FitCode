@@ -202,6 +202,14 @@
             border: 1px solid #bbdefb;
         }
         .card-header .qr { width: 22px; height: 22px; color: #bbb; }
+        .card-header .qr.qr-clickable { 
+            color: #1976d2; 
+            transition: all 0.2s ease;
+        }
+        .card-header .qr.qr-clickable:hover { 
+            color: #1565c0; 
+            transform: scale(1.1);
+        }
         .video-box { background: #f7f8fa; border-radius: 10px; padding: 16px; margin-bottom: 12px; border: 1px solid #e3e6ee; }
         .video-box svg { width: 48px; height: 48px; color: #ffd43b; margin-bottom: 8px; }
         .video-label { font-size: 1rem; color: #888; font-weight: 600; margin-bottom: 12px; }
@@ -315,8 +323,6 @@
         .icon-btn svg { width: 20px; height: 20px; color: #e74c3c; }
         .icon-btn.delete svg { color: #e74c3c; }
         .icon-btn.edit svg { color: #222; }
-        .icon-btn.qr svg { color: #1976d2; }
-        .icon-btn.qr:hover { background: #e8f5e8; }
         
         /* Modal para QR Code */
         .qr-modal {
@@ -332,13 +338,15 @@
         
         .qr-modal-content {
             background-color: #fff;
-            margin: 15% auto;
+            margin: 5% auto;
             padding: 20px;
             border-radius: 12px;
             width: 90%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .qr-modal-close {
@@ -366,6 +374,77 @@
             font-weight: 600;
             color: #222;
             margin-bottom: 10px;
+        }
+        
+        .qr-modal-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .btn-download {
+            background: #28a745;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s ease;
+        }
+        
+        .btn-download:hover {
+            background: #218838;
+            color: white;
+        }
+        
+        /* Responsividade do modal */
+        @media (min-width: 769px) {
+            .qr-modal-content {
+                margin: 10% auto;
+                max-width: 500px;
+                padding: 30px;
+            }
+            
+            .qr-modal-image {
+                max-width: 300px;
+                margin: 20px auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .qr-modal-content {
+                margin: 10% auto;
+                width: 95%;
+                max-width: 400px;
+                padding: 20px;
+            }
+            
+            .qr-modal-image {
+                max-width: 250px;
+                margin: 15px auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .qr-modal-content {
+                margin: 5% auto;
+                width: 95%;
+                padding: 15px;
+            }
+            
+            .qr-modal-image {
+                max-width: 200px;
+                margin: 10px auto;
+            }
+            
+            .qr-modal-title {
+                font-size: 1.1rem;
+            }
         }
 </style>
 {% endblock %}
@@ -422,12 +501,21 @@
                     {% if aparelho.grupo_muscular %}
                     <span class="grupo-muscular-tag">{{ aparelho.grupo_muscular.name }}</span>
                     {% endif %}
-                <svg class="qr" viewBox="0 0 24 24" fill="none">
-                    <rect x="3" y="3" width="6" height="6" stroke="#bbb" stroke-width="2"/>
-                    <rect x="15" y="3" width="6" height="6" stroke="#bbb" stroke-width="2"/>
-                    <rect x="3" y="15" width="6" height="6" stroke="#bbb" stroke-width="2"/>
-                    <rect x="15" y="15" width="6" height="6" stroke="#bbb" stroke-width="2"/>
-                </svg>
+                    {% if aparelho.qr_code %}
+                    <svg class="qr qr-clickable" viewBox="0 0 24 24" fill="none" onclick="showQRCode('{{ aparelho.qr_code.url }}', '{{ aparelho.exercise_name }}', {{ aparelho.id }})" style="cursor: pointer;">
+                        <rect x="3" y="3" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
+                        <rect x="15" y="3" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
+                        <rect x="3" y="15" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
+                        <rect x="15" y="15" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
+                    </svg>
+                    {% else %}
+                    <svg class="qr" viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="3" width="6" height="6" stroke="#bbb" stroke-width="2"/>
+                        <rect x="15" y="3" width="6" height="6" stroke="#bbb" stroke-width="2"/>
+                        <rect x="3" y="15" width="6" height="6" stroke="#bbb" stroke-width="2"/>
+                        <rect x="15" y="15" width="6" height="6" stroke="#bbb" stroke-width="2"/>
+                    </svg>
+                    {% endif %}
                 </div>
             </div>
             <div class="video-box">
@@ -473,16 +561,6 @@
                         <path d="M4 20h4l10-10a2.828 2.828 0 0 0-4-4L4 16v4z" stroke="#222" stroke-width="2"/>
                     </svg>
                 </a>
-                {% if aparelho.qr_code %}
-                <button class="icon-btn qr" title="Ver QR Code" onclick="showQRCode('{{ aparelho.qr_code.url }}', '{{ aparelho.exercise_name }}')">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="3" width="6" height="6" stroke="#222" stroke-width="2"/>
-                        <rect x="15" y="3" width="6" height="6" stroke="#222" stroke-width="2"/>
-                        <rect x="3" y="15" width="6" height="6" stroke="#222" stroke-width="2"/>
-                        <rect x="15" y="15" width="6" height="6" stroke="#222" stroke-width="2"/>
-                    </svg>
-                </button>
-                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -493,6 +571,16 @@
                 <span class="qr-modal-close" onclick="closeQRCode()">&times;</span>
                 <div class="qr-modal-title" id="qrModalTitle"></div>
                 <img id="qrModalImage" class="qr-modal-image" src="" alt="QR Code">
+                <div class="qr-modal-actions">
+                    <a href="#" id="qrDownloadBtn" class="btn-download">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download PDF
+                    </a>
+                </div>
             </div>
         </div>
 {% endblock %}
@@ -579,9 +667,14 @@
         }
         
         // Funções para o modal de QR Code
-        function showQRCode(qrCodeUrl, exerciseName) {
+        function showQRCode(qrCodeUrl, exerciseName, exerciseId) {
             document.getElementById('qrModalImage').src = qrCodeUrl;
             document.getElementById('qrModalTitle').textContent = 'QR Code - ' + exerciseName;
+            
+            // Atualizar link de download
+            const downloadBtn = document.getElementById('qrDownloadBtn');
+            downloadBtn.href = `/aparelhos/download-qr/${exerciseId}/`;
+            
             document.getElementById('qrModal').style.display = 'block';
         }
         
