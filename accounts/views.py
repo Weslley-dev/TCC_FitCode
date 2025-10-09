@@ -202,6 +202,10 @@ def admin_profile(request):
             profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
             password_form = CustomPasswordChangeForm(request.user)
             
+            # Debug: verificar dados do POST
+            print(f"Admin - Dados do POST: {request.POST}")
+            print(f"Admin - Data de nascimento no POST: {request.POST.get('birth_date')}")
+            
             # Verificar se deve remover a foto de perfil
             if request.POST.get('remove_profile_picture') == 'true':
                 if profile.profile_picture:
@@ -219,6 +223,11 @@ def admin_profile(request):
                 messages.success(request, 'Perfil atualizado com sucesso!')
                 return redirect('admin_profile')
             else:
+                # Debug: mostrar erros do formulário
+                if not user_form.is_valid():
+                    print(f"Admin - Erros do user_form: {user_form.errors}")
+                if not profile_form.is_valid():
+                    print(f"Admin - Erros do profile_form: {profile_form.errors}")
                 messages.error(request, 'Erro ao atualizar perfil. Verifique os dados.')
     else:
         # Inicializar formulários para GET

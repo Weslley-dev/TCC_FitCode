@@ -34,7 +34,7 @@ class UserProfileForm(forms.ModelForm):
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Conte um pouco sobre você...', 'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'placeholder': '(11) 99999-9999', 'class': 'form-control'}),
-            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'format': '%Y-%m-%d'}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
         }
         labels = {
@@ -43,6 +43,11 @@ class UserProfileForm(forms.ModelForm):
             'phone': 'Telefone',
             'birth_date': 'Data de Nascimento',
         }
+    
+    def clean_birth_date(self):
+        birth_date = self.cleaned_data.get('birth_date')
+        print(f"Form - Data de nascimento processada: {birth_date}")
+        return birth_date
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
