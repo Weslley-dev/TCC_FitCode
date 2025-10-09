@@ -15,8 +15,8 @@ urlpatterns = [
     path('profile/feedbacks/edit/<int:pk>/', edit_feedback, name='edit_feedback'),
     path('profile/feedbacks/delete/<int:pk>/', delete_feedback, name='delete_feedback'),
     path('profile/admin/', admin_profile, name='admin_profile'),
-    path('admin/clients/', admin_clients_list, name='admin_clients_list'),
-    path('admin/clients/<int:user_id>/', admin_client_detail, name='admin_client_detail'),
+    path('clients/', admin_clients_list, name='admin_clients_list'),
+    path('clients/<int:user_id>/', admin_client_detail, name='admin_client_detail'),
     path('aparelhos/', include('aparelhos.urls')),
 ]
 
