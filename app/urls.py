@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from accounts.views import login_view, register_view, logout_view, user_profile, change_password, user_feedbacks, edit_feedback, delete_feedback, logout_view
+from accounts.views import login_view, register_view, logout_view, user_profile, change_password, user_feedbacks, edit_feedback, delete_feedback, logout_view, admin_profile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -14,6 +14,7 @@ urlpatterns = [
     path('profile/feedbacks/', user_feedbacks, name='user_feedbacks'),
     path('profile/feedbacks/edit/<int:pk>/', edit_feedback, name='edit_feedback'),
     path('profile/feedbacks/delete/<int:pk>/', delete_feedback, name='delete_feedback'),
+    path('admin/profile/', admin_profile, name='admin_profile'),
     path('aparelhos/', include('aparelhos.urls')),
 ]
 

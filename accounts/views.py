@@ -173,3 +173,62 @@ def delete_feedback(request, pk):
     return render(request, 'accounts/delete_feedback.html', {
         'feedback': feedback,
     })
+
+@login_required
+def admin_profile(request):
+    """View para editar perfil do administrador"""
+    try:
+        profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        profile = UserProfile.objects.create(user=request.user)
+    
+    if request.method == 'POST':
+        # Verificar se é mudança de senha
+        if 'change_password' in request.POST:
+            password_form = CustomPasswordChangeForm(request.user, request.POST)
+            user_form = UserUpdateForm(instance=request.user)
+            profile_form = UserProfileForm(instance=profile)
+            
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)  # Importante para manter a sessão ativa
+                messages.success(request, 'Senha alterada com sucesso!')
+                return redirect('admin_profile')
+            else:
+                messages.error(request, 'Erro ao alterar senha. Verifique os dados.')
+        else:
+            # Atualização de perfil normal
+            user_form = UserUpdateForm(request.POST, instance=request.user)
+            profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
+            password_form = CustomPasswordChangeForm(request.user)
+            
+            # Verificar se deve remover a foto de perfil
+            if request.POST.get('remove_profile_picture') == 'true':
+                if profile.profile_picture:
+                    # Deletar o arquivo físico
+                    profile.profile_picture.delete(save=False)
+                    # Limpar o campo no banco de dados
+                    profile.profile_picture = None
+                    profile.save()
+                    messages.success(request, 'Foto de perfil removida com sucesso!')
+                    return redirect('admin_profile')
+            
+            if user_form.is_valid() and profile_form.is_valid():
+                user_form.save()
+                profile_form.save()
+                messages.success(request, 'Perfil atualizado com sucesso!')
+                return redirect('admin_profile')
+            else:
+                messages.error(request, 'Erro ao atualizar perfil. Verifique os dados.')
+    else:
+        # Inicializar formulários para GET
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = UserProfileForm(instance=profile)
+        password_form = CustomPasswordChangeForm(request.user)
+    
+    return render(request, 'accounts/admin_profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'password_form': password_form,
+        'profile': profile,
+    })

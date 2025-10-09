@@ -322,6 +322,23 @@
                 </svg>
                 <span class="menu-text">Feedbacks</span>
             </a>
+            
+            <a href="{% url 'admin_profile' %}" class="menu-item {% if request.resolver_match.url_name == 'admin_profile' %}active{% endif %}">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span class="menu-text">Meu Perfil</span>
+            </a>
+            
+            <a href="{% url 'logout' %}" class="menu-item">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <polyline points="21,12 9,12"/>
+                </svg>
+                <span class="menu-text">Sair</span>
+            </a>
         </nav>
     </div>
     

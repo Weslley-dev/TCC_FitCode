@@ -1,0 +1,655 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil - FitCode Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .profile-header {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+    }
+    
+    .profile-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 8px;
+    }
+    
+    .profile-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    .profile-forms {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+    
+    .form-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e3e6ee;
+    }
+    
+    .form-section h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 8px;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+        box-sizing: border-box;
+    }
+    
+    /* Estilos específicos para campos de formulário Django */
+    input[type="text"], 
+    input[type="email"], 
+    input[type="tel"], 
+    input[type="date"], 
+    textarea, 
+    input[type="file"] {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+        background: #fff;
+        box-sizing: border-box;
+    }
+    
+    input[type="text"]:focus, 
+    input[type="email"]:focus, 
+    input[type="tel"]:focus, 
+    input[type="date"]:focus, 
+    textarea:focus {
+        outline: none;
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+    
+    .form-textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .form-textarea:focus {
+        outline: none;
+        border-color: #1976d2;
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+    
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        border: none;
+    }
+    
+    .btn-primary {
+        background: #3a7bd5;
+        color: #fff;
+    }
+    
+    .btn-primary:hover {
+        background: #2c5aa0;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: #fff;
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+    
+    .btn svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .form-actions { 
+        display: flex; 
+        gap: 16px; 
+        justify-content: flex-end; 
+        margin-top: 32px; 
+    }
+    
+    .profile-picture {
+        text-align: center;
+        margin-bottom: 20px;
+        position: relative;
+    }
+    
+    .current-picture {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #e3e6ee;
+        margin-bottom: 15px;
+    }
+    
+    .no-picture {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 3rem;
+        color: #ccc;
+    }
+    
+    .remove-photo-btn {
+        background: #e74c3c;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        margin-top: 8px;
+    }
+    
+    .remove-photo-btn:hover {
+        background: #c0392b;
+        transform: translateY(-1px);
+    }
+    
+    .remove-photo-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .password-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e3e6ee;
+        margin-bottom: 30px;
+    }
+    
+    .password-toggle {
+        background: #fff;
+        border: 1px solid #ddd;
+        color: #333;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        transition: all 0.2s ease;
+        min-width: 120px;
+        justify-content: center;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .password-toggle:hover {
+        background: #f5f5f5;
+        color: #333;
+        border-color: #bbb;
+    }
+    
+    .password-form {
+        display: none;
+    }
+    
+    .password-form.show {
+        display: block;
+    }
+    
+    .password-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 12px;
+            max-width: 100%;
+        }
+        
+        .profile-header {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+        
+        .profile-title {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+        
+        .profile-subtitle {
+            font-size: 1rem;
+        }
+        
+        .profile-forms {
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .form-section {
+            padding: 16px;
+        }
+        
+        .form-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+        
+        .form-control, .form-textarea {
+            padding: 10px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            min-width: 120px;
+        }
+        
+        .password-section {
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .password-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+        
+        .password-actions {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .password-toggle {
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            margin-bottom: 16px;
+        }
+        
+        .current-picture, .no-picture {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .no-picture {
+            font-size: 2rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .profile-container {
+            padding: 8px;
+        }
+        
+        .profile-header {
+            margin-bottom: 20px;
+        }
+        
+        .profile-title {
+            font-size: 1.6rem;
+        }
+        
+        .profile-subtitle {
+            font-size: 0.9rem;
+        }
+        
+        .profile-forms {
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .form-section {
+            padding: 12px;
+        }
+        
+        .form-section h3 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        .form-label {
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+        
+        .form-control, .form-textarea {
+            padding: 8px 10px;
+            font-size: 0.85rem;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .password-section {
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .password-section h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        .password-toggle {
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            margin-bottom: 12px;
+        }
+        
+        .current-picture, .no-picture {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .no-picture {
+            font-size: 1.8rem;
+        }
+    }
+    
+    @media (max-width: 320px) {
+        .profile-container {
+            padding: 6px;
+        }
+        
+        .profile-title {
+            font-size: 1.4rem;
+        }
+        
+        .profile-subtitle {
+            font-size: 0.8rem;
+        }
+        
+        .form-section {
+            padding: 10px;
+        }
+        
+        .form-section h3 {
+            font-size: 0.9rem;
+        }
+        
+        .form-control, .form-textarea {
+            padding: 6px 8px;
+            font-size: 0.8rem;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .current-picture, .no-picture {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .no-picture {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1 class="profile-title">Meu Perfil</h1>
+        <p class="profile-subtitle">Gerencie suas informações pessoais</p>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="profile-forms">
+            <!-- Informações Básicas -->
+            <div class="form-section">
+                <h3>Informações Básicas</h3>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.first_name.id_for_label }}">{{ user_form.first_name.label }}</label>
+                    {{ user_form.first_name }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.last_name.id_for_label }}">{{ user_form.last_name.label }}</label>
+                    {{ user_form.last_name }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ user_form.email.id_for_label }}">{{ user_form.email.label }}</label>
+                    {{ user_form.email }}
+                </div>
+            </div>
+            
+            <!-- Perfil Detalhado -->
+            <div class="form-section">
+                <h3>Perfil Detalhado</h3>
+                
+                <div class="profile-picture">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="Foto de perfil" class="current-picture">
+                        <button type="button" class="remove-photo-btn" onclick="removeProfilePicture()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12"/>
+                            </svg>
+                            Remover Foto
+                        </button>
+                    {% else %}
+                        <div class="no-picture">👤</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ profile_form.profile_picture.id_for_label }}">{{ profile_form.profile_picture.label }}</label>
+                    {{ profile_form.profile_picture }}
+                </div>
+                
+                <!-- Campo hidden para indicar remoção da foto -->
+                <input type="hidden" name="remove_profile_picture" id="remove_profile_picture" value="false">
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ profile_form.bio.id_for_label }}">{{ profile_form.bio.label }}</label>
+                    {{ profile_form.bio }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ profile_form.phone.id_for_label }}">{{ profile_form.phone.label }}</label>
+                    {{ profile_form.phone }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ profile_form.birth_date.id_for_label }}">{{ profile_form.birth_date.label }}</label>
+                    {{ profile_form.birth_date }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <a href="{% url 'aparelhos_list' %}" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17,21 17,13 7,13 7,21"/>
+                    <polyline points="7,3 7,8 15,8"/>
+                </svg>
+                Salvar Alterações
+            </button>
+        </div>
+    </form>
+    
+    <!-- Seção de Mudança de Senha -->
+    <div class="password-section">
+        <h3>Alterar Senha</h3>
+        
+        <button type="button" class="password-toggle" onclick="togglePasswordForm()">
+            Alterar Senha
+        </button>
+        
+        <form method="post" class="password-form" id="passwordForm">
+            {% csrf_token %}
+            <input type="hidden" name="change_password" value="1">
+            
+            <div class="form-group">
+                <label class="form-label" for="{{ password_form.old_password.id_for_label }}">{{ password_form.old_password.label }}</label>
+                {{ password_form.old_password }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="{{ password_form.new_password1.id_for_label }}">{{ password_form.new_password1.label }}</label>
+                {{ password_form.new_password1 }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="{{ password_form.new_password2.id_for_label }}">{{ password_form.new_password2.label }}</label>
+                {{ password_form.new_password2 }}
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="togglePasswordForm()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17,21 17,13 7,13 7,21"/>
+                        <polyline points="7,3 7,8 15,8"/>
+                    </svg>
+                    Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function togglePasswordForm() {
+    const form = document.getElementById('passwordForm');
+    const toggle = document.querySelector('.password-toggle');
+    
+    if (form.classList.contains('show')) {
+        form.classList.remove('show');
+        toggle.textContent = 'Alterar Senha';
+    } else {
+        form.classList.add('show');
+        toggle.textContent = 'Ocultar';
+    }
+}
+
+function removeProfilePicture() {
+    if (confirm('Tem certeza que deseja remover sua foto de perfil?')) {
+        // Marcar o campo hidden para indicar remoção
+        document.getElementById('remove_profile_picture').value = 'true';
+        
+        // Esconder a foto atual e mostrar placeholder
+        const profilePicture = document.querySelector('.profile-picture');
+        profilePicture.innerHTML = `
+            <div class="no-picture">👤</div>
+        `;
+        
+        // Limpar o campo de upload de arquivo
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) {
+            fileInput.value = '';
+        }
+    }
+}
+</script>
+{% endblock %}
