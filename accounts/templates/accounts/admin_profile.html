@@ -651,5 +651,50 @@ function removeProfilePicture() {
         }
     }
 }
+
+// Máscara para data de nascimento (dd/mm/yyyy)
+function formatDateInput(input) {
+    let value = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+    
+    if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2);
+    }
+    if (value.length >= 5) {
+        value = value.substring(0, 5) + '/' + value.substring(5, 9);
+    }
+    
+    input.value = value;
+}
+
+// Aplicar máscara quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    const birthDateInput = document.getElementById('birth_date_input');
+    if (birthDateInput) {
+        // Aplicar máscara enquanto o usuário digita
+        birthDateInput.addEventListener('input', function() {
+            formatDateInput(this);
+        });
+        
+        // Converter formato brasileiro para ISO antes de enviar
+        const form = birthDateInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const value = birthDateInput.value;
+                if (value && value.includes('/')) {
+                    try {
+                        const [day, month, year] = value.split('/');
+                        if (day && month && year) {
+                            // Converter para formato ISO (yyyy-mm-dd)
+                            const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                            birthDateInput.value = isoDate;
+                        }
+                    } catch (error) {
+                        console.error('Erro ao converter data:', error);
+                    }
+                }
+            });
+        }
+    }
+});
 </script>
 {% endblock %}
