@@ -3,6 +3,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.db.models import Q
 from .forms import CustomUserCreationForm, UserProfileForm, UserUpdateForm, CustomPasswordChangeForm
 from .models import UserProfile
 from aparelhos.models import Feedback
@@ -240,4 +242,72 @@ def admin_profile(request):
         'profile_form': profile_form,
         'password_form': password_form,
         'profile': profile,
+    })
+
+@login_required
+def admin_clients_list(request):
+    """View para listar todos os clientes/usuários cadastrados"""
+    # Buscar todos os usuários com seus perfis
+    users = User.objects.select_related('profile').all().order_by('first_name', 'last_name', 'username')
+    
+    # Filtro de busca
+    search_query = request.GET.get('q', '')
+    if search_query:
+        users = users.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(username__icontains=search_query) |
+            Q(email__icontains=search_query)
+        )
+    
+    # Adicionar informações do perfil para cada usuário
+    clients_data = []
+    for user in users:
+        try:
+            profile = user.profile
+        except UserProfile.DoesNotExist:
+            profile = None
+        
+        clients_data.append({
+            'user': user,
+            'profile': profile,
+            'full_name': f"{user.first_name} {user.last_name}".strip() or user.username,
+            'email': user.email,
+            'phone': profile.phone if profile else '',
+            'birth_date': profile.birth_date if profile else None,
+            'profile_picture': profile.profile_picture if profile else None,
+            'bio': profile.bio if profile else '',
+        })
+    
+    return render(request, 'accounts/admin_clients_list.html', {
+        'clients': clients_data,
+        'search_query': search_query,
+        'total_clients': len(clients_data),
+    })
+
+@login_required
+def admin_client_detail(request, user_id):
+    """View para visualizar detalhes de um cliente específico"""
+    user = get_object_or_404(User, id=user_id)
+    
+    try:
+        profile = user.profile
+    except UserProfile.DoesNotExist:
+        profile = None
+    
+    client_data = {
+        'user': user,
+        'profile': profile,
+        'full_name': f"{user.first_name} {user.last_name}".strip() or user.username,
+        'email': user.email,
+        'phone': profile.phone if profile else '',
+        'birth_date': profile.birth_date if profile else None,
+        'profile_picture': profile.profile_picture if profile else None,
+        'bio': profile.bio if profile else '',
+        'date_joined': user.date_joined,
+        'last_login': user.last_login,
+    }
+    
+    return render(request, 'accounts/admin_client_detail.html', {
+        'client': client_data,
     })

@@ -1,0 +1,465 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ client.full_name }} - Detalhes do Cliente{% endblock %}
+
+{% block extra_css %}
+<style>
+    .client-detail-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .page-header {
+        margin-bottom: 32px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    .back-btn {
+        background: #6c757d;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .back-btn:hover {
+        background: #5a6268;
+        color: #fff;
+        text-decoration: none;
+    }
+    
+    .back-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #222;
+        margin: 0;
+    }
+    
+    .client-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .client-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e3e6ee;
+    }
+    
+    .client-avatar-section {
+        text-align: center;
+    }
+    
+    .client-avatar-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: #e3e6ee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: #666;
+        font-size: 2.5rem;
+        margin: 0 auto 20px;
+    }
+    
+    .client-avatar-large img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .client-name-large {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #222;
+        margin-bottom: 8px;
+    }
+    
+    .client-email-large {
+        color: #666;
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+    
+    .client-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1976d2;
+        margin-bottom: 4px;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .client-details {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e3e6ee;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .detail-item {
+        margin-bottom: 20px;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #222;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .detail-value {
+        color: #666;
+        font-size: 1rem;
+    }
+    
+    .detail-value.empty {
+        color: #999;
+        font-style: italic;
+    }
+    
+    .bio-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f0;
+    }
+    
+    .bio-text {
+        color: #666;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+    
+    .bio-text.empty {
+        color: #999;
+        font-style: italic;
+    }
+    
+    .actions-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid #e3e6ee;
+        text-align: center;
+    }
+    
+    .action-btn {
+        background: #1976d2;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        margin: 0 8px;
+    }
+    
+    .action-btn:hover {
+        background: #1565c0;
+        color: #fff;
+        text-decoration: none;
+    }
+    
+    .action-btn.secondary {
+        background: #6c757d;
+    }
+    
+    .action-btn.secondary:hover {
+        background: #5a6268;
+    }
+    
+    .action-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .client-detail-container {
+            padding: 12px;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+        }
+        
+        .client-info-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .client-card {
+            padding: 20px;
+        }
+        
+        .client-avatar-large {
+            width: 80px;
+            height: 80px;
+            font-size: 1.8rem;
+        }
+        
+        .client-name-large {
+            font-size: 1.2rem;
+        }
+        
+        .client-stats {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .client-details {
+            padding: 20px;
+        }
+        
+        .detail-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        
+        .actions-section {
+            padding: 16px;
+        }
+        
+        .action-btn {
+            width: 100%;
+            margin: 4px 0;
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .client-detail-container {
+            padding: 8px;
+        }
+        
+        .page-title {
+            font-size: 1.6rem;
+        }
+        
+        .client-card,
+        .client-details,
+        .actions-section {
+            padding: 16px;
+        }
+        
+        .client-avatar-large {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+        
+        .client-name-large {
+            font-size: 1.1rem;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="client-detail-container">
+    <div class="page-header">
+        <a href="{% url 'admin_clients_list' %}" class="back-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Voltar para Clientes
+        </a>
+        <h1 class="page-title">{{ client.full_name }}</h1>
+    </div>
+    
+    <div class="client-info-grid">
+        <!-- Informações Principais -->
+        <div class="client-card">
+            <div class="client-avatar-section">
+                <div class="client-avatar-large">
+                    {% if client.profile_picture %}
+                        <img src="{{ client.profile_picture.url }}" alt="{{ client.full_name }}">
+                    {% else %}
+                        {{ client.full_name|slice:":2"|upper }}
+                    {% endif %}
+                </div>
+                <div class="client-name-large">{{ client.full_name }}</div>
+                <div class="client-email-large">{{ client.email }}</div>
+            </div>
+            
+            <div class="client-stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ client.user.date_joined|date:"d/m/Y" }}</div>
+                    <div class="stat-label">Cadastrado em</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">
+                        {% if client.user.last_login %}
+                            {{ client.user.last_login|date:"d/m/Y" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </div>
+                    <div class="stat-label">Último Acesso</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Detalhes do Cliente -->
+        <div class="client-details">
+            <h3 class="section-title">Informações Pessoais</h3>
+            
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Nome Completo</div>
+                    <div class="detail-value">{{ client.full_name }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value">{{ client.email }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Telefone</div>
+                    <div class="detail-value {% if not client.phone %}empty{% endif %}">
+                        {{ client.phone|default:"Não informado" }}
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Data de Nascimento</div>
+                    <div class="detail-value {% if not client.birth_date %}empty{% endif %}">
+                        {% if client.birth_date %}
+                            {{ client.birth_date|date:"d/m/Y" }}
+                        {% else %}
+                            Não informado
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Username</div>
+                    <div class="detail-value">{{ client.user.username }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Status da Conta</div>
+                    <div class="detail-value">
+                        {% if client.user.is_active %}
+                            <span style="color: #28a745;">Ativa</span>
+                        {% else %}
+                            <span style="color: #dc3545;">Inativa</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            {% if client.bio %}
+                <div class="bio-section">
+                    <div class="detail-label">Biografia</div>
+                    <div class="bio-text">{{ client.bio }}</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Ações -->
+    <div class="actions-section">
+        <h3 class="section-title">Ações Disponíveis</h3>
+        <p style="color: #666; margin-bottom: 20px;">
+            Gerencie as informações e atividades deste cliente
+        </p>
+        
+        <a href="mailto:{{ client.email }}" class="action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            Enviar Email
+        </a>
+        
+        <a href="{% url 'admin_clients_list' %}" class="action-btn secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Ver Todos os Clientes
+        </a>
+    </div>
+</div>
+{% endblock %}
