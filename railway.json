@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "gunicorn TCC_FitCode.wsgi:application",
+    "startCommand": "gunicorn TCC_FitCode.app.wsgi:application",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }

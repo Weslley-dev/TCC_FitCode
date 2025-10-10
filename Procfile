@@ -1,1 +1,1 @@
-web: gunicorn TCC_FitCode.wsgi:application
+web: gunicorn TCC_FitCode.app.wsgi:application
