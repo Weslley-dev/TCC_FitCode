@@ -1,0 +1,7 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "gunicorn app.wsgi:application"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
