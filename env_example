@@ -1,7 +1,9 @@
+# Configurações para desenvolvimento local
 DEBUG=True
-DB_NAME=fitcode_db
-DB_USER=postgres
-DB_PASSWORD=123
-DB_HOST=localhost
-DB_PORT=5432
-ALLOWED_HOSTS=localhost,127.0.0.1
+SECRET_KEY=django-insecure-36a13o0%3$!o)j=7uui-9p5+lo_)g^a_kn^=*teu73=8d&7h1)
+BASE_URL=http://localhost:8000
+
+# Configurações para produção (Railway)
+# DEBUG=False
+# SECRET_KEY=your-secret-key-here
+# BASE_URL=https://your-app-name.railway.app
