@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
 from accounts.views import login_view, register_view, logout_view, user_profile, change_password, user_feedbacks, edit_feedback, delete_feedback, logout_view, admin_profile, admin_clients_list, admin_client_detail
 
 urlpatterns = [
@@ -22,3 +23,8 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # Para produção no Railway - servir arquivos de mídia
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
