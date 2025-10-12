@@ -83,7 +83,7 @@ INSTALLED_APPS = [
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir arquivos estáticos
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir arquivos estáticos
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -140,6 +140,13 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# Configurações para servir arquivos de mídia no Railway
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    # No Railway, usar WhiteNoise para servir arquivos de mídia
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'media'),
+    ]
 
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  
