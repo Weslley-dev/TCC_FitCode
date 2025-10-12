@@ -6,6 +6,8 @@ def user_profile(request):
         try:
             profile = request.user.profile
         except UserProfile.DoesNotExist:
-            profile = UserProfile.objects.create(user=request.user)
+            # Não criar perfil automaticamente no context processor
+            # Deixar para ser criado nas views específicas
+            profile = None
         return {'user_profile': profile}
     return {'user_profile': None}

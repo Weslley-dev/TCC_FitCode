@@ -1,2 +1,2 @@
-# Railway deploy configuration
+# Render.com deploy configuration
 web: gunicorn app.wsgi:application

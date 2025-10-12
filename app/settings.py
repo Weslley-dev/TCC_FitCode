@@ -19,6 +19,7 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else [
     'tccfitcode-production.up.railway.app',
     '*.up.railway.app',
+    '*.onrender.com',
     'localhost',
     '127.0.0.1',
     '*'
@@ -27,10 +28,10 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get
 # URL base para QR Codes
 BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
 
-# Configuração do banco - usar Railway em produção, SQLite localmente
-if os.environ.get('RAILWAY_ENVIRONMENT'):
-    # Produção no Railway
-    DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres:UoJueWsUDTrSWnGgdAMahqDYTjJpXhml@shortline.proxy.rlwy.net:28977/railway')
+# Configuração do banco - usar PostgreSQL apenas se DATABASE_URL estiver definida, senão SQLite
+if os.environ.get('DATABASE_URL') and not os.environ.get('DATABASE_URL').startswith('sqlite'):
+    # Produção com PostgreSQL (Railway, Render PostgreSQL, etc.)
+    DATABASE_URL = os.environ.get('DATABASE_URL')
     url = urlparse(DATABASE_URL)
     DATABASES = {
         'default': {
@@ -43,7 +44,7 @@ if os.environ.get('RAILWAY_ENVIRONMENT'):
         }
     }
 else:
-    # Desenvolvimento local - SQLite
+    # Desenvolvimento local e Render com SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -51,11 +52,13 @@ else:
         }
     }
 
-# Configurações CSRF para Railway
+# Configurações CSRF para Railway e Render
 CSRF_TRUSTED_ORIGINS = [
     'https://tccfitcode-production.up.railway.app',
     'https://*.up.railway.app',
+    'https://*.onrender.com',
     'http://tccfitcode-production.up.railway.app',  # Fallback para HTTP
+    'http://*.onrender.com',  # Fallback para HTTP
 ]
 CSRF_COOKIE_SECURE = False  # Temporariamente False para debug
 SESSION_COOKIE_SECURE = False  # Temporariamente False para debug
@@ -92,8 +95,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Ativar WhiteNoise apenas no Railway
-if os.environ.get('RAILWAY_ENVIRONMENT'):
+# Ativar WhiteNoise em produção (Railway, Render, etc.)
+if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RENDER'):
     MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 ROOT_URLCONF = 'app.urls'
@@ -145,9 +148,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-# Configurações para servir arquivos de mídia no Railway
-if os.environ.get('RAILWAY_ENVIRONMENT'):
-    # No Railway, usar WhiteNoise para servir arquivos de mídia
+# Configurações para servir arquivos de mídia em produção
+if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RENDER'):
+    # Em produção, usar WhiteNoise para servir arquivos de mídia
     STATICFILES_DIRS = [
         os.path.join(BASE_DIR, 'media'),
     ]
