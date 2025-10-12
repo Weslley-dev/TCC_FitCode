@@ -29,6 +29,14 @@ BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
 DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres:UoJueWsUDTrSWnGgdAMahqDYTjJpXhml@shortline.proxy.rlwy.net:28977/railway')
 url = urlparse(DATABASE_URL)
 
+# Configurações CSRF para Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://tccfitcode-production.up.railway.app',
+    'https://*.up.railway.app',
+]
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 # Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
