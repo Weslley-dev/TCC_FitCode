@@ -35,7 +35,7 @@ if __name__ == "__main__":
     # Criar/atualizar superusuário
     print("👤 Configurando usuário administrador...")
     try:
-        execute_from_command_line(['manage.py', 'create_admin'])
+        execute_from_command_line(['manage.py', 'force_create_admin'])
         print("✅ Administrador configurado!")
     except Exception as e:
         print(f"❌ Erro ao configurar administrador: {e}")
