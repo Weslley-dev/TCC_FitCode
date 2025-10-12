@@ -28,7 +28,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get
 # URL base para QR Codes
 BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
 
-# Configuração do banco - usar PostgreSQL apenas se DATABASE_URL estiver definida, senão SQLite
+# Configuração do banco
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL and not DATABASE_URL.startswith('sqlite'):
@@ -54,11 +54,15 @@ if DATABASE_URL and not DATABASE_URL.startswith('sqlite'):
             }
         }
 else:
-    # Desenvolvimento local e Render com SQLite
+    # Desenvolvimento local - PostgreSQL
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'tcc_fitcode_local',
+            'USER': 'postgres',
+            'PASSWORD': '123',
+            'HOST': 'localhost',
+            'PORT': '5432',
         }
     }
 

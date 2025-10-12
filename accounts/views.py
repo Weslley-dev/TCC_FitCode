@@ -9,6 +9,7 @@ from .forms import CustomUserCreationForm, UserProfileForm, UserUpdateForm, Cust
 from .models import UserProfile
 from aparelhos.models import Feedback
 from aparelhos.forms import FeedbackForm
+from .decorators import admin_required
 
 def register_view(request):
     if request.method == 'POST':
@@ -185,7 +186,7 @@ def delete_feedback(request, pk):
         'feedback': feedback,
     })
 
-@login_required
+@admin_required
 def admin_profile(request):
     """View para editar perfil do administrador"""
     try:
@@ -253,7 +254,7 @@ def admin_profile(request):
         'profile': profile,
     })
 
-@login_required
+@admin_required
 def admin_clients_list(request):
     """View para listar todos os clientes/usuários cadastrados"""
     # Buscar todos os usuários com seus perfis
@@ -294,7 +295,7 @@ def admin_clients_list(request):
         'total_clients': len(clients_data),
     })
 
-@login_required
+@admin_required
 def admin_client_detail(request, user_id):
     """View para visualizar detalhes de um cliente específico"""
     user = get_object_or_404(User, id=user_id)
