@@ -32,20 +32,13 @@ if __name__ == "__main__":
         print(f"❌ Erro ao verificar banco: {e}")
         sys.exit(1)
     
-    # Criar superusuário se não existir
-    if not User.objects.filter(username='WeslleyDev').exists():
-        print("👤 Criando superusuário...")
-        try:
-            User.objects.create_superuser(
-                username='WeslleyDev',
-                email='weslley@example.com',
-                password='admin123',
-                first_name='Weslley',
-                last_name='Developer'
-            )
-            print("✅ Superusuário criado: WeslleyDev / admin123")
-        except Exception as e:
-            print(f"❌ Erro ao criar superusuário: {e}")
+    # Criar/atualizar superusuário
+    print("👤 Configurando usuário administrador...")
+    try:
+        execute_from_command_line(['manage.py', 'create_admin'])
+        print("✅ Administrador configurado!")
+    except Exception as e:
+        print(f"❌ Erro ao configurar administrador: {e}")
     
     # Criar dados de exemplo se não existirem
     from aparelhos.models import Aparelho
