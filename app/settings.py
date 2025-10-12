@@ -29,20 +29,30 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get
 BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
 
 # Configuração do banco - usar PostgreSQL apenas se DATABASE_URL estiver definida, senão SQLite
-if os.environ.get('DATABASE_URL') and not os.environ.get('DATABASE_URL').startswith('sqlite'):
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL and not DATABASE_URL.startswith('sqlite'):
     # Produção com PostgreSQL (Railway, Render PostgreSQL, etc.)
-    DATABASE_URL = os.environ.get('DATABASE_URL')
-    url = urlparse(DATABASE_URL)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': url.path[1:],
-            'USER': url.username,
-            'PASSWORD': url.password,
-            'HOST': url.hostname,
-            'PORT': url.port,
+    try:
+        url = urlparse(DATABASE_URL)
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': url.path[1:],
+                'USER': url.username,
+                'PASSWORD': url.password,
+                'HOST': url.hostname,
+                'PORT': url.port,
+            }
         }
-    }
+    except Exception as e:
+        print(f"Erro ao configurar PostgreSQL, usando SQLite: {e}")
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 else:
     # Desenvolvimento local e Render com SQLite
     DATABASES = {
@@ -162,3 +172,24 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configurações de Logging para Debug
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'accounts': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}

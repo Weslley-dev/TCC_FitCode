@@ -29,10 +29,15 @@ def register_view(request):
     return render(request, 'register.html', {'user_form': user_form})
 
 def login_view(request):
+    import logging
+    logger = logging.getLogger(__name__)
+    
     form = AuthenticationForm(request, data=request.POST or None)
     if request.method == 'POST':
+        logger.info(f"Tentativa de login - POST recebido")
         if form.is_valid():
             user = form.get_user()
+            logger.info(f"Usuário válido: {user.username}")
             auth_login(request, user)
             
             # Verificar se veio do fluxo do QR Code
@@ -42,9 +47,13 @@ def login_view(request):
             
             # Redirecionar baseado em permissões - apenas WeslleyDev tem acesso admin
             if user.username == 'WeslleyDev' and (user.is_superuser or user.is_staff):
+                logger.info("Redirecionando para admin")
                 return redirect('aparelhos_list')  # Admin vai para lista de exercícios com permissões
             else:
+                logger.info("Redirecionando para usuário comum")
                 return redirect('user_exercises_list')  # Usuário comum vai para lista sem permissões
+        else:
+            logger.error(f"Formulário inválido: {form.errors}")
     return render(request, 'login.html', {'form': form})
 
 def logout_view(request):

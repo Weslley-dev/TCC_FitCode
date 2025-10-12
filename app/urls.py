@@ -4,9 +4,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
 from accounts.views import login_view, register_view, logout_view, user_profile, change_password, user_feedbacks, edit_feedback, delete_feedback, logout_view, admin_profile, admin_clients_list, admin_client_detail
+from .views import debug_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('debug/', debug_view, name='debug'),
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
     path('logout/', logout_view, name='logout'),
