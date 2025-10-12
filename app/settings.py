@@ -33,9 +33,16 @@ url = urlparse(DATABASE_URL)
 CSRF_TRUSTED_ORIGINS = [
     'https://tccfitcode-production.up.railway.app',
     'https://*.up.railway.app',
+    'http://tccfitcode-production.up.railway.app',  # Fallback para HTTP
 ]
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False  # Temporariamente False para debug
+SESSION_COOKIE_SECURE = False  # Temporariamente False para debug
+CSRF_COOKIE_HTTPONLY = False
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_DOMAIN = None
+CSRF_COOKIE_PATH = '/'
+CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
 # Apps
 INSTALLED_APPS = [
