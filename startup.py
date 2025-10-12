@@ -47,6 +47,16 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"❌ Erro ao criar superusuário: {e}")
     
+    # Criar dados de exemplo se não existirem
+    from aparelhos.models import Aparelho
+    if Aparelho.objects.count() == 0:
+        print("🏋️ Criando dados de exemplo...")
+        try:
+            execute_from_command_line(['manage.py', 'create_sample_data'])
+            print("✅ Dados de exemplo criados!")
+        except Exception as e:
+            print(f"❌ Erro ao criar dados de exemplo: {e}")
+    
     # Coletar arquivos estáticos
     print("📁 Coletando arquivos estáticos...")
     try:
