@@ -45,8 +45,10 @@ if DATABASE_URL and not DATABASE_URL.startswith('sqlite'):
                 'PORT': url.port,
             }
         }
+        print(f"✅ Conectado ao PostgreSQL: {url.hostname}")
     except Exception as e:
-        print(f"Erro ao configurar PostgreSQL, usando SQLite: {e}")
+        print(f"❌ Erro ao configurar PostgreSQL: {e}")
+        # Fallback para SQLite se PostgreSQL falhar
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
