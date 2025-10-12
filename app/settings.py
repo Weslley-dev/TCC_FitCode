@@ -26,8 +26,30 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get
 
 # URL base para QR Codes
 BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
-DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres:UoJueWsUDTrSWnGgdAMahqDYTjJpXhml@shortline.proxy.rlwy.net:28977/railway')
-url = urlparse(DATABASE_URL)
+
+# Configuração do banco - usar Railway em produção, SQLite localmente
+if os.environ.get('RAILWAY_ENVIRONMENT'):
+    # Produção no Railway
+    DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres:UoJueWsUDTrSWnGgdAMahqDYTjJpXhml@shortline.proxy.rlwy.net:28977/railway')
+    url = urlparse(DATABASE_URL)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': url.path[1:],
+            'USER': url.username,
+            'PASSWORD': url.password,
+            'HOST': url.hostname,
+            'PORT': url.port,
+        }
+    }
+else:
+    # Desenvolvimento local - SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Configurações CSRF para Railway
 CSRF_TRUSTED_ORIGINS = [
@@ -90,18 +112,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'app.wsgi.application'
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': url.path[1:],   # remove a barra inicial "/"
-        'USER': url.username,
-        'PASSWORD': url.password,
-        'HOST': url.hostname,
-        'PORT': url.port,
-    }
-}
 
 
 AUTH_PASSWORD_VALIDATORS = [
