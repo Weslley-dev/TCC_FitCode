@@ -15,97 +15,64 @@
         padding: 20px;
     }
     
-    /* Header da página */
-    .page-header {
-        margin-bottom: 32px;
-        text-align: center;
-    }
-    
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #222;
-        margin-bottom: 8px;
-        background: linear-gradient(135deg, #1976d2, #1565c0);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    .page-subtitle {
-        color: #666;
-        font-size: 1.1rem;
-    }
-    
-    /* Header específico para fluxo QR Code */
-    .qr-flow-header {
-        background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-        color: white;
-        padding: 24px;
-        border-radius: 16px;
-        margin-bottom: 30px;
-        text-align: center;
-        box-shadow: 0 8px 32px rgba(25, 118, 210, 0.3);
-    }
-    
-    .qr-flow-title {
-        font-size: 1.8rem;
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
-    
-    .qr-flow-subtitle {
-        font-size: 1.1rem;
-        opacity: 0.9;
-    }
-    
-    /* Botão de voltar */
+    /* Botão de voltar discreto */
     .back-btn {
-        margin-bottom: 24px;
-        display: inline-flex;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #e3e6ee;
+        border-radius: 50%;
+        display: flex;
         align-items: center;
-        gap: 8px;
+        justify-content: center;
         text-decoration: none;
-        padding: 12px 20px;
-        background: #6c757d;
-        color: white;
-        border-radius: 8px;
-        font-weight: 600;
+        color: #666;
         transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        backdrop-filter: blur(10px);
     }
     
     .back-btn:hover {
-        background: #5a6268;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        color: white;
+        background: #fff;
+        color: #1976d2;
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         text-decoration: none;
     }
     
-    /* Card principal do exercício */
+    .back-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Card principal do exercício - estilo igual à lista */
     .exercise-card {
         background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        padding: 32px;
-        margin-bottom: 32px;
+        border-radius: 12px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
         border: 1px solid #e3e6ee;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: all 0.3s ease;
     }
     
     .exercise-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
     }
     
-    /* Header do card */
-        .card-header { 
+    /* Header do card - estilo igual à lista */
+    .card-header {
         display: flex;
         align-items: center;
-            justify-content: space-between; 
-        margin-bottom: 24px;
+        justify-content: space-between;
+        margin-bottom: 16px;
         flex-wrap: wrap;
-        gap: 16px;
+        gap: 12px;
     }
     
     .card-title {
@@ -116,44 +83,45 @@
     }
     
     .card-title-icon {
-        width: 48px;
-        height: 48px;
-        background: linear-gradient(135deg, #ffd43b, #ffb700);
-        border-radius: 12px;
+        width: 40px;
+        height: 40px;
+        background: #ffe066;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 12px rgba(255, 212, 59, 0.3);
+        flex-shrink: 0;
     }
     
     .card-title-text {
-        font-size: 1.8rem;
-        font-weight: 700;
+        font-size: 1.3rem;
+        font-weight: 600;
         color: #222;
         margin: 0;
+        line-height: 1.2;
     }
     
     .grupo-muscular-tag {
-        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        background: #e3f2fd;
         color: #1976d2;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 0.9rem;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 0.85rem;
         font-weight: 600;
-        border: 2px solid #90caf9;
+        border: 1px solid #bbdefb;
         white-space: nowrap;
     }
     
-    /* Seção de vídeo */
+    /* Seção de vídeo - estilo compacto */
     .video-section {
-        margin-bottom: 32px;
+        margin-bottom: 20px;
     }
     
     .video-label {
-        font-size: 1.2rem;
-        color: #333;
+        font-size: 1rem;
+        color: #666;
         font-weight: 600;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -162,18 +130,15 @@
     .video-container {
         position: relative;
         width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-        border-radius: 16px;
+        border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         background: #000;
+        aspect-ratio: 16/9;
     }
     
     .video-player {
         width: 100%;
-        height: auto;
-        min-height: 300px;
+        height: 100%;
         object-fit: cover;
         cursor: pointer;
         transition: transform 0.3s ease;
@@ -183,44 +148,43 @@
         transform: scale(1.02);
     }
     
-        .video-placeholder {
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        border: 3px dashed #dee2e6;
-        border-radius: 16px;
-        padding: 60px 20px;
-        text-align: center; 
-        color: #6c757d;
+    .video-placeholder {
+        background: #f7f8fa;
+        border: 2px dashed #e3e6ee;
+        border-radius: 8px;
+        padding: 40px 20px;
+        text-align: center;
+        color: #888;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 300px;
+        aspect-ratio: 16/9;
     }
     
     .video-placeholder-icon {
-        width: 64px;
-        height: 64px;
-        color: #adb5bd;
-        margin-bottom: 16px;
+        width: 48px;
+        height: 48px;
+        color: #ccc;
+        margin-bottom: 12px;
     }
     
-    .video-placeholder-text { 
-        font-size: 1.1rem;
-        color: #6c757d;
-        font-weight: 500;
+    .video-placeholder-text {
+        font-size: 0.9rem;
+        color: #999;
     }
     
-    /* Seção de instruções */
+    /* Seção de instruções - estilo compacto */
     .instructions-section {
-        margin-bottom: 32px;
+        margin-bottom: 20px;
     }
     
     .instructions-content {
         background: #f8f9fa;
         border: 1px solid #e9ecef;
-        border-radius: 12px;
-        padding: 20px;
-        margin-top: 16px;
+        border-radius: 8px;
+        padding: 16px;
+        margin-top: 12px;
         display: none;
         animation: fadeIn 0.3s ease;
     }
@@ -235,40 +199,34 @@
     }
     
     .instructions-text {
-        font-size: 1rem; 
-        line-height: 1.6;
+        font-size: 0.95rem;
+        line-height: 1.5;
         color: #444;
         margin: 0;
     }
     
-    /* Botões de ação */
+    /* Botões de ação - estilo igual à lista */
     .action-buttons {
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        margin-top: 24px;
-    }
-    
-    .button-row {
-        display: flex;
         gap: 12px;
-        width: 100%;
+        margin-top: 16px;
     }
     
     .btn {
         border: none;
-        border-radius: 12px;
-        padding: 14px 24px;
-        font-size: 1rem;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 0.95rem;
         font-weight: 600;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         text-decoration: none;
-        min-height: 48px;
+        min-height: 44px;
         position: relative;
         overflow: hidden;
     }
@@ -280,53 +238,53 @@
     }
     
     .btn-primary {
-        background: linear-gradient(135deg, #1976d2, #1565c0);
+        background: #1976d2;
         color: white;
-        flex: 1;
+        width: 100%;
     }
     
     .btn-primary:hover:not(:disabled) {
-        background: linear-gradient(135deg, #1565c0, #0d47a1);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+        background: #1565c0;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
     }
     
     .btn-secondary {
-        background: #f8f9fa;
-        color: #495057;
-        border: 2px solid #dee2e6;
-        flex: 1;
+        background: #f5f5f5;
+        color: #666;
+        border: 1px solid #ddd;
+        width: 100%;
     }
     
     .btn-secondary:hover:not(:disabled) {
-        background: #e9ecef;
-        border-color: #adb5bd;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        background: #e0e0e0;
+        color: #333;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
     .btn-info {
-        background: linear-gradient(135deg, #17a2b8, #138496);
+        background: #6c757d;
         color: white;
         width: 100%;
     }
     
     .btn-info:hover:not(:disabled) {
-        background: linear-gradient(135deg, #138496, #117a8b);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(23, 162, 184, 0.4);
+        background: #5a6268;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
     }
     
     .btn svg {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
         flex-shrink: 0;
     }
     
     /* Loading spinner */
     .loading-spinner {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
         border: 2px solid transparent;
         border-top: 2px solid currentColor;
         border-radius: 50%;
@@ -338,61 +296,19 @@
         100% { transform: rotate(360deg); }
     }
     
-    /* Seção de estatísticas */
-    .stats-section {
-        background: #f8f9fa;
-        border-radius: 16px;
-        padding: 24px;
-        margin-top: 32px;
-    }
-    
-    .stats-title {
-        font-size: 1.4rem;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
-    }
-    
-    .stat-item {
-        text-align: center;
-        padding: 16px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #1976d2;
-        margin-bottom: 4px;
-    }
-    
-    .stat-label {
-        font-size: 0.9rem;
-        color: #666;
-        font-weight: 500;
-    }
-    
     /* Mensagens temporárias */
     .temporary-message {
         position: fixed;
-        top: 100px;
+        top: 80px;
         right: 20px;
-        padding: 16px 24px;
-        border-radius: 12px;
+        padding: 12px 20px;
+        border-radius: 8px;
         font-weight: 600;
         z-index: 10000;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
         animation: slideInRight 0.3s ease;
-        max-width: 300px;
+        max-width: 280px;
+        font-size: 0.9rem;
     }
     
     .temporary-message.success {
@@ -423,61 +339,34 @@
             padding: 16px;
         }
         
-        .page-title {
-            font-size: 2rem;
+        .back-btn {
+            top: 15px;
+            left: 15px;
+            width: 36px;
+            height: 36px;
+        }
+        
+        .back-btn svg {
+            width: 18px;
+            height: 18px;
         }
         
         .exercise-card {
-            padding: 24px 20px;
+            padding: 16px;
         }
         
         .card-header {
             flex-direction: column;
             align-items: flex-start;
-            gap: 12px;
+            gap: 8px;
         }
         
         .card-title-text {
-            font-size: 1.5rem;
-        }
-        
-        .button-row {
-            flex-direction: column;
-        }
-        
-        .btn {
-            width: 100%;
+            font-size: 1.2rem;
         }
         
         .video-container {
-            max-width: 100%;
-        }
-        
-        .video-player {
-            min-height: 250px;
-        }
-        
-        .stats-grid {
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .exercise-card {
-            padding: 20px 16px;
-        }
-        
-        .page-title {
-            font-size: 1.8rem;
-        }
-        
-        .card-title-text {
-            font-size: 1.3rem;
-        }
-        
-        .video-player {
-            min-height: 200px;
+            aspect-ratio: 16/9;
         }
         
         .temporary-message {
@@ -486,25 +375,37 @@
             max-width: none;
         }
     }
+    
+    @media (max-width: 480px) {
+        .exercise-card {
+            padding: 14px;
+        }
+        
+        .card-title-text {
+            font-size: 1.1rem;
+        }
+        
+        .btn {
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            min-height: 40px;
+        }
+        
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="exercise-detail-container">
-    <!-- Header específico para fluxo QR Code -->
-    {% if is_qr_flow %}
-    <div class="qr-flow-header">
-        <h2 class="qr-flow-title">Exercício Acessado via QR Code</h2>
-        <p class="qr-flow-subtitle">Você foi direcionado para este exercício através de um QR Code</p>
-    </div>
-    {% endif %}
-    
-    <!-- Botão de voltar -->
-    <a href="{% url 'user_exercises_list' %}" class="back-btn">
+    <!-- Botão de voltar discreto -->
+    <a href="{% url 'user_exercises_list' %}" class="back-btn" title="Voltar para lista de exercícios">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
-        Ver Todos os Exercícios
     </a>
     
     <!-- Card principal do exercício -->
@@ -515,13 +416,13 @@
                 <div class="card-title-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M8 12h8M12 8v8"/>
-                </svg>
+                    </svg>
                 </div>
                 <h1 class="card-title-text">{{ aparelho.exercise_name }}</h1>
             </div>
-                {% if aparelho.grupo_muscular %}
-                <span class="grupo-muscular-tag">{{ aparelho.grupo_muscular.name }}</span>
-                {% endif %}
+            {% if aparelho.grupo_muscular %}
+            <span class="grupo-muscular-tag">{{ aparelho.grupo_muscular.name }}</span>
+            {% endif %}
         </div>
         
         <!-- Seção de vídeo -->
@@ -536,11 +437,11 @@
             {% if aparelho.video %}
                 <div class="video-container">
                     <video class="video-player" controls preload="metadata">
-                    <source src="{{ aparelho.video.url }}" type="video/mp4">
-                    <source src="{{ aparelho.video.url }}" type="video/webm">
+                        <source src="{{ aparelho.video.url }}" type="video/mp4">
+                        <source src="{{ aparelho.video.url }}" type="video/webm">
                         <source src="{{ aparelho.video.url }}" type="video/ogg">
-                    Seu navegador não suporta a reprodução de vídeo.
-                </video>
+                        Seu navegador não suporta a reprodução de vídeo.
+                    </video>
                 </div>
             {% else %}
                 <div class="video-placeholder">
@@ -560,9 +461,9 @@
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
                     <path d="M12 17h.01"/>
-                    </svg>
+                </svg>
                 <span id="instructions-text">Ver Instruções</span>
-                </button>
+            </button>
             
             <div class="instructions-content" id="instructions-content">
                 <p class="instructions-text">{{ aparelho.instructions }}</p>
@@ -572,46 +473,25 @@
         
         <!-- Botões de ação -->
         <div class="action-buttons">
-            <div class="button-row">
-                <button class="btn btn-primary" onclick="countVisualization({{ aparelho.pk }})" id="visualization-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                    <span id="visualization-text">Contar Visualização</span>
-                </button>
-                
-                <a href="{% url 'user_feedback' aparelho.pk %}" class="btn btn-secondary">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                        <path d="M8 9h8"/>
-                        <path d="M8 13h6"/>
-                    </svg>
-                    {% if user_feedback %}Atualizar Feedback{% else %}Enviar Feedback{% endif %}
-                </a>
-            </div>
+            <button class="btn btn-primary" onclick="countVisualization({{ aparelho.pk }})" id="visualization-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span id="visualization-text">Contar Visualização</span>
+            </button>
+            
+            <a href="{% url 'user_feedback' aparelho.pk %}" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    <path d="M8 9h8"/>
+                    <path d="M8 13h6"/>
+                </svg>
+                {% if user_feedback %}Atualizar Feedback{% else %}Enviar Feedback{% endif %}
+            </a>
         </div>
     </div>
-    
-    <!-- Seção de estatísticas -->
-    <div class="stats-section">
-        <h3 class="stats-title">Estatísticas do Exercício</h3>
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-number" id="total-visualizacoes">{{ total_visualizacoes }}</div>
-                <div class="stat-label">Visualizações</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">{{ total_feedbacks }}</div>
-                <div class="stat-label">Feedbacks</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">{{ media_rating }}</div>
-                <div class="stat-label">Avaliação Média</div>
-            </div>
-            </div>
-        </div>
-    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -863,13 +743,11 @@ function resetButton() {
     ProcessingState.cooldownTime = 0;
 }
 
-// Atualizar estatísticas
-function updateStats(count) {
-    const statElement = document.getElementById('total-visualizacoes');
-    if (statElement && count !== undefined) {
-        statElement.textContent = count;
+    // Atualizar estatísticas (removido - não exibir para usuários)
+    function updateStats(count) {
+        // Estatísticas não são exibidas para usuários
+        console.log('Visualização contada:', count);
     }
-}
 
 // Mostrar mensagem temporária
 function showMessage(message, type = 'success') {
