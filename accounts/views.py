@@ -46,8 +46,8 @@ def login_view(request):
                 exercise_id = request.session.get('qr_exercise_id')
                 return redirect('qr_exercise_detail', pk=exercise_id)
             
-            # Redirecionar baseado em permissões - apenas WeslleyDev tem acesso admin
-            if user.username == 'WeslleyDev' and (user.is_superuser or user.is_staff):
+            # Redirecionar baseado em permissões - superusuários têm acesso admin
+            if user.is_superuser or user.is_staff:
                 logger.info("Redirecionando para admin")
                 return redirect('aparelhos_list')  # Admin vai para lista de exercícios com permissões
             else:

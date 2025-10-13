@@ -38,42 +38,51 @@ class Aparelho(models.Model):
     def generate_qr_code(self):
         """Gera QR Code para o exercício"""
         if not self.exercise_name:
+            print(f"⚠️ Aparelho {self.id} sem nome, pulando geração de QR")
             return
         
         try:
             import qrcode
             import io
-        except ImportError:
-            return  # Se qrcode não estiver instalado, não gera o QR Code
+            from django.core.files.base import ContentFile
+        except ImportError as e:
+            print(f"❌ Erro ao importar bibliotecas: {e}")
+            return
         
         # URL que será codificada no QR Code
-        # Assumindo que o site estará rodando em localhost:8000
-        # Em produção, isso deve ser configurado via settings
         from django.conf import settings
         base_url = getattr(settings, 'BASE_URL', 'http://localhost:8000')
         qr_data = f"{base_url}/aparelhos/qr/{self.id}/"
+        print(f"🔗 Gerando QR para: {qr_data}")
         
-        # Criar QR Code
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(qr_data)
-        qr.make(fit=True)
-        
-        # Criar imagem
-        img = qr.make_image(fill_color="black", back_color="white")
-        
-        # Converter para bytes
-        buffer = io.BytesIO()
-        img.save(buffer, format='PNG')
-        buffer.seek(0)
-        
-        # Salvar no campo qr_code
-        filename = f"qr_{self.id}_{self.exercise_name.replace(' ', '_')}.png"
-        self.qr_code.save(filename, ContentFile(buffer.getvalue()), save=False)
+        try:
+            # Criar QR Code
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(qr_data)
+            qr.make(fit=True)
+            
+            # Criar imagem
+            img = qr.make_image(fill_color="black", back_color="white")
+            
+            # Converter para bytes
+            buffer = io.BytesIO()
+            img.save(buffer, format='PNG')
+            buffer.seek(0)
+            
+            # Salvar no campo qr_code
+            filename = f"qr_{self.id}_{self.exercise_name.replace(' ', '_')}.png"
+            self.qr_code.save(filename, ContentFile(buffer.getvalue()), save=False)
+            print(f"✅ QR code gerado: {filename}")
+            
+        except Exception as e:
+            print(f"❌ Erro ao gerar QR code: {e}")
+            import traceback
+            traceback.print_exc()
     
     def save(self, *args, **kwargs):
         # Gerar QR Code antes de salvar

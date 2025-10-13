@@ -26,7 +26,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get
 ]
 
 # URL base para QR Codes
-BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
+BASE_URL = os.environ.get('BASE_URL', 'https://tcc-fitcode-web.onrender.com')
 
 # Configuração do banco
 DATABASE_URL = os.environ.get('DATABASE_URL')

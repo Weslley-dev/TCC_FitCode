@@ -4,14 +4,14 @@ from django.contrib import messages
 
 def admin_required(view_func):
     """
-    Decorator que verifica se o usuário é o administrador autorizado (WeslleyDev)
+    Decorator que verifica se o usuário é administrador (superuser ou staff)
     """
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect('login')
         
-        if request.user.username != 'WeslleyDev' or not (request.user.is_superuser or request.user.is_staff):
+        if not (request.user.is_superuser or request.user.is_staff):
             messages.error(request, 'Você não tem permissão para acessar esta área.')
             return redirect('user_exercises_list')
         
