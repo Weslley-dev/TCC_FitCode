@@ -1,2 +1,2 @@
 # Render.com deploy configuration
-web: python manage.py migrate && python startup_render.py && gunicorn app.wsgi:application
+web: python manage.py migrate && python configure_render_postgres.py && gunicorn app.wsgi:application
