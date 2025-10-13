@@ -4,12 +4,9 @@
 
 {% block extra_css %}
 <style>
-    .exercise-detail-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        min-height: 100vh;
-    }
+    .page-header { margin-bottom: 32px; }
+    .page-title { font-size: 2rem; font-weight: 700; color: #222; margin-bottom: 8px; }
+    .page-subtitle { color: #666; font-size: 1.1rem; }
     
     .qr-flow-header {
         background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
@@ -31,187 +28,367 @@
         opacity: 0.9;
     }
     
-    .exercise-header { 
-        display: flex; 
-        gap: 30px;
-        margin-bottom: 40px;
-        align-items: flex-start;
-    }
-    
-    .exercise-image-container {
-        flex: 0 0 400px;
-    }
-    
-    .exercise-image {
-        width: 100%;
-        height: 300px;
-        object-fit: cover;
-        border-radius: 12px; 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .exercise-info {
-        flex: 1;
-    }
-    
-    .exercise-title { 
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #222;
-        margin-bottom: 12px;
-    }
-    
-    .exercise-group {
-        display: flex; 
-        align-items: center; 
-        gap: 8px;
-        color: #666;
-        font-size: 1.1rem;
-        margin-bottom: 20px;
-    }
-    
-    .exercise-group svg {
-        width: 20px;
-        height: 20px;
-    }
-    
-    .exercise-description {
-        color: #555;
-        font-size: 1.1rem;
-        line-height: 1.6;
-        margin-bottom: 30px;
-    }
-    
-    .exercise-actions {
-        display: flex; 
-        gap: 12px; 
-        margin-bottom: 30px;
-    }
-    
-    .btn { 
-        padding: 12px 24px;
-        border-radius: 8px; 
-        font-size: 1rem; 
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        border: none;
-        cursor: pointer; 
-        display: inline-flex; 
-        align-items: center; 
-        gap: 8px; 
-    }
-    
-    .btn-primary {
-        background: #1976d2;
-        color: #fff; 
-    }
-    
-    .btn-primary:hover {
-        background: #1565c0;
-        color: #fff; 
-    }
-    
-    .btn-secondary {
-        background: #f5f5f5;
-        color: #666;
-        border: 1px solid #ddd;
-    }
-    
-    .btn-secondary:hover {
-        background: #e0e0e0;
-        color: #333;
-    }
-    
-    .btn-back {
-        background: #6c757d;
-        color: #fff;
-    }
-    
-    .btn-back:hover {
-        background: #5a6268;
-        color: #fff;
-    }
-    
-    .stats-section {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 12px; 
-        margin-bottom: 30px;
-    }
-    
-    .stats-title {
-        font-size: 1.3rem;
-        font-weight: 600; 
-        color: #222; 
-        margin-bottom: 15px;
-    }
-    
-    .stats-grid { 
-        display: grid; 
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px; 
-    }
-    
-    .stat-item {
-        text-align: center; 
-    }
-    
-    .stat-number { 
-        font-size: 2rem; 
-        font-weight: 700; 
-        color: #1976d2;
-        margin-bottom: 5px;
-    }
-    
-    .stat-label { 
-        color: #666; 
-        font-size: 0.9rem; 
-    }
-    
     .back-btn {
         margin-bottom: 20px;
     }
     
+    .aparelho-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 6px #0001; padding: 22px 20px; margin-bottom: 24px; }
     
+    /* Responsividade para cards */
+    @media (max-width: 768px) {
+        .aparelho-card { 
+            padding: 16px; 
+            margin-bottom: 16px; 
+        }
+        .card-title span { 
+            font-size: 1.1rem; 
+        }
+        .video-player { 
+            height: 180px; 
+        }
+        .card-actions { 
+            gap: 12px; 
+        }
+        .bottom-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .details-btn { 
+            padding: 8px 16px; 
+            font-size: 0.9rem; 
+            min-width: 120px;
+            width: 100%;
+        }
+        .user-action-btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            min-width: 120px;
+            width: 100%;
+        }
+        .grupo-muscular-tag { 
+            font-size: 0.8rem; 
+            padding: 3px 10px; 
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .aparelho-card { 
+            padding: 12px; 
+        }
+        .video-player { 
+            height: 160px; 
+        }
+        .card-actions { 
+            gap: 10px; 
+        }
+        .bottom-actions {
+            flex-direction: column;
+            gap: 8px;
+        }
+        .details-btn { 
+            padding: 8px 14px; 
+            font-size: 0.85rem; 
+            min-width: 100px;
+            width: 100%;
+        }
+        .user-action-btn {
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            min-width: 100px;
+            width: 100%;
+        }
+        .card-header { 
+            flex-direction: column; 
+            align-items: flex-start; 
+            gap: 12px; 
+        }
+        .card-actions-header { 
+            width: 100%; 
+            justify-content: space-between; 
+        }
+        .grupo-muscular-tag { 
+            font-size: 0.75rem; 
+            padding: 2px 8px; 
+        }
+    }
+    
+    @media (max-width: 360px) {
+        .aparelho-card { 
+            padding: 10px; 
+        }
+        .video-player { 
+            height: 140px; 
+        }
+        .card-title span { 
+            font-size: 1rem; 
+        }
+        .details-btn { 
+            padding: 6px 12px; 
+            font-size: 0.8rem; 
+            min-width: 90px;
+            width: 100%;
+        }
+        .user-action-btn {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            min-width: 90px;
+            width: 100%;
+        }
+    }
+    
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .card-title { display: flex; align-items: center; gap: 8px; }
+    .card-title svg { width: 28px; height: 28px; background: #ffe066; border-radius: 50%; padding: 4px; }
+    .card-title span { font-size: 1.2rem; font-weight: 600; color: #222; }
+    .card-actions-header { display: flex; align-items: center; gap: 12px; }
+    .grupo-muscular-tag { 
+        background: #e3f2fd; 
+        color: #1976d2; 
+        padding: 4px 12px; 
+        border-radius: 16px; 
+        font-size: 0.85rem; 
+        font-weight: 600; 
+        border: 1px solid #bbdefb;
+    }
+    .card-header .qr { width: 22px; height: 22px; color: #bbb; }
+    .card-header .qr.qr-clickable { 
+        color: #1976d2; 
+        transition: all 0.2s ease;
+    }
+    .card-header .qr.qr-clickable:hover { 
+        color: #1565c0; 
+        transform: scale(1.1);
+    }
+    .video-box { background: #f7f8fa; border-radius: 10px; padding: 16px; margin-bottom: 12px; border: 1px solid #e3e6ee; }
+    .video-box svg { width: 48px; height: 48px; color: #ffd43b; margin-bottom: 8px; }
+    .video-label { font-size: 1rem; color: #888; font-weight: 600; margin-bottom: 12px; }
+    
+    /* Estilos para player de vídeo */
+    .video-player { 
+        width: 100%; 
+        max-width: 100%; 
+        height: 300px; 
+        border-radius: 12px; 
+        background: #000; 
+        object-fit: cover;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        aspect-ratio: 16 / 9;
+    }
+    .video-player:hover {
+        transform: scale(1.02);
+    }
+    
+    /* Container do vídeo para controle de aspecto */
+    .video-container {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        aspect-ratio: 16 / 9;
+    }
+    
+    .video-container .video-player {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    /* Responsividade aprimorada para vídeos */
+    @media (max-width: 1024px) {
+        .video-container {
+            max-width: 450px;
+        }
+    }
     
     @media (max-width: 768px) {
-        .exercise-detail-container {
-            padding: 15px;
+        .video-container {
+            max-width: 100%;
+            aspect-ratio: 16 / 9;
         }
-        
-        .exercise-header {
-            flex-direction: column;
-            gap: 20px;
+        .video-player { 
+            height: 180px; 
+            aspect-ratio: 16 / 9;
         }
-        
-        .exercise-image-container {
-            flex: none;
+        .video-placeholder {
+            max-width: 100%;
+            aspect-ratio: 16 / 9;
         }
-        
-        .exercise-title {
-            font-size: 2rem;
+    }
+    
+    @media (max-width: 480px) {
+        .video-player { 
+            height: 160px; 
         }
-        
-        .exercise-actions {
-            flex-direction: column; 
+        .video-placeholder {
+            padding: 30px 15px;
         }
-        
-        .btn { 
-            justify-content: center;
+    }
+    
+    @media (max-width: 360px) {
+        .video-player { 
+            height: 140px; 
         }
-        
-        .stats-grid {
-            grid-template-columns: 1fr;
+        .video-placeholder {
+            padding: 20px 10px;
         }
-        
+    }
+    .video-placeholder { 
+        background: #f7f8fa; 
+        border-radius: 12px; 
+        padding: 40px 20px; 
+        text-align: center; 
+        border: 2px dashed #e3e6ee;
+        color: #888;
+        aspect-ratio: 16 / 9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .video-placeholder svg { 
+        width: 48px; 
+        height: 48px; 
+        color: #ccc; 
+        margin-bottom: 12px; 
+    }
+    .video-placeholder-text { 
+        font-size: 0.9rem; 
+        color: #999; 
+    }
+    .card-desc { font-size: 1rem; color: #444; margin-bottom: 12px; }
+    
+    /* Layout dos botões */
+    .card-actions { 
+        display: flex; 
+        flex-direction: column; 
+        gap: 15px; 
+        align-items: center;
+    }
+    
+    .top-action {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    
+    .bottom-actions {
+        display: flex;
+        gap: 12px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Desktop - botões lado a lado */
+    @media (min-width: 769px) {
+        .user-action-btn {
+            width: auto;
+            flex: 1;
+        }
+    }
+    
+    /* Botão Ver Detalhes */
+    .details-btn { 
+        background: #fff; 
+        border: 1px solid #e3e6ee; 
+        border-radius: 8px; 
+        padding: 10px 20px; 
+        font-size: 1rem; 
+        color: #222; 
+        font-weight: 600; 
+        cursor: pointer; 
+        display: flex; 
+        align-items: center; 
+        gap: 8px; 
+        transition: all 0.2s ease;
+        min-width: 140px;
+        justify-content: center;
+        width: 100%;
+    }
+    .details-btn:hover { 
+        background: #f8f9fa; 
+        border-color: #d1d5db;
+    }
+    .details-btn.active { 
+        background: #e3f2fd; 
+        color: #1976d2; 
+        border-color: #1976d2;
+    }
+    .details-btn svg { 
+        width: 18px; 
+        height: 18px; 
+        color: #222; 
+    }
+    .details-btn.active svg { 
+        color: #1976d2; 
+    }
+    
+    /* Botões de ação do usuário */
+    .user-action-btn {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        min-width: 140px;
+        justify-content: center;
+        min-height: auto;
+        width: 100%;
+    }
+    
+    .user-action-btn.primary {
+        background: #1976d2;
+        color: #fff;
+    }
+    .user-action-btn.primary:hover {
+        background: #1565c0;
+        color: #fff;
+    }
+    
+    .user-action-btn.secondary {
+        background: #f5f5f5;
+        color: #666;
+        border: 1px solid #ddd;
+    }
+    .user-action-btn.secondary:hover {
+        background: #e0e0e0;
+        color: #333;
+    }
+    
+    .user-action-btn.back {
+        background: #6c757d;
+        color: #fff;
+    }
+    .user-action-btn.back:hover {
+        background: #5a6268;
+        color: #fff;
+    }
+    
+    .user-action-btn svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="exercise-detail-container">
-    {% csrf_token %}
+    <div class="page-header">
+        <h1 class="page-title">{{ aparelho.exercise_name }}</h1>
+        <p class="page-subtitle">Exercício acessado via QR Code</p>
+    </div>
+    
     <!-- Header específico para fluxo QR Code -->
     {% if is_qr_flow %}
     <div class="qr-flow-header">
@@ -220,141 +397,285 @@
     </div>
     {% endif %}
     
-    <a href="{% url 'user_exercises_list' %}" class="btn btn-back back-btn">
+    <a href="{% url 'user_exercises_list' %}" class="user-action-btn back back-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
         Ver Todos os Exercícios
     </a>
     
-    <div class="exercise-header">
-        <div class="exercise-image-container">
-            {% if aparelho.image %}
-                <img src="{{ aparelho.image.url }}" alt="{{ aparelho.exercise_name }}" class="exercise-image">
+    <div class="aparelho-card">
+        <div class="card-header">
+            <div class="card-title">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" fill="#ffe066"/>
+                    <path d="M8 12h8M12 8v8" stroke="#222" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>{{ aparelho.exercise_name }}</span>
+            </div>
+            <div class="card-actions-header">
+                {% if aparelho.grupo_muscular %}
+                <span class="grupo-muscular-tag">{{ aparelho.grupo_muscular.name }}</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="video-box">
+            <div class="video-label">Vídeo do exercício</div>
+            
+            {% if aparelho.video %}
+                <div class="video-container">
+                <video class="video-player" controls preload="metadata" poster="">
+                    <source src="{{ aparelho.video.url }}" type="video/mp4">
+                    <source src="{{ aparelho.video.url }}" type="video/avi">
+                    <source src="{{ aparelho.video.url }}" type="video/mov">
+                    <source src="{{ aparelho.video.url }}" type="video/webm">
+                    Seu navegador não suporta a reprodução de vídeo.
+                </video>
+                </div>
             {% else %}
-                <div class="exercise-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
-                    💪
+                <div class="video-placeholder">
+                    <svg viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="22" stroke="#ccc" stroke-width="2" fill="none"/>
+                        <polygon points="20,16 34,24 20,32" fill="#ccc"/>
+                    </svg>
+                    <div class="video-placeholder-text">Nenhum vídeo disponível</div>
                 </div>
             {% endif %}
         </div>
         
-        <div class="exercise-info">
-            <h1 class="exercise-title">{{ aparelho.exercise_name }}</h1>
-            
-            <div class="exercise-group">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
-                {{ aparelho.grupo_muscular.name }}
+        <div class="card-desc" id="instructions-{{ aparelho.id }}" style="display: none;">{{ aparelho.instructions }}</div>
+        
+        <div class="card-actions">
+            <!-- Botão Ver Detalhes no topo -->
+            <div class="top-action">
+                <button class="details-btn" onclick="toggleInstructions('{{ aparelho.id }}')" id="btn-{{ aparelho.id }}">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 4.5C7.305 4.5 3.135 7.305 1.5 12c1.635 4.695 5.805 7.5 10.5 7.5s8.865-2.805 10.5-7.5C20.865 7.305 16.695 4.5 12 4.5z" stroke="#222" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" stroke="#222" stroke-width="2"/>
+                    </svg>
+                    <span id="text-{{ aparelho.id }}">Ver Detalhes</span>
+                </button>
             </div>
             
-            {% if aparelho.instructions %}
-                <div class="exercise-description">{{ aparelho.instructions }}</div>
-            {% endif %}
-            
-            <div class="exercise-actions">
-                <button onclick="countVisualization({{ aparelho.pk }})" class="btn btn-primary" id="visualization-btn">
+            <!-- Botões na linha de baixo -->
+            <div class="bottom-actions">
+                <button class="user-action-btn primary" onclick="countVisualization('{{ aparelho.id }}')" id="visualization-btn-{{ aparelho.id }}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                         <circle cx="12" cy="12" r="3"/>
                     </svg>
-                    <span id="visualization-text">Contar Visualização</span>
+                    Contar Visualização
                 </button>
                 
-                <a href="{% url 'user_feedback' aparelho.pk %}" class="btn btn-secondary">
+                <a class="user-action-btn secondary" href="{% url 'user_feedback' aparelho.id %}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         <path d="M8 9h8"/>
                         <path d="M8 13h6"/>
                     </svg>
-                    {% if user_feedback %}Atualizar Feedback{% else %}Enviar Feedback{% endif %}
+                    Feedback
                 </a>
             </div>
         </div>
     </div>
+{% endblock %}
 
-
-    <!-- Seção de vídeo -->
-    {% if aparelho.video %}
-    <div class="video-section" style="margin-bottom: 30px;">
-        <h3 style="font-size: 1.3rem; font-weight: 600; color: #222; margin-bottom: 15px;">Vídeo do Exercício</h3>
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px;">
-            <video controls style="width: 100%; max-width: 600px; border-radius: 8px;">
-                <source src="{{ aparelho.video.url }}" type="video/mp4">
-                <source src="{{ aparelho.video.url }}" type="video/avi">
-                <source src="{{ aparelho.video.url }}" type="video/mov">
-                <source src="{{ aparelho.video.url }}" type="video/webm">
-                Seu navegador não suporta a reprodução de vídeo.
-            </video>
-        </div>
-    </div>
-    {% endif %}
-
-    <div class="stats-section">
-        <h3 class="stats-title">Estatísticas do Exercício</h3>
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-number">{{ total_visualizacoes }}</div>
-                <div class="stat-label">Visualizações</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">{{ total_feedbacks }}</div>
-                <div class="stat-label">Feedbacks</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">{{ media_rating }}</div>
-                <div class="stat-label">Avaliação Média</div>
-            </div>
-        </div>
-    </div>
-</div>
-
+{% block extra_js %}
 <script>
-function countVisualization(aparelhoId) {
-    const btn = document.getElementById('visualization-btn');
-    const text = document.getElementById('visualization-text');
-    
-    // Desabilitar botão temporariamente
-    btn.disabled = true;
-    text.textContent = 'Contando...';
-    
-    fetch(`/aparelhos/user/visualizacao/${aparelhoId}/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            text.textContent = `Visualizações: ${data.count}`;
-            btn.style.background = '#28a745';
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pausar todos os outros vídeos quando um vídeo começar a tocar
+        const videos = document.querySelectorAll('.video-player');
+        
+        videos.forEach(video => {
+            video.addEventListener('play', function() {
+                // Pausar todos os outros vídeos
+                videos.forEach(otherVideo => {
+                    if (otherVideo !== video && !otherVideo.paused) {
+                        otherVideo.pause();
+                    }
+                });
+            });
             
-            // Atualizar contador na página
-            const statNumber = document.querySelector('.stat-number');
-            if (statNumber) {
-                statNumber.textContent = data.count;
-            }
-        } else {
-            text.textContent = data.message;
-            btn.style.background = '#dc3545';
-        }
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        text.textContent = 'Erro ao contar';
-        btn.style.background = '#dc3545';
-    })
-    .finally(() => {
-        // Reabilitar botão após 3 segundos
-        setTimeout(() => {
-            btn.disabled = false;
-            text.textContent = 'Contar Visualização';
-            btn.style.background = '#1976d2';
-        }, 3000);
+            // Adicionar efeito de hover
+            video.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            video.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
     });
-}
+
+    // Função para controlar a exibição das instruções
+    function toggleInstructions(aparelhoId) {
+        const instructions = document.getElementById('instructions-' + aparelhoId);
+        const button = document.getElementById('btn-' + aparelhoId);
+        const text = document.getElementById('text-' + aparelhoId);
+        
+        if (instructions.style.display === 'none') {
+            instructions.style.display = 'block';
+            text.textContent = 'Ocultar Detalhes';
+            button.classList.add('active');
+        } else {
+            instructions.style.display = 'none';
+            text.textContent = 'Ver Detalhes';
+            button.classList.remove('active');
+        }
+    }
+
+    // Função para contar visualização
+    function countVisualization(aparelhoId) {
+        const button = document.getElementById('visualization-btn-' + aparelhoId);
+        const originalText = button.innerHTML;
+        
+        // Verificar se o botão já está processando
+        if (button.disabled || button.dataset.processing === 'true') {
+            console.log('Botão já está processando, ignorando clique');
+            return;
+        }
+        
+        // Marcar como processando IMEDIATAMENTE
+        button.dataset.processing = 'true';
+        button.disabled = true;
+        button.style.opacity = '0.6';
+        
+        // Adicionar um pequeno delay para evitar cliques duplos acidentais
+        setTimeout(() => {
+            // Fazer requisição para o servidor
+            fetch(`/aparelhos/user/visualizacao/${aparelhoId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Sucesso - mostrar mensagem e iniciar cooldown
+                    button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Visualização Contada!';
+                    showTemporaryMessage(data.message, 'success');
+                    
+                    // Iniciar cooldown de 1min30s
+                    startCooldown(button, aparelhoId, 90); // 90 segundos = 1min30s
+                } else {
+                    // Erro - mostrar mensagem de cooldown
+                    button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Aguarde...';
+                    showTemporaryMessage(data.message, 'error');
+                    
+                    // Iniciar cooldown com tempo restante
+                    const cooldownTime = data.cooldown || 90;
+                    startCooldown(button, aparelhoId, cooldownTime);
+                }
+            })
+            .catch(error => {
+                console.log('Erro ao salvar visualização:', error);
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.innerHTML = originalText;
+                button.dataset.processing = 'false';
+                showTemporaryMessage('Erro ao contar visualização. Tente novamente.', 'error');
+            });
+        }, 100); // 100ms de delay para evitar cliques duplos
+    }
+
+    // Função para iniciar cooldown
+    function startCooldown(button, aparelhoId, totalSeconds) {
+        let remainingSeconds = totalSeconds;
+        
+        const updateButton = () => {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            button.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Aguarde ${timeString}`;
+            
+            if (remainingSeconds <= 0) {
+                // Cooldown terminou
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Contar Visualização';
+                button.dataset.processing = 'false'; // Resetar flag de processamento
+                return;
+            }
+            
+            remainingSeconds--;
+            setTimeout(updateButton, 1000);
+        };
+        
+        updateButton();
+    }
+
+    // Função para mostrar mensagem temporária
+    function showTemporaryMessage(message, type = 'success') {
+        // Remover mensagem anterior se existir
+        const existingMessage = document.querySelector('.temporary-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+        
+        // Criar nova mensagem
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'temporary-message';
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+            color: ${type === 'success' ? '#155724' : '#721c24'};
+            border: 1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'};
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        `;
+        messageDiv.textContent = message;
+        
+        // Adicionar animação CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.body.appendChild(messageDiv);
+        
+        // Remover mensagem após 3 segundos
+        setTimeout(() => {
+            messageDiv.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Função para obter CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
 {% endblock %}
