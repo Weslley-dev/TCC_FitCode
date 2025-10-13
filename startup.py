@@ -67,10 +67,12 @@ if __name__ == "__main__":
     # Criar/atualizar superusuário
     print("👤 Configurando usuário administrador...")
     try:
-        execute_from_command_line(['manage.py', 'create_superuser_render'])
+        execute_from_command_line(['manage.py', 'test_user_creation'])
         print("✅ Administrador configurado!")
     except Exception as e:
         print(f"❌ Erro ao configurar administrador: {e}")
+        import traceback
+        print(traceback.format_exc())
     
     # Criar dados de exemplo se não existirem
     from aparelhos.models import Aparelho
