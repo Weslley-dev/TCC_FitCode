@@ -14,7 +14,7 @@ from django.core.management import call_command
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings')
 
-# Executar migrações automaticamente no Render
+# Executar migrações no Render
 if os.environ.get('RENDER'):
     try:
         django.setup()

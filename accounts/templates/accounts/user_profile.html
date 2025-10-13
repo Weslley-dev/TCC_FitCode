@@ -211,6 +211,8 @@
         width: 18px;
         height: 18px;
     }
+    
+    .btn-secondary:hover {
         border-color: #bbb;
     }
     
@@ -697,16 +699,16 @@ function togglePasswordForm() {
 
 function removeProfilePicture() {
     if (confirm('Tem certeza que deseja remover sua foto de perfil?')) {
-        // Marcar o campo hidden para indicar remoção
+        
         document.getElementById('remove_profile_picture').value = 'true';
         
-        // Esconder a foto atual e mostrar placeholder
+        
         const profilePicture = document.querySelector('.profile-picture');
         profilePicture.innerHTML = `
             <div class="no-picture">👤</div>
         `;
         
-        // Limpar o campo de upload de arquivo
+        
         const fileInput = document.querySelector('input[type="file"]');
         if (fileInput) {
             fileInput.value = '';
@@ -714,7 +716,7 @@ function removeProfilePicture() {
     }
 }
 
-// Máscara para data de nascimento (dd/mm/yyyy)
+//  data de nascimento 
 function formatDateInput(input) {
     let value = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
     
@@ -728,16 +730,16 @@ function formatDateInput(input) {
     input.value = value;
 }
 
-// Aplicar máscara quando a página carregar
+
 document.addEventListener('DOMContentLoaded', function() {
     const birthDateInput = document.getElementById('birth_date_input');
     if (birthDateInput) {
-        // Aplicar máscara enquanto o usuário digita
+        
         birthDateInput.addEventListener('input', function() {
             formatDateInput(this);
         });
         
-        // Converter formato brasileiro para ISO antes de enviar
+        
         const form = birthDateInput.closest('form');
         if (form) {
             form.addEventListener('submit', function(e) {
@@ -746,7 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     try {
                         const [day, month, year] = value.split('/');
                         if (day && month && year) {
-                            // Converter para formato ISO (yyyy-mm-dd)
+                            
                             const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
                             birthDateInput.value = isoDate;
                         }

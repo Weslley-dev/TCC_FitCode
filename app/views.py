@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 def debug_view(request):
     """View de debug para testar conexão com banco"""
     try:
-        # Testar conexão com banco
+        # Testar conexão 
         user_count = User.objects.count()
         profile_count = UserProfile.objects.count()
         

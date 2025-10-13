@@ -48,17 +48,17 @@ class UserProfileForm(forms.ModelForm):
         birth_date = self.cleaned_data.get('birth_date')
         
         if birth_date:
-            # Se for string, tentar converter do formato brasileiro (dd/mm/yyyy) para o formato do Django
+            
             if isinstance(birth_date, str):
                 try:
                     from datetime import datetime
-                    # Tentar converter dd/mm/yyyy para yyyy-mm-dd
+                    
                     if '/' in birth_date:
                         date_obj = datetime.strptime(birth_date, '%d/%m/%Y')
                         birth_date = date_obj.strftime('%Y-%m-%d')
                         print(f"Form - Data convertida de {self.cleaned_data.get('birth_date')} para {birth_date}")
                 except ValueError:
-                    # Se não conseguir converter, deixar como está para o Django tratar o erro
+                    
                     pass
         
         print(f"Form - Data de nascimento processada: {birth_date}")

@@ -427,7 +427,7 @@
 </div>
 
 <script>
-// Auto-submit do formulário de busca com delay
+
 let searchTimeout;
 const searchInput = document.querySelector('.search-input');
 
@@ -436,11 +436,10 @@ if (searchInput) {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             this.form.submit();
-        }, 500); // Aguarda 500ms após parar de digitar
+        }, 500); 
     });
 }
 
-// Destacar termo de busca nos resultados
 const searchQuery = '{{ search_query }}';
 if (searchQuery) {
     const clientNames = document.querySelectorAll('.client-name');

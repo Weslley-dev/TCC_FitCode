@@ -16,15 +16,15 @@ def register_view(request):
         user_form = CustomUserCreationForm(request.POST)
         if user_form.is_valid():
             user = user_form.save()
-            auth_login(request, user)  # Login automático após registro
+            auth_login(request, user)  
             
-            # Verificar se veio do fluxo do QR Code
+            # Verificar se veio do QR Code
             if request.session.get('qr_redirect', False) and request.session.get('qr_exercise_id'):
                 exercise_id = request.session.get('qr_exercise_id')
                 messages.success(request, 'Cadastro realizado com sucesso! Redirecionando para o exercício...')
                 return redirect('qr_exercise_detail', pk=exercise_id)
             
-            # Redirecionar para lista de exercícios após registro
+            # levar para alista de exercícios após registro
             return redirect('user_exercises_list')
     else:
         user_form = CustomUserCreationForm()
@@ -43,13 +43,13 @@ def login_view(request):
             logger.info(f"Usuário válido: {user.username}")
             auth_login(request, user)
             
-            # Verificar se veio do fluxo do QR Code
+            # Verificar se veio do QR Code
             if request.session.get('qr_redirect', False) and request.session.get('qr_exercise_id'):
                 exercise_id = request.session.get('qr_exercise_id')
                 messages.success(request, 'Login realizado com sucesso! Redirecionando para o exercício...')
                 return redirect('qr_exercise_detail', pk=exercise_id)
             
-            # Redirecionar baseado em permissões - superusuários têm acesso admin
+            # levar baseado na permisão - superusuários têm acesso admin
             if user.is_superuser or user.is_staff:
                 logger.info("Redirecionando para admin")
                 return redirect('aparelhos_list')  # Admin vai para lista de exercícios com permissões
@@ -81,7 +81,7 @@ def user_profile(request):
             
             if password_form.is_valid():
                 user = password_form.save()
-                update_session_auth_hash(request, user)  # Importante para manter a sessão ativa
+                update_session_auth_hash(request, user)  
                 messages.success(request, 'Senha alterada com sucesso!')
                 return redirect('user_profile')
             else:
@@ -92,14 +92,14 @@ def user_profile(request):
             profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
             password_form = CustomPasswordChangeForm(request.user)
             
-            # Debug: verificar dados do POST
+            
             print(f"Dados do POST: {request.POST}")
             print(f"Data de nascimento no POST: {request.POST.get('birth_date')}")
             
-            # Verificar se deve remover a foto de perfil
+            # Verificar se vai remover a foto de perfil
             if request.POST.get('remove_profile_picture') == 'true':
                 if profile.profile_picture:
-                    # Deletar o arquivo físico
+                    
                     profile.profile_picture.delete(save=False)
                     # Limpar o campo no banco de dados
                     profile.profile_picture = None
@@ -120,7 +120,7 @@ def user_profile(request):
                     print(f"Erros do profile_form: {profile_form.errors}")
                 messages.error(request, 'Erro ao atualizar perfil. Verifique os dados.')
     else:
-        # Inicializar formulários para GET
+        
         user_form = UserUpdateForm(instance=request.user)
         profile_form = UserProfileForm(instance=profile)
         password_form = CustomPasswordChangeForm(request.user)
@@ -139,7 +139,7 @@ def change_password(request):
         form = CustomPasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Importante para manter a sessão ativa
+            update_session_auth_hash(request, user)  
             messages.success(request, 'Senha alterada com sucesso!')
             return redirect('user_profile')
     else:
@@ -206,7 +206,7 @@ def admin_profile(request):
             
             if password_form.is_valid():
                 user = password_form.save()
-                update_session_auth_hash(request, user)  # Importante para manter a sessão ativa
+                update_session_auth_hash(request, user)  
                 messages.success(request, 'Senha alterada com sucesso!')
                 return redirect('admin_profile')
             else:
@@ -221,12 +221,12 @@ def admin_profile(request):
             print(f"Admin - Dados do POST: {request.POST}")
             print(f"Admin - Data de nascimento no POST: {request.POST.get('birth_date')}")
             
-            # Verificar se deve remover a foto de perfil
+            # Verificar se vai remover a foto de perfil
             if request.POST.get('remove_profile_picture') == 'true':
                 if profile.profile_picture:
-                    # Deletar o arquivo físico
+                    
                     profile.profile_picture.delete(save=False)
-                    # Limpar o campo no banco de dados
+                    
                     profile.profile_picture = None
                     profile.save()
                     messages.success(request, 'Foto de perfil removida com sucesso!')
@@ -238,14 +238,14 @@ def admin_profile(request):
                 messages.success(request, 'Perfil atualizado com sucesso!')
                 return redirect('admin_profile')
             else:
-                # Debug: mostrar erros do formulário
+                
                 if not user_form.is_valid():
                     print(f"Admin - Erros do user_form: {user_form.errors}")
                 if not profile_form.is_valid():
                     print(f"Admin - Erros do profile_form: {profile_form.errors}")
                 messages.error(request, 'Erro ao atualizar perfil. Verifique os dados.')
     else:
-        # Inicializar formulários para GET
+        
         user_form = UserUpdateForm(instance=request.user)
         profile_form = UserProfileForm(instance=profile)
         password_form = CustomPasswordChangeForm(request.user)
@@ -263,7 +263,7 @@ def admin_clients_list(request):
     # Buscar todos os usuários com seus perfis
     users = User.objects.select_related('profile').all().order_by('first_name', 'last_name', 'username')
     
-    # Filtro de busca
+    # Filtro 
     search_query = request.GET.get('q', '')
     if search_query:
         users = users.filter(
@@ -273,7 +273,7 @@ def admin_clients_list(request):
             Q(email__icontains=search_query)
         )
     
-    # Adicionar informações do perfil para cada usuário
+    
     clients_data = []
     for user in users:
         try:

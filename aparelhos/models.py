@@ -49,7 +49,7 @@ class Aparelho(models.Model):
             print(f"❌ Erro ao importar bibliotecas: {e}")
             return
         
-        # URL que será codificada no QR Code
+        
         from django.conf import settings
         base_url = getattr(settings, 'BASE_URL', 'http://localhost:8000')
         qr_data = f"{base_url}/aparelhos/qr/{self.id}/"
@@ -85,7 +85,7 @@ class Aparelho(models.Model):
             traceback.print_exc()
     
     def save(self, *args, **kwargs):
-        # Gerar QR Code antes de salvar
+       
         super().save(*args, **kwargs)
         if not self.qr_code:  # Só gera se não existir
             self.generate_qr_code()

@@ -24,11 +24,11 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    # Em desenvolvimento, servir arquivos estáticos e de mídia
+    
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 else:
-    # Para produção no Railway - servir arquivos de mídia
+    # Para produção no Railway - não utilizado
     urlpatterns += [
         re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     ]
