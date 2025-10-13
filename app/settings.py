@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Segurança / Debug
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-36a13o0%3$!o)j=7uui-9p5+lo_)g^a_kn^=*teu73=8d&7h1)')
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 # ALLOWED_HOSTS - pode ser configurado via variável de ambiente
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else [
     'tccfitcode-production.up.railway.app',
