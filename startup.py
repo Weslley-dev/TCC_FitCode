@@ -32,6 +32,19 @@ if __name__ == "__main__":
         print(f"❌ Erro ao verificar banco: {e}")
         sys.exit(1)
     
+    # Carregar dados do backup se não existirem usuários
+    print("📦 Verificando dados...")
+    try:
+        from django.contrib.auth.models import User
+        if User.objects.count() == 0:
+            print("🔄 Carregando dados do backup...")
+            execute_from_command_line(['manage.py', 'loaddata', 'render_data.json'])
+            print("✅ Dados carregados!")
+        else:
+            print("✅ Dados já existem, pulando carregamento")
+    except Exception as e:
+        print(f"❌ Erro ao carregar dados: {e}")
+
     # Criar/atualizar superusuário
     print("👤 Configurando usuário administrador...")
     try:
