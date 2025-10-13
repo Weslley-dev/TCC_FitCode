@@ -67,8 +67,40 @@ if __name__ == "__main__":
     # Criar/atualizar superusuário
     print("👤 Configurando usuário administrador...")
     try:
-        execute_from_command_line(['manage.py', 'test_user_creation'])
-        print("✅ Administrador configurado!")
+        from django.contrib.auth.models import User
+        
+        # Verificar se já existe
+        if not User.objects.filter(username='WeslleyTcc').exists():
+            print("🔄 Criando usuário WeslleyTcc...")
+            user = User.objects.create_user(
+                username='WeslleyTcc',
+                email='weslleypereira307@gmail.com',
+                password='FitCode2024!',
+                first_name='Weslley',
+                last_name='TCC',
+                is_superuser=True,
+                is_staff=True,
+                is_active=True
+            )
+            print("✅ Usuário WeslleyTcc criado!")
+        else:
+            print("⚠️ Usuário WeslleyTcc já existe, atualizando...")
+            user = User.objects.get(username='WeslleyTcc')
+            user.set_password('FitCode2024!')
+            user.is_superuser = True
+            user.is_staff = True
+            user.is_active = True
+            user.save()
+            print("✅ Usuário WeslleyTcc atualizado!")
+        
+        # Verificar dados
+        user_check = User.objects.get(username='WeslleyTcc')
+        print(f"📋 Dados do usuário:")
+        print(f"  👤 Usuário: {user_check.username}")
+        print(f"  🔐 Superusuário: {user_check.is_superuser}")
+        print(f"  👨‍💼 Staff: {user_check.is_staff}")
+        print(f"  ✅ Ativo: {user_check.is_active}")
+        
     except Exception as e:
         print(f"❌ Erro ao configurar administrador: {e}")
         import traceback
