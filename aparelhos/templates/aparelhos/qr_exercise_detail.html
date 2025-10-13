@@ -211,11 +211,14 @@
 
 {% block content %}
 <div class="exercise-detail-container">
+    {% csrf_token %}
     <!-- Header específico para fluxo QR Code -->
+    {% if is_qr_flow %}
     <div class="qr-flow-header">
         <h2 class="qr-flow-title">Exercício Acessado via QR Code</h2>
         <p class="qr-flow-subtitle">Você foi direcionado para este exercício através de um QR Code</p>
     </div>
+    {% endif %}
     
     <a href="{% url 'user_exercises_list' %}" class="btn btn-back back-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -251,7 +254,15 @@
             {% endif %}
             
             <div class="exercise-actions">
-                <a href="{% url 'user_feedback' aparelho.pk %}" class="btn btn-primary">
+                <button onclick="countVisualization({{ aparelho.pk }})" class="btn btn-primary" id="visualization-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span id="visualization-text">Contar Visualização</span>
+                </button>
+                
+                <a href="{% url 'user_feedback' aparelho.pk %}" class="btn btn-secondary">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         <path d="M8 9h8"/>
@@ -298,4 +309,52 @@
         </div>
     </div>
 </div>
+
+<script>
+function countVisualization(aparelhoId) {
+    const btn = document.getElementById('visualization-btn');
+    const text = document.getElementById('visualization-text');
+    
+    // Desabilitar botão temporariamente
+    btn.disabled = true;
+    text.textContent = 'Contando...';
+    
+    fetch(`/aparelhos/user/visualizacao/${aparelhoId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            text.textContent = `Visualizações: ${data.count}`;
+            btn.style.background = '#28a745';
+            
+            // Atualizar contador na página
+            const statNumber = document.querySelector('.stat-number');
+            if (statNumber) {
+                statNumber.textContent = data.count;
+            }
+        } else {
+            text.textContent = data.message;
+            btn.style.background = '#dc3545';
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        text.textContent = 'Erro ao contar';
+        btn.style.background = '#dc3545';
+    })
+    .finally(() => {
+        // Reabilitar botão após 3 segundos
+        setTimeout(() => {
+            btn.disabled = false;
+            text.textContent = 'Contar Visualização';
+            btn.style.background = '#1976d2';
+        }, 3000);
+    });
+}
+</script>
 {% endblock %}

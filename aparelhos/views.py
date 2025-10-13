@@ -278,6 +278,10 @@ def qr_code_redirect(request, pk):
     """
     aparelho = get_object_or_404(Aparelho, pk=pk)
     
+    # Se usuário já está logado, redireciona direto para o exercício
+    if request.user.is_authenticated:
+        return redirect('qr_exercise_detail', pk=pk)
+    
     # Salva o ID do exercício na sessão para redirecionamento após login
     request.session['qr_exercise_id'] = pk
     request.session['qr_redirect'] = True
@@ -289,17 +293,18 @@ def qr_code_redirect(request, pk):
 def qr_exercise_detail(request, pk):
     """
     View para exibir exercício específico do QR Code
-    Acessível apenas após login via QR Code
+    Acessível após login via QR Code
     """
     aparelho = get_object_or_404(Aparelho, pk=pk)
     
     # Verifica se o usuário veio do fluxo do QR Code
-    if not request.session.get('qr_redirect', False):
-        return redirect('user_exercises_list')
+    is_qr_flow = request.session.get('qr_redirect', False)
+    qr_exercise_id = request.session.get('qr_exercise_id')
     
-    # Remove a flag de redirecionamento QR da sessão
-    request.session.pop('qr_redirect', None)
-    request.session.pop('qr_exercise_id', None)
+    # Se veio do QR code, limpa as flags da sessão
+    if is_qr_flow and qr_exercise_id == pk:
+        request.session.pop('qr_redirect', None)
+        request.session.pop('qr_exercise_id', None)
     
     # Busca feedback do usuário para este exercício
     user_feedback = None
@@ -327,7 +332,7 @@ def qr_exercise_detail(request, pk):
         'total_visualizacoes': total_visualizacoes,
         'total_feedbacks': total_feedbacks,
         'media_rating': round(avg_rating, 1) if avg_rating else 0,
-        'is_qr_flow': True,  # Flag para identificar que veio do QR Code
+        'is_qr_flow': is_qr_flow,  # Flag para identificar que veio do QR Code
     }
     
     return render(request, 'aparelhos/qr_exercise_detail.html', context)
