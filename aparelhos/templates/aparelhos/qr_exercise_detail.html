@@ -70,10 +70,10 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 16px;
+            margin-bottom: 16px; 
         flex-wrap: wrap;
-        gap: 12px;
-    }
+            gap: 12px; 
+        }
     
     .card-title {
         display: flex;
@@ -101,13 +101,13 @@
         line-height: 1.2;
     }
     
-    .grupo-muscular-tag {
-        background: #e3f2fd;
-        color: #1976d2;
+    .grupo-muscular-tag { 
+        background: #e3f2fd; 
+        color: #1976d2; 
         padding: 6px 12px;
-        border-radius: 16px;
-        font-size: 0.85rem;
-        font-weight: 600;
+        border-radius: 16px; 
+        font-size: 0.85rem; 
+        font-weight: 600; 
         border: 1px solid #bbdefb;
         white-space: nowrap;
     }
@@ -115,16 +115,6 @@
     /* Seção de vídeo - estilo compacto */
     .video-section {
         margin-bottom: 20px;
-    }
-    
-    .video-label {
-        font-size: 1rem;
-        color: #666;
-        font-weight: 600;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
     }
     
     .video-container {
@@ -148,8 +138,8 @@
         transform: scale(1.02);
     }
     
-    .video-placeholder {
-        background: #f7f8fa;
+    .video-placeholder { 
+        background: #f7f8fa; 
         border: 2px dashed #e3e6ee;
         border-radius: 8px;
         padding: 40px 20px;
@@ -163,15 +153,15 @@
     }
     
     .video-placeholder-icon {
-        width: 48px;
-        height: 48px;
-        color: #ccc;
-        margin-bottom: 12px;
+        width: 48px; 
+        height: 48px; 
+        color: #ccc; 
+        margin-bottom: 12px; 
     }
     
-    .video-placeholder-text {
-        font-size: 0.9rem;
-        color: #999;
+    .video-placeholder-text { 
+        font-size: 0.9rem; 
+        color: #999; 
     }
     
     /* Seção de instruções - estilo compacto */
@@ -416,42 +406,28 @@
                 <div class="card-title-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M8 12h8M12 8v8"/>
-                    </svg>
+                </svg>
                 </div>
                 <h1 class="card-title-text">{{ aparelho.exercise_name }}</h1>
             </div>
-            {% if aparelho.grupo_muscular %}
-            <span class="grupo-muscular-tag">{{ aparelho.grupo_muscular.name }}</span>
-            {% endif %}
+                {% if aparelho.grupo_muscular %}
+                <span class="grupo-muscular-tag">{{ aparelho.grupo_muscular.name }}</span>
+                {% endif %}
         </div>
         
         <!-- Seção de vídeo -->
-        <div class="video-section">
-            <div class="video-label">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="5,3 19,12 5,21"/>
-                </svg>
-                Vídeo do Exercício
-            </div>
-            
             {% if aparelho.video %}
+        <div class="video-section">
                 <div class="video-container">
-                    <video class="video-player" controls preload="metadata">
-                        <source src="{{ aparelho.video.url }}" type="video/mp4">
-                        <source src="{{ aparelho.video.url }}" type="video/webm">
-                        <source src="{{ aparelho.video.url }}" type="video/ogg">
-                        Seu navegador não suporta a reprodução de vídeo.
-                    </video>
+                <video class="video-player" controls preload="metadata">
+                    <source src="{{ aparelho.video.url }}" type="video/mp4">
+                    <source src="{{ aparelho.video.url }}" type="video/webm">
+                    <source src="{{ aparelho.video.url }}" type="video/ogg">
+                    Seu navegador não suporta a reprodução de vídeo.
+                </video>
                 </div>
-            {% else %}
-                <div class="video-placeholder">
-                    <svg class="video-placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="5,3 19,12 5,21"/>
-                    </svg>
-                    <div class="video-placeholder-text">Nenhum vídeo disponível para este exercício</div>
-                </div>
-            {% endif %}
         </div>
+        {% endif %}
         
         <!-- Seção de instruções -->
         {% if aparelho.instructions %}
@@ -461,9 +437,9 @@
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
                     <path d="M12 17h.01"/>
-                </svg>
+                    </svg>
                 <span id="instructions-text">Ver Instruções</span>
-            </button>
+                </button>
             
             <div class="instructions-content" id="instructions-content">
                 <p class="instructions-text">{{ aparelho.instructions }}</p>
@@ -474,24 +450,24 @@
         <!-- Botões de ação -->
         <div class="action-buttons">
             <button class="btn btn-primary" onclick="countVisualization({{ aparelho.pk }})" id="visualization-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
                 <span id="visualization-text">Contar Visualização</span>
-            </button>
-            
+                </button>
+                
             <a href="{% url 'user_feedback' aparelho.pk %}" class="btn btn-secondary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    <path d="M8 9h8"/>
-                    <path d="M8 13h6"/>
-                </svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        <path d="M8 9h8"/>
+                        <path d="M8 13h6"/>
+                    </svg>
                 {% if user_feedback %}Atualizar Feedback{% else %}Enviar Feedback{% endif %}
-            </a>
+                </a>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}

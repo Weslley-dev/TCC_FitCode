@@ -21,12 +21,14 @@ def register_view(request):
             # Verificar se veio do fluxo do QR Code
             if request.session.get('qr_redirect', False) and request.session.get('qr_exercise_id'):
                 exercise_id = request.session.get('qr_exercise_id')
+                messages.success(request, 'Cadastro realizado com sucesso! Redirecionando para o exercício...')
                 return redirect('qr_exercise_detail', pk=exercise_id)
             
             # Redirecionar para lista de exercícios após registro
             return redirect('user_exercises_list')
     else:
         user_form = CustomUserCreationForm()
+    
     return render(request, 'register.html', {'user_form': user_form})
 
 def login_view(request):
@@ -44,6 +46,7 @@ def login_view(request):
             # Verificar se veio do fluxo do QR Code
             if request.session.get('qr_redirect', False) and request.session.get('qr_exercise_id'):
                 exercise_id = request.session.get('qr_exercise_id')
+                messages.success(request, 'Login realizado com sucesso! Redirecionando para o exercício...')
                 return redirect('qr_exercise_detail', pk=exercise_id)
             
             # Redirecionar baseado em permissões - superusuários têm acesso admin

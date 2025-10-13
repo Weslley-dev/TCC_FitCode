@@ -286,6 +286,10 @@ def qr_code_redirect(request, pk):
     request.session['qr_exercise_id'] = pk
     request.session['qr_redirect'] = True
     
+    # Adicionar mensagem informativa
+    from django.contrib import messages
+    messages.info(request, f'Faça login para acessar o exercício: {aparelho.exercise_name}')
+    
     # Redireciona para login
     return redirect('login')
 
