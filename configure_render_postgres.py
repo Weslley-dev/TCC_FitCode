@@ -70,10 +70,15 @@ def configure_render_postgres():
             
             if not restored:
                 print("⚠️ Nenhum backup encontrado, criando dados iniciais...")
+                # Deletar usuários existentes para evitar confusão
+                User.objects.filter(is_superuser=True).delete()
+                # Criar novo administrador
                 User.objects.create_superuser(
                     username='admin', 
                     email='admin@fitcode.com',
-                    password='admin123'
+                    password='admin123',
+                    first_name='Admin',
+                    last_name='FitCode'
                 )
                 print("✅ Superusuário criado: admin/admin123")
         
