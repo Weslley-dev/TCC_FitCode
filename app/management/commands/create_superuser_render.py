@@ -12,7 +12,7 @@ class Command(BaseCommand):
             if User.objects.filter(username='WeslleyTcc').exists():
                 self.stdout.write('⚠️ Usuário WeslleyTcc já existe. Atualizando...')
                 user = User.objects.get(username='WeslleyTcc')
-                user.set_password('Trator123')
+                user.set_password('fitcode@dmin1020')
                 user.email = 'weslleypereira307@gmail.com'
                 user.is_superuser = True
                 user.is_staff = True
@@ -24,7 +24,7 @@ class Command(BaseCommand):
                 user = User.objects.create_user(
                     username='WeslleyTcc',
                     email='weslleypereira307@gmail.com',
-                    password='Trator123',
+                    password='fitcode@dmin1020',
                     first_name='Weslley',
                     last_name='TCC',
                     is_superuser=True,
@@ -38,7 +38,7 @@ class Command(BaseCommand):
             self.stdout.write('📋 Dados do superusuário:')
             self.stdout.write(f'   👤 Usuário: {user_check.username}')
             self.stdout.write(f'   📧 E-mail: {user_check.email}')
-            self.stdout.write(f'   🔑 Senha: Trator123')
+            self.stdout.write(f'   🔑 Senha: fitcode@dmin1020')
             self.stdout.write(f'   🔐 Superusuário: {user_check.is_superuser}')
             self.stdout.write(f'   👨‍💼 Staff: {user_check.is_staff}')
             self.stdout.write(f'   ✅ Ativo: {user_check.is_active}')
