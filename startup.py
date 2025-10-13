@@ -32,37 +32,45 @@ django.setup()
         print(f"❌ Erro ao verificar banco: {e}")
         sys.exit(1)
     
-    # Carregar dados do backup se não existirem usuários
-    print("📦 Verificando dados...")
-    try:
-        from django.contrib.auth.models import User
-        user_count = User.objects.count()
-        print(f"👥 Usuários encontrados: {user_count}")
-        
-        if user_count == 0:
-            print("🔄 Nenhum usuário encontrado, carregando dados do backup...")
-            
-            # Verificar se o arquivo existe
-            import os
-            if os.path.exists('render_data.json'):
-                print("✅ Arquivo render_data.json encontrado")
-                execute_from_command_line(['manage.py', 'loaddata', 'render_data.json'])
-                print("✅ Dados carregados com sucesso!")
-                
-                # Verificar se os dados foram carregados
-                new_user_count = User.objects.count()
-                print(f"👥 Usuários após carregamento: {new_user_count}")
+        # Carregar dados do backup se não existirem usuários
+        print("📦 Verificando dados...")
+        try:
+            from django.contrib.auth.models import User
+            user_count = User.objects.count()
+            print(f"👥 Usuários encontrados: {user_count}")
+
+            if user_count == 0:
+                print("🔄 Nenhum usuário encontrado, carregando dados do backup...")
+
+                # Verificar se o arquivo existe
+                import os
+                if os.path.exists('admin_data.json'):
+                    print("✅ Arquivo admin_data.json encontrado")
+                    execute_from_command_line(['manage.py', 'loaddata', 'admin_data.json'])
+                    print("✅ Dados carregados com sucesso!")
+
+                    # Verificar se os dados foram carregados
+                    new_user_count = User.objects.count()
+                    print(f"👥 Usuários após carregamento: {new_user_count}")
+                elif os.path.exists('render_data.json'):
+                    print("✅ Arquivo render_data.json encontrado")
+                    execute_from_command_line(['manage.py', 'loaddata', 'render_data.json'])
+                    print("✅ Dados carregados com sucesso!")
+
+                    # Verificar se os dados foram carregados
+                    new_user_count = User.objects.count()
+                    print(f"👥 Usuários após carregamento: {new_user_count}")
+                else:
+                    print("❌ Nenhum arquivo de dados encontrado")
+                    print("📁 Arquivos no diretório:")
+                    for file in os.listdir('.'):
+                        print(f"  - {file}")
             else:
-                print("❌ Arquivo render_data.json não encontrado")
-                print("📁 Arquivos no diretório:")
-                for file in os.listdir('.'):
-                    print(f"  - {file}")
-        else:
-            print("✅ Dados já existem, pulando carregamento")
-    except Exception as e:
-        print(f"❌ Erro ao carregar dados: {e}")
-        import traceback
-        print(traceback.format_exc())
+                print("✅ Dados já existem, pulando carregamento")
+        except Exception as e:
+            print(f"❌ Erro ao carregar dados: {e}")
+            import traceback
+            print(traceback.format_exc())
 
     # Criar/atualizar superusuário
     print("👤 Configurando usuário administrador...")
