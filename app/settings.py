@@ -84,17 +84,31 @@ CSRF_TRUSTED_ORIGINS = [
     'https://tccfitcode-production.up.railway.app',
     'https://*.up.railway.app',
     'https://*.onrender.com',
+    'https://tcc-fitcode-web.onrender.com',
     'http://tccfitcode-production.up.railway.app',  # Fallback para HTTP
     'http://*.onrender.com',  # Fallback para HTTP
+    'http://localhost:8000',  # Para desenvolvimento local
+    'http://127.0.0.1:8000',  # Para desenvolvimento local
 ]
-CSRF_COOKIE_SECURE = False  # Temporariamente False para debug
-SESSION_COOKIE_SECURE = False  # Temporariamente False para debug
+
+# Configurações de CSRF mais permissivas para desenvolvimento
+CSRF_COOKIE_SECURE = False  # False para HTTP local, True para HTTPS em produção
+SESSION_COOKIE_SECURE = False  # False para HTTP local, True para HTTPS em produção
 CSRF_COOKIE_HTTPONLY = False
 CSRF_USE_SESSIONS = False
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_DOMAIN = None
 CSRF_COOKIE_PATH = '/'
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
+
+# Configurações de CSRF para produção
+if os.environ.get('RENDER') or os.environ.get('RAILWAY_ENVIRONMENT'):
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+
+# Configurações adicionais de segurança
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+SECURE_REFERRER_POLICY = None
 
 # Apps
 INSTALLED_APPS = [
