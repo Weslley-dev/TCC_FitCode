@@ -113,7 +113,7 @@ INSTALLED_APPS = [
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',  # Para servir arquivos estáticos
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Sempre ativo para servir arquivos estáticos
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -121,10 +121,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# Ativar WhiteNoise em produção (Railway, Render, etc.)
-if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RENDER'):
-    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 ROOT_URLCONF = 'app.urls'
 
@@ -166,11 +162,16 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Configurações do WhiteNoise para arquivos estáticos
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Configurações de arquivos estáticos
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -178,9 +179,7 @@ MEDIA_URL = '/media/'
 # Configurações para servir arquivos de mídia em produção
 if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('RENDER'):
     # Em produção, usar WhiteNoise para servir arquivos de mídia
-    STATICFILES_DIRS = [
-        os.path.join(BASE_DIR, 'media'),
-    ]
+    STATICFILES_DIRS.append(os.path.join(BASE_DIR, 'media'))
 
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  
