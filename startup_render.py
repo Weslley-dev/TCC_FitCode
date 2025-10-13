@@ -17,6 +17,14 @@ from django.contrib.auth.models import User
 def startup_render():
     print("🚀 Iniciando aplicação no Render...")
     
+    # Verificar tipo de banco
+    from django.conf import settings
+    db_engine = settings.DATABASES['default']['ENGINE']
+    is_postgres = 'postgresql' in db_engine
+    is_sqlite = 'sqlite' in db_engine
+    
+    print(f"🗄️ Banco de dados: {'PostgreSQL' if is_postgres else 'SQLite'}")
+    
     try:
         # Verificar se já existem usuários
         user_count = User.objects.count()
@@ -58,21 +66,24 @@ def startup_render():
         else:
             print("✅ Dados já existem, continuando...")
         
-        # Fazer backup dos dados atuais
-        print("💾 Fazendo backup dos dados...")
-        try:
-            call_command('dumpdata', 
-                        'auth.user', 
-                        'accounts.userprofile', 
-                        'aparelhos.aparelho',
-                        'aparelhos.grupo_muscular',
-                        'aparelhos.feedback',
-                        'aparelhos.visualizacao',
-                        '--indent', '2',
-                        '--output', 'backup_data.json')
-            print("✅ Backup criado: backup_data.json")
-        except Exception as e:
-            print(f"⚠️ Erro ao criar backup: {e}")
+        # Fazer backup dos dados atuais (apenas para SQLite)
+        if is_sqlite:
+            print("💾 Fazendo backup dos dados (SQLite)...")
+            try:
+                call_command('dumpdata', 
+                            'auth.user', 
+                            'accounts.userprofile', 
+                            'aparelhos.aparelho',
+                            'aparelhos.grupo_muscular',
+                            'aparelhos.feedback',
+                            'aparelhos.visualizacao',
+                            '--indent', '2',
+                            '--output', 'backup_data.json')
+                print("✅ Backup criado: backup_data.json")
+            except Exception as e:
+                print(f"⚠️ Erro ao criar backup: {e}")
+        else:
+            print("✅ PostgreSQL - dados persistentes, backup não necessário")
         
         print("🎉 Aplicação iniciada com sucesso!")
         
