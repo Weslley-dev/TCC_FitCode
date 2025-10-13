@@ -10,9 +10,9 @@ from django.core.management import execute_from_command_line
 from django.contrib.auth.models import User
 
 if __name__ == "__main__":
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings')
-    django.setup()
-    
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings')
+django.setup()
+
     print("🚀 Iniciando configuração do Render...")
     
     # Executar migrações
