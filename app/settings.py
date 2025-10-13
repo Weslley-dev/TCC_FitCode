@@ -30,9 +30,20 @@ BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
 
 # Configuração do banco
 DATABASE_URL = os.environ.get('DATABASE_URL')
+RENDER = os.environ.get('RENDER')
 
-if DATABASE_URL and not DATABASE_URL.startswith('sqlite'):
-    # Produção com PostgreSQL (Railway, Render PostgreSQL, etc.)
+if RENDER:
+    # Render.com - usar SQLite por padrão (gratuito)
+    print("🌐 Detectado ambiente Render.com")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+    print("✅ Usando SQLite no Render")
+elif DATABASE_URL and not DATABASE_URL.startswith('sqlite'):
+    # Produção com PostgreSQL (Railway, etc.)
     try:
         url = urlparse(DATABASE_URL)
         DATABASES = {
