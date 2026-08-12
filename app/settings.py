@@ -28,12 +28,15 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get
 # URL base para QR Codes
 BASE_URL = os.environ.get('BASE_URL', 'https://tcc-fitcode-web.onrender.com')
 
+
+
+
 # Configuração do banco
 DATABASE_URL = os.environ.get('DATABASE_URL')
 RENDER = os.environ.get('RENDER')
 
-if DATABASE_URL and not DATABASE_URL.startswith('sqlite'):
-    # Produção com PostgreSQL (Render pago, Railway, etc.)
+if DATABASE_URL and DATABASE_URL.startswith('postgres'):
+    # Produção com PostgreSQL (Render pago, Railway, Neon, etc.)
     try:
         url = urlparse(DATABASE_URL)
         DATABASES = {
@@ -49,35 +52,23 @@ if DATABASE_URL and not DATABASE_URL.startswith('sqlite'):
         print(f"✅ Conectado ao PostgreSQL: {url.hostname}")
     except Exception as e:
         print(f"❌ Erro ao configurar PostgreSQL: {e}")
-        # Fallback para SQLite se PostgreSQL falhar
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
                 'NAME': BASE_DIR / 'db.sqlite3',
             }
         }
-elif RENDER:
-    # Render.com gratuito - usar SQLite
-    print("🌐 Detectado ambiente Render.com (gratuito)")
+else:
+    # Desenvolvimento local - SQLite (padrão)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    print("✅ Usando SQLite no Render (gratuito)")
-else:
-    # Desenvolvimento local - PostgreSQL
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'tcc_fitcode_local',
-            'USER': 'postgres',
-            'PASSWORD': '123',
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
-    }
+    print("✅ Usando SQLite local")
+
+
 
 # Configurações CSRF para Railway e Render
 CSRF_TRUSTED_ORIGINS = [
