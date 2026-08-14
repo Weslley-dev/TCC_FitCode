@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from cloudinary_storage.storage import MediaCloudinaryStorage, VideoMediaCloudinaryStorage
 
 class Grupo_muscular(models.Model):
     id = models.AutoField(primary_key=True)
@@ -24,10 +25,26 @@ class Aparelho(models.Model):
         null=True,      
         blank=True
     )
-    video = models.FileField(upload_to='aparelhos/videos/', blank=True, null=True)
-    image = models.ImageField(upload_to='aparelhos/', blank=True, null=True)  
+    video = models.FileField(
+        upload_to='aparelhos/videos/',
+        storage=VideoMediaCloudinaryStorage(),
+        blank=True,
+        null=True
+    )
+    image = models.ImageField(
+        upload_to='aparelhos/',
+        storage=MediaCloudinaryStorage(),
+        blank=True,
+        null=True
+    )
     instructions = models.TextField("Instruções de Execução", blank=True)
-    qr_code = models.ImageField(upload_to='aparelhos/qrcodes/', blank=True, null=True, help_text="QR Code gerado automaticamente")
+    qr_code = models.ImageField(
+        upload_to='aparelhos/qrcodes/',
+        storage=MediaCloudinaryStorage(),
+        blank=True,
+        null=True,
+        help_text="QR Code gerado automaticamente"
+    )
 
     class Meta:
         ordering = ["exercise_name"]
@@ -144,4 +161,3 @@ class Visualizacao(models.Model):
         cooldown_time = self.last_clicked + timedelta(minutes=1, seconds=30)
         remaining = cooldown_time - timezone.now()
         return max(0, int(remaining.total_seconds()))
-
