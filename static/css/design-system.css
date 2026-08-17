@@ -1,0 +1,562 @@
+/* ============================================================
+   FITCODE — DESIGN SYSTEM
+   Identidade: aço escovado, ferro, anilhas de academia.
+   Paleta grafite + ferrugem, tipografia condensada atlética.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+  /* ---- Cor: base ---- */
+  --fc-bg: #F1F2F4;
+  --fc-bg-alt: #E7E9EC;
+  --fc-surface: #FFFFFF;
+  --fc-surface-sunken: #F6F7F8;
+  --fc-border: #E1E3E7;
+  --fc-border-strong: #CBCFD5;
+
+  /* ---- Cor: estrutura escura (sidebar/topbar) ---- */
+  --fc-graphite-900: #14171A;
+  --fc-graphite-800: #1B1F23;
+  --fc-graphite-700: #262B31;
+  --fc-graphite-600: #33393F;
+  --fc-graphite-border: #2E343A;
+
+  /* ---- Cor: texto ---- */
+  --fc-ink: #1B1F23;
+  --fc-ink-soft: #565D66;
+  --fc-ink-mute: #8A9099;
+  --fc-chalk: #F4F5F3;
+  --fc-chalk-soft: #B7BEC6;
+
+  /* ---- Cor: ação (ferrugem/ferro) ---- */
+  --fc-rust-700: #A9391F;
+  --fc-rust-600: #C8432A;
+  --fc-rust-500: #D9542E;
+  --fc-rust-100: #FBE7E0;
+  --fc-rust-50: #FDF3EF;
+
+  /* ---- Cor: aço (secundária/dados) ---- */
+  --fc-steel-700: #2C5C68;
+  --fc-steel-600: #3E7C8C;
+  --fc-steel-500: #4C93A3;
+  --fc-steel-100: #E1EFF2;
+  --fc-steel-50: #F0F7F8;
+
+  /* ---- Cor: estado ---- */
+  --fc-success: #2E7D4F;
+  --fc-success-bg: #E4F4EA;
+  --fc-danger: #C23B2E;
+  --fc-danger-bg: #FBEAE7;
+  --fc-warning: #B4740E;
+  --fc-warning-bg: #FBF1E0;
+
+  /* ---- Tipografia ---- */
+  --fc-font-display: 'Oswald', sans-serif;
+  --fc-font-body: 'Inter', sans-serif;
+  --fc-font-mono: 'IBM Plex Mono', monospace;
+
+  /* ---- Forma ---- */
+  --fc-radius-sm: 6px;
+  --fc-radius: 10px;
+  --fc-radius-lg: 16px;
+  --fc-shadow-sm: 0 1px 2px rgba(20, 23, 26, 0.06), 0 1px 1px rgba(20, 23, 26, 0.04);
+  --fc-shadow: 0 4px 16px rgba(20, 23, 26, 0.08);
+  --fc-shadow-lg: 0 12px 32px rgba(20, 23, 26, 0.14);
+
+  --fc-sidebar-w: 272px;
+}
+
+/* ============================================================
+   RESET / BASE
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--fc-font-body);
+  background: var(--fc-bg);
+  color: var(--fc-ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+h1, h2, h3, .fc-display {
+  font-family: var(--fc-font-display);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--fc-ink);
+}
+
+::selection { background: var(--fc-rust-100); color: var(--fc-rust-700); }
+
+/* ============================================================
+   LAYOUT: APP SHELL (sidebar + main)
+   ============================================================ */
+.fc-shell { display: flex; min-height: 100vh; }
+
+.fc-sidebar {
+  width: var(--fc-sidebar-w);
+  background: var(--fc-graphite-800);
+  position: fixed;
+  height: 100vh;
+  left: calc(-1 * var(--fc-sidebar-w));
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: left 0.28s ease;
+  border-right: 1px solid var(--fc-graphite-border);
+}
+.fc-sidebar.open { left: 0; }
+
+.fc-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 22px;
+  border-bottom: 1px solid var(--fc-graphite-border);
+}
+.fc-brand-mark {
+  width: 40px; height: 40px;
+  background: var(--fc-rust-600);
+  border-radius: var(--fc-radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.fc-brand-mark svg { width: 22px; height: 22px; stroke: var(--fc-chalk); }
+.fc-brand-name {
+  font-family: var(--fc-font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--fc-chalk);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+}
+.fc-brand-sub {
+  font-size: 0.72rem;
+  color: var(--fc-chalk-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.fc-user-card {
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--fc-graphite-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.fc-user-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--fc-graphite-600);
+  border: 2px solid var(--fc-rust-600);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--fc-chalk-soft);
+  font-family: var(--fc-font-display);
+  font-size: 1rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.fc-user-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.fc-user-name {
+  font-size: 0.92rem; font-weight: 600; color: var(--fc-chalk);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fc-user-role {
+  font-size: 0.72rem; color: var(--fc-chalk-soft);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px;
+}
+
+.fc-nav { padding: 14px 12px; flex: 1; overflow-y: auto; }
+.fc-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 2px;
+  border-radius: var(--fc-radius-sm);
+  color: var(--fc-chalk-soft);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.fc-nav-item svg { width: 19px; height: 19px; stroke: currentColor; flex-shrink: 0; }
+.fc-nav-item:hover { background: var(--fc-graphite-700); color: var(--fc-chalk); }
+.fc-nav-item.is-active {
+  background: var(--fc-graphite-700);
+  color: var(--fc-chalk);
+  border-left-color: var(--fc-rust-600);
+  font-weight: 600;
+}
+.fc-nav-item.is-disabled { color: #565C63; pointer-events: none; }
+.fc-nav-divider { height: 1px; background: var(--fc-graphite-border); margin: 12px 8px; }
+
+.fc-main { flex: 1; min-height: 100vh; width: 100%; }
+
+.fc-topbar {
+  background: var(--fc-surface);
+  border-bottom: 1px solid var(--fc-border);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 500;
+}
+.fc-menu-btn {
+  background: var(--fc-graphite-800);
+  border: none;
+  border-radius: var(--fc-radius-sm);
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+.fc-menu-btn:hover { background: var(--fc-rust-600); }
+.fc-menu-btn svg { width: 19px; height: 19px; stroke: var(--fc-chalk); }
+.fc-topbar-title {
+  font-family: var(--fc-font-display);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--fc-ink);
+}
+
+.fc-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(20, 23, 26, 0.55);
+  z-index: 999;
+}
+.fc-overlay.show { display: block; }
+
+.fc-content { padding: 32px; }
+.fc-page-container { max-width: 1200px; margin: 0 auto; }
+
+@media (max-width: 768px) {
+  .fc-content { padding: 20px 16px; }
+  .fc-topbar { padding: 14px 16px; }
+}
+
+/* ============================================================
+   PAGE HEADER
+   ============================================================ */
+.fc-page-header { margin-bottom: 28px; }
+.fc-page-title {
+  font-family: var(--fc-font-display);
+  font-size: 1.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--fc-ink);
+  margin-bottom: 6px;
+}
+.fc-page-subtitle { color: var(--fc-ink-soft); font-size: 1rem; }
+
+@media (max-width: 480px) {
+  .fc-page-title { font-size: 1.5rem; }
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.fc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--fc-font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 22px;
+  border-radius: var(--fc-radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.1s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.fc-btn svg { width: 18px; height: 18px; }
+.fc-btn:active { transform: translateY(1px); }
+
+.fc-btn--primary { background: var(--fc-rust-600); color: #fff; }
+.fc-btn--primary:hover { background: var(--fc-rust-700); }
+
+.fc-btn--secondary { background: var(--fc-surface); color: var(--fc-ink); border-color: var(--fc-border-strong); }
+.fc-btn--secondary:hover { background: var(--fc-surface-sunken); }
+
+.fc-btn--ghost { background: transparent; color: var(--fc-ink-soft); border-color: transparent; }
+.fc-btn--ghost:hover { background: var(--fc-surface-sunken); color: var(--fc-ink); }
+
+.fc-btn--danger { background: var(--fc-danger-bg); color: var(--fc-danger); }
+.fc-btn--danger:hover { background: #f5d9d3; }
+
+.fc-btn--block { width: 100%; }
+.fc-btn--sm { padding: 8px 14px; font-size: 0.85rem; }
+
+.fc-icon-btn {
+  background: var(--fc-surface-sunken);
+  border: 1px solid var(--fc-border);
+  border-radius: var(--fc-radius-sm);
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-decoration: none;
+}
+.fc-icon-btn:hover { background: var(--fc-bg-alt); }
+.fc-icon-btn svg { width: 18px; height: 18px; stroke: var(--fc-ink-soft); }
+.fc-icon-btn--danger svg { stroke: var(--fc-danger); }
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+.fc-field { margin-bottom: 18px; text-align: left; }
+.fc-field label,
+.fc-field > label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--fc-ink);
+  margin-bottom: 6px;
+}
+
+.form-input, .form-select, .form-textarea, .form-control,
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"],
+select, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--fc-radius-sm);
+  border: 1px solid var(--fc-border-strong);
+  background: var(--fc-surface-sunken);
+  font-family: var(--fc-font-body);
+  font-size: 0.96rem;
+  color: var(--fc-ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.form-textarea, textarea { resize: vertical; min-height: 100px; }
+
+.form-input:focus, .form-select:focus, .form-textarea:focus, .form-control:focus,
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--fc-rust-600);
+  box-shadow: 0 0 0 3px var(--fc-rust-100);
+  background: var(--fc-surface);
+}
+
+.errorlist { list-style: none; color: var(--fc-danger); font-size: 0.85rem; margin-top: 4px; }
+.help-text { color: var(--fc-ink-mute); font-size: 0.85rem; margin-top: 4px; }
+
+/* ============================================================
+   CARDS / SECTIONS / SURFACES
+   ============================================================ */
+.fc-card {
+  background: var(--fc-surface);
+  border-radius: var(--fc-radius-lg);
+  box-shadow: var(--fc-shadow-sm);
+  border: 1px solid var(--fc-border);
+}
+
+.fc-section {
+  background: var(--fc-surface-sunken);
+  border: 1px solid var(--fc-border);
+  border-radius: var(--fc-radius);
+  padding: 20px 18px;
+  margin-bottom: 22px;
+}
+.fc-section-title {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--fc-font-display);
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--fc-ink);
+  margin-bottom: 14px;
+}
+.fc-section-title svg { width: 20px; height: 20px; stroke: var(--fc-rust-600); }
+
+.fc-form-container {
+  max-width: 620px;
+  margin: 0 auto;
+  background: var(--fc-surface);
+  border-radius: var(--fc-radius-lg);
+  box-shadow: var(--fc-shadow-sm);
+  border: 1px solid var(--fc-border);
+  padding: 32px 28px;
+}
+@media (max-width: 640px) {
+  .fc-form-container { padding: 22px 18px; margin: 0 4px; }
+}
+
+/* ============================================================
+   BADGES — "chapa de anilha" (plate tag) para grupo muscular
+   Cores fixas por slug, sem depender de backend.
+   ============================================================ */
+.fc-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--fc-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.fc-tag::before {
+  content: "";
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.fc-tag--default { background: var(--fc-steel-100); color: var(--fc-steel-700); }
+
+.fc-tag--peito        { background: #FBE7E0; color: #A9391F; }
+.fc-tag--costas       { background: #E1EFF2; color: #2C5C68; }
+.fc-tag--ombro        { background: #FBF1E0; color: #A66A0C; }
+.fc-tag--biceps       { background: #E9E4F5; color: #5B3EA6; }
+.fc-tag--triceps      { background: #E4F4EA; color: #226B45; }
+.fc-tag--antebraco    { background: #F5E9DC; color: #8A5A2A; }
+.fc-tag--perna        { background: #FBEAE7; color: #A6392C; }
+.fc-tag--gluteo       { background: #F0E6F2; color: #7A3E82; }
+.fc-tag--abdomen      { background: #E0F0EE; color: #1F7566; }
+.fc-tag--panturrilha  { background: #EDEEF0; color: #444B52; }
+.fc-tag--trapezio     { background: #E1EFF2; color: #3E7C8C; }
+.fc-tag--cardio       { background: #FDEBEA; color: #C23B2E; }
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+.fc-table-wrap { overflow-x: auto; border-radius: var(--fc-radius-lg); border: 1px solid var(--fc-border); background: var(--fc-surface); }
+.fc-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.fc-table th {
+  text-align: left;
+  font-family: var(--fc-font-display);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fc-ink-soft);
+  background: var(--fc-surface-sunken);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--fc-border);
+}
+.fc-table td { padding: 14px 16px; border-bottom: 1px solid var(--fc-border); color: var(--fc-ink); }
+.fc-table tr:last-child td { border-bottom: none; }
+.fc-table tr:hover td { background: var(--fc-surface-sunken); }
+
+/* ============================================================
+   ALERTS / MESSAGES
+   ============================================================ */
+.fc-alert {
+  padding: 13px 16px;
+  border-radius: var(--fc-radius-sm);
+  margin-bottom: 18px;
+  font-size: 0.92rem;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fc-alert--success { background: var(--fc-success-bg); color: var(--fc-success); border-color: #bfe3cd; }
+.fc-alert--error   { background: var(--fc-danger-bg);  color: var(--fc-danger);  border-color: #f0c3ba; }
+.fc-alert--info    { background: var(--fc-steel-50);   color: var(--fc-steel-700); border-color: var(--fc-steel-100); }
+.fc-alert--warning { background: var(--fc-warning-bg); color: var(--fc-warning); border-color: #f0dcae; }
+
+/* ============================================================
+   EMPTY STATES
+   ============================================================ */
+.fc-empty {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--fc-ink-mute);
+}
+.fc-empty svg { width: 56px; height: 56px; stroke: var(--fc-border-strong); margin-bottom: 16px; }
+.fc-empty-title { font-family: var(--fc-font-display); font-size: 1.1rem; text-transform: uppercase; color: var(--fc-ink-soft); margin-bottom: 6px; }
+.fc-empty-text { font-size: 0.92rem; }
+
+/* ============================================================
+   AUTH SCREENS (login / register)
+   ============================================================ */
+.fc-auth-shell {
+  min-height: 100vh;
+  display: flex;
+  background: var(--fc-graphite-900);
+}
+.fc-auth-visual {
+  flex: 1.1;
+  background:
+    linear-gradient(160deg, rgba(20,23,26,0.4), rgba(20,23,26,0.92)),
+    repeating-linear-gradient(135deg, rgba(200,67,42,0.06) 0px, rgba(200,67,42,0.06) 2px, transparent 2px, transparent 26px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px;
+  color: var(--fc-chalk);
+  position: relative;
+}
+.fc-auth-visual-top { display: flex; align-items: center; gap: 12px; }
+.fc-auth-visual-headline {
+  font-family: var(--fc-font-display);
+  font-size: 2.6rem;
+  line-height: 1.08;
+  text-transform: uppercase;
+  max-width: 460px;
+}
+.fc-auth-visual-headline span { color: var(--fc-rust-500); }
+.fc-auth-visual-foot { font-size: 0.85rem; color: var(--fc-chalk-soft); max-width: 420px; line-height: 1.5; }
+
+.fc-auth-panel {
+  flex: 1;
+  min-width: 380px;
+  max-width: 480px;
+  background: var(--fc-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+.fc-auth-card { width: 100%; max-width: 360px; }
+.fc-auth-eyebrow {
+  font-family: var(--fc-font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fc-rust-600);
+  margin-bottom: 8px;
+}
+.fc-auth-title {
+  font-family: var(--fc-font-display);
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.fc-auth-subtitle { color: var(--fc-ink-soft); font-size: 0.95rem; margin-bottom: 28px; }
+.fc-auth-form { display: flex; flex-direction: column; gap: 16px; }
+.fc-auth-foot { margin-top: 22px; text-align: center; font-size: 0.9rem; color: var(--fc-ink-soft); }
+.fc-auth-foot a { color: var(--fc-rust-600); font-weight: 600; text-decoration: none; }
+.fc-auth-foot a:hover { text-decoration: underline; }
+
+@media (max-width: 900px) {
+  .fc-auth-visual { display: none; }
+  .fc-auth-panel { max-width: none; min-width: 0; width: 100%; background: var(--fc-bg); }
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.fc-mono { font-family: var(--fc-font-mono); }
+.fc-flex { display: flex; }
+.fc-flex-between { display: flex; align-items: center; justify-content: space-between; }
+.fc-gap-8 { gap: 8px; } .fc-gap-12 { gap: 12px; } .fc-gap-16 { gap: 16px; }
+.fc-mb-0 { margin-bottom: 0 !important; }
