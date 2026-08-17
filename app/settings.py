@@ -114,7 +114,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
     'accounts',
@@ -193,8 +192,6 @@ MEDIA_URL = '/media/'
 CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
 
 
-
-
 if CLOUDINARY_URL:
     import cloudinary
     cloudinary.config(cloudinary_url=CLOUDINARY_URL)
@@ -204,7 +201,7 @@ if CLOUDINARY_URL:
             "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
     STATICFILES_STORAGE = STORAGES["staticfiles"]["BACKEND"]
@@ -215,13 +212,11 @@ else:
             "BACKEND": "django.core.files.storage.FileSystemStorage",
         },
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
     STATICFILES_STORAGE = STORAGES["staticfiles"]["BACKEND"]
     print("⚠️ CLOUDINARY_URL não definida — usando armazenamento local")
-
-
 
 
 
