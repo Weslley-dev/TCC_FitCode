@@ -1,689 +1,234 @@
 {% extends 'user_base.html' %}
 
 {% block title %}{{ aparelho.exercise_name }} - FitCode{% endblock %}
+{% block topbar_title %}{{ aparelho.exercise_name }}{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Reset e base */
-    * {
-        box-sizing: border-box;
+    .fc-qr-back-btn {
+        position: fixed; top: 20px; left: 20px; z-index: 1000; width: 42px; height: 42px;
+        background: var(--fc-surface); border: 1px solid var(--fc-border); border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; text-decoration: none;
+        color: var(--fc-ink-soft); box-shadow: var(--fc-shadow-sm); transition: all 0.2s ease;
     }
-    
-    .exercise-detail-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
+    .fc-qr-back-btn:hover { background: var(--fc-rust-50); color: var(--fc-rust-600); transform: scale(1.08); }
+    .fc-qr-back-btn svg { width: 20px; height: 20px; }
+
+    .fc-qr-card { padding: 24px; }
+    .fc-qr-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+    .fc-qr-title-group { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .fc-qr-icon { width: 42px; height: 42px; background: var(--fc-rust-50); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .fc-qr-icon svg { width: 22px; height: 22px; stroke: var(--fc-rust-600); }
+    .fc-qr-title-text { font-family: var(--fc-font-display); font-size: 1.3rem; text-transform: uppercase; color: var(--fc-ink); margin: 0; line-height: 1.2; }
+
+    .fc-qr-video-section { margin-bottom: 20px; }
+    .fc-qr-video-container { position: relative; width: 100%; border-radius: var(--fc-radius); overflow: hidden; background: #000; aspect-ratio: 16/9; }
+    .fc-qr-video-player { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform 0.2s ease; }
+    .fc-qr-video-placeholder { background: var(--fc-surface-sunken); border: 2px dashed var(--fc-border-strong); border-radius: var(--fc-radius); padding: 40px 20px; text-align: center; color: var(--fc-ink-mute); display: flex; flex-direction: column; align-items: center; justify-content: center; aspect-ratio: 16/9; }
+    .fc-qr-video-placeholder svg { width: 44px; height: 44px; stroke: var(--fc-border-strong); margin-bottom: 10px; }
+
+    .fc-qr-instructions-section { margin-bottom: 20px; }
+    .fc-qr-instructions-content { background: var(--fc-surface-sunken); border: 1px solid var(--fc-border); border-radius: var(--fc-radius-sm); padding: 16px; margin-top: 12px; display: none; }
+    .fc-qr-instructions-content.show { display: block; animation: fcFadeIn 0.25s ease; }
+    @keyframes fcFadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .fc-qr-instructions-text { font-size: 0.95rem; line-height: 1.55; color: var(--fc-ink-soft); margin: 0; }
+
+    .fc-qr-action-buttons { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+    .fc-qr-btn {
+        border: none; border-radius: var(--fc-radius-sm); padding: 13px 16px; font-size: 0.95rem; font-weight: 600;
+        cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        transition: all 0.2s ease; text-decoration: none; min-height: 46px; width: 100%;
     }
-    
-    /* Botão de voltar discreto */
-    .back-btn {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 1000;
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid #e3e6ee;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        color: #666;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        backdrop-filter: blur(10px);
-    }
-    
-    .back-btn:hover {
-        background: #fff;
-        color: #1976d2;
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        text-decoration: none;
-    }
-    
-    .back-btn svg {
-        width: 20px;
-        height: 20px;
-    }
-    
-    /* Card principal do exercício - estilo igual à lista */
-    .exercise-card {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 1px 6px rgba(0,0,0,0.1);
-        padding: 20px;
-        margin-bottom: 20px;
-        border: 1px solid #e3e6ee;
-        transition: all 0.3s ease;
-    }
-    
-    .exercise-card:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        transform: translateY(-2px);
-    }
-    
-    /* Header do card - estilo igual à lista */
-    .card-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-            margin-bottom: 16px; 
-        flex-wrap: wrap;
-            gap: 12px; 
-        }
-    
-    .card-title {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex: 1;
-    }
-    
-    .card-title-icon {
-        width: 40px;
-        height: 40px;
-        background: #ffe066;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-    
-    .card-title-text {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #222;
-        margin: 0;
-        line-height: 1.2;
-    }
-    
-    .grupo-muscular-tag { 
-        background: #e3f2fd; 
-        color: #1976d2; 
-        padding: 6px 12px;
-        border-radius: 16px; 
-        font-size: 0.85rem; 
-        font-weight: 600; 
-        border: 1px solid #bbdefb;
-        white-space: nowrap;
-    }
-    
-    /* Seção de vídeo - estilo compacto */
-    .video-section {
-        margin-bottom: 20px;
-    }
-    
-    .video-container {
-        position: relative;
-        width: 100%;
-        border-radius: 8px;
-        overflow: hidden;
-        background: #000;
-        aspect-ratio: 16/9;
-    }
-    
-    .video-player {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-    }
-    
-    .video-player:hover {
-        transform: scale(1.02);
-    }
-    
-    .video-placeholder { 
-        background: #f7f8fa; 
-        border: 2px dashed #e3e6ee;
-        border-radius: 8px;
-        padding: 40px 20px;
-        text-align: center;
-        color: #888;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        aspect-ratio: 16/9;
-    }
-    
-    .video-placeholder-icon {
-        width: 48px; 
-        height: 48px; 
-        color: #ccc; 
-        margin-bottom: 12px; 
-    }
-    
-    .video-placeholder-text { 
-        font-size: 0.9rem; 
-        color: #999; 
-    }
-    
-    /* Seção de instruções - estilo compacto */
-    .instructions-section {
-        margin-bottom: 20px;
-    }
-    
-    .instructions-content {
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        padding: 16px;
-        margin-top: 12px;
-        display: none;
-        animation: fadeIn 0.3s ease;
-    }
-    
-    .instructions-content.show {
-        display: block;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .instructions-text {
-        font-size: 0.95rem;
-        line-height: 1.5;
-        color: #444;
-        margin: 0;
-    }
-    
-    /* Botões de ação - estilo igual à lista */
-    .action-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-top: 16px;
-    }
-    
-    .btn {
-        border: none;
-        border-radius: 8px;
-        padding: 12px 16px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        min-height: 44px;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none !important;
-    }
-    
-    .btn-primary {
-        background: #1976d2;
-        color: white;
-        width: 100%;
-    }
-    
-    .btn-primary:hover:not(:disabled) {
-        background: #1565c0;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
-    }
-    
-    .btn-secondary {
-        background: #f5f5f5;
-        color: #666;
-        border: 1px solid #ddd;
-        width: 100%;
-    }
-    
-    .btn-secondary:hover:not(:disabled) {
-        background: #e0e0e0;
-        color: #333;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .btn-info {
-        background: #6c757d;
-        color: white;
-        width: 100%;
-    }
-    
-    .btn-info:hover:not(:disabled) {
-        background: #5a6268;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-    }
-    
-    .btn svg {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-    }
-    
-    /* Loading spinner */
-    .loading-spinner {
-        width: 18px;
-        height: 18px;
-        border: 2px solid transparent;
-        border-top: 2px solid currentColor;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    /* Mensagens temporárias */
-    .temporary-message {
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        padding: 12px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        z-index: 10000;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-        animation: slideInRight 0.3s ease;
-        max-width: 280px;
-        font-size: 0.9rem;
-    }
-    
-    .temporary-message.success {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-    
-    .temporary-message.error {
-        background: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-    
-    @keyframes slideInRight {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    
-    @keyframes slideOutRight {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-    
-    /* Responsividade */
-    @media (max-width: 768px) {
-        .exercise-detail-container {
-            padding: 16px;
-        }
-        
-        .back-btn {
-            top: 15px;
-            left: 15px;
-            width: 36px;
-            height: 36px;
-        }
-        
-        .back-btn svg {
-            width: 18px;
-            height: 18px;
-        }
-        
-        .exercise-card {
-            padding: 16px;
-        }
-        
-        .card-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-        }
-        
-        .card-title-text {
-            font-size: 1.2rem;
-        }
-        
-        .video-container {
-            aspect-ratio: 16/9;
-        }
-        
-        .temporary-message {
-            right: 10px;
-            left: 10px;
-            max-width: none;
-        }
-    }
-    
+    .fc-qr-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .fc-qr-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .fc-qr-btn--primary { background: var(--fc-rust-600); color: #fff; }
+    .fc-qr-btn--primary:hover:not(:disabled) { background: var(--fc-rust-700); }
+    .fc-qr-btn--secondary { background: var(--fc-surface-sunken); color: var(--fc-ink); border: 1px solid var(--fc-border-strong); }
+    .fc-qr-btn--secondary:hover:not(:disabled) { background: var(--fc-bg-alt); }
+    .fc-qr-btn--info { background: var(--fc-graphite-800); color: var(--fc-chalk); }
+    .fc-qr-btn--info:hover:not(:disabled) { background: var(--fc-graphite-700); }
+
+    .fc-loading-spinner { width: 18px; height: 18px; border: 2px solid transparent; border-top: 2px solid currentColor; border-radius: 50%; animation: fcSpin 1s linear infinite; }
+    @keyframes fcSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .fc-temporary-message { position: fixed; top: 80px; right: 20px; padding: 12px 20px; border-radius: var(--fc-radius-sm); font-weight: 600; z-index: 10000; box-shadow: var(--fc-shadow-lg); max-width: 280px; font-size: 0.9rem; }
+    .fc-temporary-message.success { background: var(--fc-success-bg); color: var(--fc-success); border: 1px solid #bfe3cd; }
+    .fc-temporary-message.error { background: var(--fc-danger-bg); color: var(--fc-danger); border: 1px solid #f0c3ba; }
+
     @media (max-width: 480px) {
-        .exercise-card {
-            padding: 14px;
-        }
-        
-        .card-title-text {
-            font-size: 1.1rem;
-        }
-        
-        .btn {
-            padding: 10px 14px;
-            font-size: 0.9rem;
-            min-height: 40px;
-        }
-        
-        .btn svg {
-            width: 16px;
-            height: 16px;
-        }
+        .fc-temporary-message { right: 10px; left: 10px; max-width: none; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="exercise-detail-container">
-    <!-- Botão de voltar discreto -->
-    <a href="{% url 'user_exercises_list' %}" class="back-btn" title="Voltar para lista de exercícios">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
+    <a href="{% url 'user_exercises_list' %}" class="fc-qr-back-btn" title="Voltar para lista de exercícios">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     </a>
-    
-    <!-- Card principal do exercício -->
-    <div class="exercise-card">
-        <!-- Header do exercício -->
-        <div class="card-header">
-            <div class="card-title">
-                <div class="card-title-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M8 12h8M12 8v8"/>
-                </svg>
+
+    <div class="fc-card fc-qr-card">
+        <div class="fc-qr-header">
+            <div class="fc-qr-title-group">
+                <div class="fc-qr-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 12h8M12 8v8"/></svg>
                 </div>
-                <h1 class="card-title-text">{{ aparelho.exercise_name }}</h1>
+                <h1 class="fc-qr-title-text">{{ aparelho.exercise_name }}</h1>
             </div>
-                {% if aparelho.grupo_muscular %}
-                <span class="grupo-muscular-tag">{{ aparelho.grupo_muscular.name }}</span>
-                {% endif %}
+            {% if aparelho.grupo_muscular %}
+            <span class="fc-tag fc-tag--{{ aparelho.grupo_muscular.name|slugify }}">{{ aparelho.grupo_muscular.name }}</span>
+            {% endif %}
         </div>
-        
-        <!-- Seção de vídeo -->
-            {% if aparelho.video %}
-        <div class="video-section">
-                <div class="video-container">
-                <video class="video-player" controls preload="metadata">
+
+        {% if aparelho.video %}
+        <div class="fc-qr-video-section">
+            <div class="fc-qr-video-container">
+                <video class="fc-qr-video-player" controls preload="metadata">
                     <source src="{{ aparelho.video.url }}" type="video/mp4">
                     <source src="{{ aparelho.video.url }}" type="video/webm">
                     <source src="{{ aparelho.video.url }}" type="video/ogg">
                     Seu navegador não suporta a reprodução de vídeo.
                 </video>
-                </div>
+            </div>
         </div>
         {% endif %}
-        
-        <!-- Seção de instruções -->
+
         {% if aparelho.instructions %}
-        <div class="instructions-section">
-            <button class="btn btn-info" onclick="toggleInstructions()" id="instructions-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                    <path d="M12 17h.01"/>
-                    </svg>
+        <div class="fc-qr-instructions-section">
+            <button class="fc-qr-btn fc-qr-btn--info" onclick="toggleInstructions()" id="instructions-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
                 <span id="instructions-text">Ver Instruções</span>
-                </button>
-            
-            <div class="instructions-content" id="instructions-content">
-                <p class="instructions-text">{{ aparelho.instructions }}</p>
+            </button>
+
+            <div class="fc-qr-instructions-content" id="instructions-content">
+                <p class="fc-qr-instructions-text">{{ aparelho.instructions }}</p>
             </div>
         </div>
         {% endif %}
-        
-        <!-- Botões de ação -->
-        <div class="action-buttons">
-            <button class="btn btn-primary" onclick="countVisualization({{ aparelho.pk }})" id="visualization-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                    </svg>
+
+        <div class="fc-qr-action-buttons">
+            <button class="fc-qr-btn fc-qr-btn--primary" onclick="countVisualization({{ aparelho.pk }})" id="visualization-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 <span id="visualization-text">Contar Visualização</span>
-                </button>
-                
-            <a href="{% url 'user_feedback' aparelho.pk %}" class="btn btn-secondary">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                        <path d="M8 9h8"/>
-                        <path d="M8 13h6"/>
-                    </svg>
+            </button>
+
+            <a href="{% url 'user_feedback' aparelho.pk %}" class="fc-qr-btn fc-qr-btn--secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/></svg>
                 {% if user_feedback %}Atualizar Feedback{% else %}Enviar Feedback{% endif %}
-                </a>
-            </div>
+            </a>
         </div>
     </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Estado global para controle de processamento
-const ProcessingState = {
-    isProcessing: false,
-    cooldownTime: 0,
-    cooldownInterval: null
-};
+const ProcessingState = { isProcessing: false, cooldownTime: 0, cooldownInterval: null };
 
-// Inicialização quando o DOM estiver carregado
-    document.addEventListener('DOMContentLoaded', function() {
-    console.log('Página carregada com sucesso');
-    
-    // Configurar vídeos
+document.addEventListener('DOMContentLoaded', function() {
     setupVideos();
-    
-    // Verificar se há cooldown ativo
-    checkActiveCooldown();
 });
 
-// Configurar comportamento dos vídeos
 function setupVideos() {
-        const videos = document.querySelectorAll('.video-player');
-        
-        videos.forEach(video => {
-        // Pausar outros vídeos quando um começar a tocar
-            video.addEventListener('play', function() {
-                videos.forEach(otherVideo => {
-                    if (otherVideo !== video && !otherVideo.paused) {
-                        otherVideo.pause();
-                    }
-                });
-            });
-            
-        // Efeitos de hover
-            video.addEventListener('mouseenter', function() {
-            if (!this.paused) {
-                this.style.transform = 'scale(1.02)';
-            }
-            });
-            
-            video.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1)';
-            });
+    const videos = document.querySelectorAll('.fc-qr-video-player');
+    videos.forEach(video => {
+        video.addEventListener('play', function() {
+            videos.forEach(other => { if (other !== video && !other.paused) other.pause(); });
         });
+    });
 }
 
-// Função para alternar instruções
 function toggleInstructions() {
     const content = document.getElementById('instructions-content');
     const button = document.getElementById('instructions-btn');
     const text = document.getElementById('instructions-text');
-    
-    if (!content || !button || !text) {
-        console.error('Elementos de instruções não encontrados');
-        return;
-    }
-    
+    if (!content || !button || !text) return;
+
     const isVisible = content.classList.contains('show');
-    
     if (isVisible) {
         content.classList.remove('show');
         text.textContent = 'Ver Instruções';
-        button.style.background = 'linear-gradient(135deg, #17a2b8, #138496)';
-        } else {
+        button.classList.remove('fc-qr-btn--secondary');
+        button.classList.add('fc-qr-btn--info');
+    } else {
         content.classList.add('show');
         text.textContent = 'Ocultar Instruções';
-        button.style.background = 'linear-gradient(135deg, #6c757d, #5a6268)';
+        button.classList.remove('fc-qr-btn--info');
+        button.classList.add('fc-qr-btn--secondary');
     }
 }
 
-// Função principal para contar visualização
-    function countVisualization(aparelhoId) {
-    console.log('Tentativa de contar visualização para aparelho:', aparelhoId);
-    
-    // Verificar se já está processando
+function countVisualization(aparelhoId) {
     if (ProcessingState.isProcessing) {
-        console.log('Já está processando uma visualização');
         showMessage('Aguarde o processamento anterior terminar', 'error');
         return;
     }
-    
-    // Verificar cooldown
     if (ProcessingState.cooldownTime > 0) {
-        console.log('Ainda em cooldown:', ProcessingState.cooldownTime, 'segundos');
         showMessage(`Aguarde ${formatTime(ProcessingState.cooldownTime)} para contar novamente`, 'error');
         return;
     }
-    
-    // Iniciar processamento
     startProcessing(aparelhoId);
 }
 
-// Iniciar processamento da visualização
 function startProcessing(aparelhoId) {
     const button = document.getElementById('visualization-btn');
     const text = document.getElementById('visualization-text');
-    
-    if (!button || !text) {
-        console.error('Elementos do botão não encontrados');
-            return;
-        }
-        
-    // Marcar como processando
+    if (!button || !text) return;
+
     ProcessingState.isProcessing = true;
-    
-    // Atualizar botão
-        button.disabled = true;
-    button.style.opacity = '0.7';
-    text.innerHTML = '<div class="loading-spinner"></div> Processando...';
-        
-    // Fazer requisição
-            fetch(`/aparelhos/user/visualizacao/${aparelhoId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json',
-                },
-            })
+    button.disabled = true;
+    text.innerHTML = '<div class="fc-loading-spinner"></div> Processando...';
+
+    fetch(`/aparelhos/user/visualizacao/${aparelhoId}/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' },
+    })
     .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         return response.json();
     })
-            .then(data => {
-        console.log('Resposta do servidor:', data);
-        
-                if (data.success) {
-            // Sucesso
-            handleSuccess(data, aparelhoId);
-                } else {
-            // Erro ou cooldown
-            handleError(data, aparelhoId);
-                }
-            })
-            .catch(error => {
-        console.error('Erro na requisição:', error);
-        handleRequestError(error, aparelhoId);
-    });
+    .then(data => {
+        if (data.success) handleSuccess(data);
+        else handleError(data);
+    })
+    .catch(error => handleRequestError());
 }
 
-// Tratar sucesso
-function handleSuccess(data, aparelhoId) {
+function handleSuccess(data) {
     const button = document.getElementById('visualization-btn');
     const text = document.getElementById('visualization-text');
-    
-    // Atualizar botão
     text.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg> Visualização Contada!';
-    button.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
-    
-    // Mostrar mensagem
+    button.classList.remove('fc-qr-btn--primary');
+    button.style.background = '#2E7D4F';
     showMessage(data.message || 'Visualização contada com sucesso!', 'success');
-    
-    // Atualizar estatísticas
-    updateStats(data.count);
-    
-    // Iniciar cooldown
-    startCooldown(90); // 1min30s
+    startCooldown(90);
 }
 
-// Tratar erro
-function handleError(data, aparelhoId) {
+function handleError(data) {
     const button = document.getElementById('visualization-btn');
     const text = document.getElementById('visualization-text');
-    
-    // Atualizar botão
     text.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Aguarde...';
-    button.style.background = 'linear-gradient(135deg, #ffc107, #fd7e14)';
-    
-    // Mostrar mensagem
+    button.style.background = '#B4740E';
     showMessage(data.message || 'Aguarde antes de contar novamente', 'error');
-    
-    // Iniciar cooldown
-    const cooldownTime = data.cooldown || 90;
-    startCooldown(cooldownTime);
+    startCooldown(data.cooldown || 90);
 }
 
-// Tratar erro de requisição
-function handleRequestError(error, aparelhoId) {
+function handleRequestError() {
     const button = document.getElementById('visualization-btn');
     const text = document.getElementById('visualization-text');
-    
-    // Restaurar botão
     text.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Contar Visualização';
-                button.disabled = false;
-                button.style.opacity = '1';
-    button.style.background = 'linear-gradient(135deg, #1976d2, #1565c0)';
-    
-    // Mostrar mensagem de erro
+    button.disabled = false;
+    button.style.background = '';
     showMessage('Erro ao contar visualização. Tente novamente.', 'error');
-    
-    // Resetar estado
     ProcessingState.isProcessing = false;
 }
 
-// Iniciar cooldown
 function startCooldown(seconds) {
     ProcessingState.cooldownTime = seconds;
     ProcessingState.isProcessing = false;
-    
-    // Limpar intervalo anterior
-    if (ProcessingState.cooldownInterval) {
-        clearInterval(ProcessingState.cooldownInterval);
-    }
-    
-    // Atualizar botão
+    if (ProcessingState.cooldownInterval) clearInterval(ProcessingState.cooldownInterval);
     updateCooldownButton();
-    
-    // Iniciar contador
     ProcessingState.cooldownInterval = setInterval(() => {
         ProcessingState.cooldownTime--;
         updateCooldownButton();
-        
         if (ProcessingState.cooldownTime <= 0) {
             clearInterval(ProcessingState.cooldownInterval);
             resetButton();
@@ -691,103 +236,63 @@ function startCooldown(seconds) {
     }, 1000);
 }
 
-// Atualizar botão durante cooldown
 function updateCooldownButton() {
     const button = document.getElementById('visualization-btn');
     const text = document.getElementById('visualization-text');
-    
     if (!button || !text) return;
-    
-    const timeString = formatTime(ProcessingState.cooldownTime);
-    text.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Aguarde ${timeString}`;
-    button.style.background = 'linear-gradient(135deg, #6c757d, #5a6268)';
+    text.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Aguarde ${formatTime(ProcessingState.cooldownTime)}`;
+    button.style.background = '#565D66';
 }
 
-// Resetar botão
 function resetButton() {
     const button = document.getElementById('visualization-btn');
     const text = document.getElementById('visualization-text');
-    
     if (!button || !text) return;
-    
-                button.disabled = false;
-                button.style.opacity = '1';
-    button.style.background = 'linear-gradient(135deg, #1976d2, #1565c0)';
+    button.disabled = false;
+    button.style.background = '';
     text.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Contar Visualização';
-    
     ProcessingState.isProcessing = false;
     ProcessingState.cooldownTime = 0;
 }
 
-    // Atualizar estatísticas (removido - não exibir para usuários)
-    function updateStats(count) {
-        // Estatísticas não são exibidas para usuários
-        console.log('Visualização contada:', count);
-    }
-
-// Mostrar mensagem temporária
 function showMessage(message, type = 'success') {
-    // Remover mensagem anterior
-        const existingMessage = document.querySelector('.temporary-message');
-        if (existingMessage) {
-            existingMessage.remove();
-        }
-        
-        // Criar nova mensagem
-        const messageDiv = document.createElement('div');
-    messageDiv.className = `temporary-message ${type}`;
-        messageDiv.textContent = message;
-        
-        document.body.appendChild(messageDiv);
-        
-    // Remover após 4 segundos
-        setTimeout(() => {
-        if (messageDiv.parentNode) {
-            messageDiv.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => {
-                if (messageDiv.parentNode) {
-                    messageDiv.remove();
-                }
-            }, 300);
-        }
+    const existing = document.querySelector('.fc-temporary-message');
+    if (existing) existing.remove();
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `fc-temporary-message ${type}`;
+    messageDiv.textContent = message;
+    document.body.appendChild(messageDiv);
+    setTimeout(() => {
+        if (messageDiv.parentNode) messageDiv.remove();
     }, 4000);
 }
 
-// Formatar tempo
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 }
 
-// Verificar cooldown ativo (para recarregamento da página)
-function checkActiveCooldown() {
-    // Implementar lógica para verificar cooldown persistente se necessário
-    console.log('Verificando cooldown ativo...');
-}
-
-// Obter CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
         }
-        return cookieValue;
     }
+    return cookieValue;
+}
 
-// Prevenir múltiplos cliques
 let lastClickTime = 0;
 document.addEventListener('click', function(e) {
     if (e.target.closest('#visualization-btn')) {
         const now = Date.now();
-        if (now - lastClickTime < 1000) { // 1 segundo entre cliques
+        if (now - lastClickTime < 1000) {
             e.preventDefault();
             e.stopPropagation();
             return false;

@@ -1,693 +1,309 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Lista de Exercícios - FitCode{% endblock %}
+{% block topbar_title %}Exercícios{% endblock %}
 
 {% block extra_css %}
 <style>
-        .page-header { margin-bottom: 32px; }
-        .page-title { font-size: 2rem; font-weight: 700; color: #222; margin-bottom: 8px; }
-        .page-subtitle { color: #666; font-size: 1.1rem; }
-        .filters-container { display: flex; gap: 16px; margin-bottom: 28px; align-items: center; }
-        .search-box { display: flex; align-items: center; background: #f4f6fa; border-radius: 8px; padding: 10px 16px; border: 1px solid #e3e6ee; flex: 1; }
-        .search-box input { border: none; background: transparent; font-size: 1rem; width: 100%; outline: none; }
-        .search-box svg { width: 20px; height: 20px; color: #bbb; margin-right: 8px; }
-        
-        /* Estilos para o filtro dropdown */
-        .filter-dropdown { position: relative; }
-        .filter-btn { 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            background: #fff; 
-            border: 1px solid #e3e6ee; 
-            border-radius: 8px; 
-            padding: 10px 16px; 
-            font-size: 1rem; 
-            color: #222; 
-            cursor: pointer; 
-            transition: all 0.2s ease;
-            min-width: 180px;
-        }
-        .filter-btn:hover { 
-            background: #f8f9fa; 
-            border-color: #d1d5db; 
-        }
-        .filter-btn svg { width: 20px; height: 20px; color: #666; }
-        .dropdown-arrow { 
-            width: 16px; 
-            height: 16px; 
-            color: #999; 
-            margin-left: auto; 
-            transition: transform 0.2s ease; 
-        }
-        .filter-btn.active .dropdown-arrow { 
-            transform: rotate(180deg); 
-        }
-        .filter-options { 
-            position: absolute; 
-            top: 100%; 
-            left: 0; 
-            right: 0; 
-            background: #fff; 
-            border: 1px solid #e3e6ee; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-            z-index: 1000; 
-            display: none; 
-            margin-top: 4px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .filter-options.show { 
-            display: block; 
-        }
-        .filter-option { 
-            display: block; 
-            padding: 12px 16px; 
-            color: #222; 
-            text-decoration: none; 
-            transition: background-color 0.2s ease; 
-            border-bottom: 1px solid #f1f3f4;
-        }
-        .filter-option:last-child { 
-            border-bottom: none; 
-        }
-        .filter-option:hover { 
-            background: #f8f9fa; 
-        }
-        .filter-option.active { 
-            background: #e3f2fd; 
-            color: #1976d2; 
-            font-weight: 600; 
-        }
-        
-        /* Responsividade para filtros */
-        @media (max-width: 768px) {
-            .filters-container { 
-                flex-direction: column; 
-                gap: 12px; 
-            }
-            .filter-btn { 
-                min-width: auto; 
-                width: 100%; 
-                justify-content: center; 
-            }
-        }
-        .aparelho-card { background: #fff; border-radius: 12px; box-shadow: 0 1px 6px #0001; padding: 22px 20px; margin-bottom: 24px; }
-        
-        /* Responsividade para cards */
-        @media (max-width: 768px) {
-            .aparelho-card { 
-                padding: 16px; 
-                margin-bottom: 16px; 
-            }
-            .card-title span { 
-                font-size: 1.1rem; 
-            }
-            .video-player { 
-                height: 180px; 
-            }
-            .card-actions { 
-                flex-wrap: wrap; 
-                gap: 12px; 
-            }
-            .details-btn { 
-                padding: 6px 14px; 
-                font-size: 0.9rem; 
-            }
-            .grupo-muscular-tag { 
-                font-size: 0.8rem; 
-                padding: 3px 10px; 
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .aparelho-card { 
-                padding: 12px; 
-            }
-            .video-player { 
-                height: 160px; 
-            }
-            .card-actions { 
-                flex-direction: row; 
-                align-items: center; 
-                justify-content: space-between; 
-                gap: 8px; 
-            }
-            .details-btn { 
-                flex: 1; 
-                justify-content: center; 
-                margin-right: 8px; 
-            }
-            .card-actions .icon-btn { 
-                flex-shrink: 0; 
-                width: 40px; 
-                height: 40px; 
-                display: flex; 
-                align-items: center; 
-                justify-content: center; 
-                border-radius: 8px; 
-                background: #f8f9fa; 
-                border: 1px solid #e3e6ee; 
-            }
-            .card-actions .icon-btn:hover { 
-                background: #e9ecef; 
-            }
-            .card-actions .icon-btn svg { 
-                width: 18px; 
-                height: 18px; 
-            }
-            .card-header { 
-                flex-direction: column; 
-                align-items: flex-start; 
-                gap: 12px; 
-            }
-            .card-actions-header { 
-                width: 100%; 
-                justify-content: space-between; 
-            }
-            .grupo-muscular-tag { 
-                font-size: 0.75rem; 
-                padding: 2px 8px; 
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .aparelho-card { 
-                padding: 10px; 
-            }
-            .video-player { 
-                height: 140px; 
-            }
-            .card-title span { 
-                font-size: 1rem; 
-            }
-            .details-btn { 
-                padding: 8px 12px; 
-                font-size: 0.85rem; 
-            }
-        }
-        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .card-title { display: flex; align-items: center; gap: 8px; }
-        .card-title svg { width: 28px; height: 28px; background: #ffe066; border-radius: 50%; padding: 4px; }
-        .card-title span { font-size: 1.2rem; font-weight: 600; color: #222; }
-        .card-actions-header { display: flex; align-items: center; gap: 12px; }
-        .grupo-muscular-tag { 
-            background: #e3f2fd; 
-            color: #1976d2; 
-            padding: 4px 12px; 
-            border-radius: 16px; 
-            font-size: 0.85rem; 
-            font-weight: 600; 
-            border: 1px solid #bbdefb;
-        }
-        .card-header .qr { width: 22px; height: 22px; color: #bbb; }
-        .card-header .qr.qr-clickable { 
-            color: #1976d2; 
-            transition: all 0.2s ease;
-        }
-        .card-header .qr.qr-clickable:hover { 
-            color: #1565c0; 
-            transform: scale(1.1);
-        }
-        .video-box { background: #f7f8fa; border-radius: 10px; padding: 16px; margin-bottom: 12px; border: 1px solid #e3e6ee; }
-        .video-box svg { width: 48px; height: 48px; color: #ffd43b; margin-bottom: 8px; }
-        .video-label { font-size: 1rem; color: #888; font-weight: 600; margin-bottom: 12px; }
-        
-        /* Estilos para player de vídeo */
-        .video-player { 
-            width: 100%; 
-            max-width: 100%; 
-            height: 300px; 
-            border-radius: 12px; 
-            background: #000; 
-            object-fit: cover;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            aspect-ratio: 16 / 9;
-        }
-        .video-player:hover {
-            transform: scale(1.02);
-        }
-        
-        /* Container do vídeo para controle de aspecto */
-        .video-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            aspect-ratio: 16 / 9;
-        }
-        
-        .video-container .video-player {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        /* Responsividade aprimorada para vídeos */
-        @media (max-width: 1024px) {
-            .video-container {
-                max-width: 450px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .video-container {
-                max-width: 100%;
-                aspect-ratio: 16 / 9;
-            }
-            .video-player { 
-                height: 180px; 
-                aspect-ratio: 16 / 9;
-            }
-            .video-placeholder {
-                max-width: 100%;
-                aspect-ratio: 16 / 9;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .video-player { 
-                height: 160px; 
-            }
-            .video-placeholder {
-                padding: 30px 15px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .video-player { 
-                height: 140px; 
-            }
-            .video-placeholder {
-                padding: 20px 10px;
-            }
-        }
-        .video-placeholder { 
-            background: #f7f8fa; 
-            border-radius: 12px; 
-            padding: 40px 20px; 
-            text-align: center; 
-            border: 2px dashed #e3e6ee;
-            color: #888;
-            aspect-ratio: 16 / 9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        .video-placeholder svg { 
-            width: 48px; 
-            height: 48px; 
-            color: #ccc; 
-            margin-bottom: 12px; 
-        }
-        .video-placeholder-text { 
-            font-size: 0.9rem; 
-            color: #999; 
-        }
-        .card-desc { font-size: 1rem; color: #444; margin-bottom: 12px; }
-        .card-actions { display: flex; align-items: center; gap: 18px; }
-        .details-btn { background: #f7f8fa; border: none; border-radius: 8px; padding: 8px 18px; font-size: 1rem; color: #222; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
-        .details-btn:hover { background: #e9ecef; }
-        .details-btn.active { background: #e3f2fd; color: #1976d2; }
-        .details-btn svg { width: 18px; height: 18px; color: #222; }
-        .details-btn.active svg { color: #1976d2; }
-        .icon-btn { background: none; border: none; cursor: pointer; }
-        .icon-btn svg { width: 20px; height: 20px; color: #e74c3c; }
-        .icon-btn.delete svg { color: #e74c3c; }
-        .icon-btn.edit svg { color: #222; }
-        
-        /* Modal para QR Code */
-        .qr-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        
-        .qr-modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .qr-modal-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #aaa;
-        }
-        
-        .qr-modal-close:hover {
-            color: #000;
-        }
-        
-        .qr-modal-image {
-            max-width: 100%;
-            height: auto;
-            margin: 20px 0;
-        }
-        
-        .qr-modal-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #222;
-            margin-bottom: 10px;
-        }
-        
-        .qr-modal-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        
-        .btn-download {
-            background: #28a745;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: background 0.2s ease;
-        }
-        
-        .btn-download:hover {
-            background: #218838;
-            color: white;
-        }
-        
-        /* Responsividade do modal */
-        @media (min-width: 769px) {
-            .qr-modal-content {
-                margin: 10% auto;
-                max-width: 500px;
-                padding: 30px;
-            }
-            
-            .qr-modal-image {
-                max-width: 300px;
-                margin: 20px auto;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .qr-modal-content {
-                margin: 10% auto;
-                width: 95%;
-                max-width: 400px;
-                padding: 20px;
-            }
-            
-            .qr-modal-image {
-                max-width: 250px;
-                margin: 15px auto;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .qr-modal-content {
-                margin: 5% auto;
-                width: 95%;
-                padding: 15px;
-            }
-            
-            .qr-modal-image {
-                max-width: 200px;
-                margin: 10px auto;
-            }
-            
-            .qr-modal-title {
-                font-size: 1.1rem;
-            }
-        }
+    .fc-filters { display: flex; gap: 14px; margin-bottom: 26px; flex-wrap: wrap; }
+    .fc-search-box {
+        display: flex; align-items: center; gap: 10px;
+        background: var(--fc-surface); border: 1px solid var(--fc-border-strong);
+        border-radius: var(--fc-radius-sm); padding: 11px 16px; flex: 1; min-width: 220px;
+    }
+    .fc-search-box svg { width: 18px; height: 18px; stroke: var(--fc-ink-mute); flex-shrink: 0; }
+    .fc-search-box input { border: none; background: transparent; padding: 0; width: 100%; }
+    .fc-search-box input:focus { outline: none; box-shadow: none; background: transparent; }
+
+    .fc-filter-dropdown { position: relative; }
+    .fc-filter-btn {
+        display: flex; align-items: center; gap: 8px;
+        background: var(--fc-surface); border: 1px solid var(--fc-border-strong);
+        border-radius: var(--fc-radius-sm); padding: 11px 16px; font-size: 0.95rem;
+        color: var(--fc-ink); cursor: pointer; min-width: 200px;
+    }
+    .fc-filter-btn svg { width: 18px; height: 18px; stroke: var(--fc-ink-mute); }
+    .fc-filter-btn .arrow { margin-left: auto; transition: transform 0.2s ease; }
+    .fc-filter-btn.active .arrow { transform: rotate(180deg); }
+    .fc-filter-options {
+        position: absolute; top: 100%; left: 0; right: 0; margin-top: 6px;
+        background: var(--fc-surface); border: 1px solid var(--fc-border);
+        border-radius: var(--fc-radius-sm); box-shadow: var(--fc-shadow); z-index: 100;
+        display: none; max-height: 300px; overflow-y: auto;
+    }
+    .fc-filter-options.show { display: block; }
+    .fc-filter-option { display: block; padding: 11px 16px; color: var(--fc-ink); text-decoration: none; border-bottom: 1px solid var(--fc-border); font-size: 0.92rem; }
+    .fc-filter-option:last-child { border-bottom: none; }
+    .fc-filter-option:hover { background: var(--fc-surface-sunken); }
+    .fc-filter-option.active { background: var(--fc-rust-50); color: var(--fc-rust-700); font-weight: 600; }
+
+    .fc-exercise-card { padding: 22px 22px; margin-bottom: 20px; }
+    .fc-ex-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .fc-ex-title { display: flex; align-items: center; gap: 10px; }
+    .fc-ex-title .fc-icon-badge {
+        width: 32px; height: 32px; border-radius: 50%; background: var(--fc-rust-50);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .fc-ex-title .fc-icon-badge svg { width: 17px; height: 17px; stroke: var(--fc-rust-600); }
+    .fc-ex-title span { font-family: var(--fc-font-display); font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.01em; }
+    .fc-ex-actions-header { display: flex; align-items: center; gap: 12px; }
+    .fc-qr-mini { width: 30px; height: 30px; color: var(--fc-ink-mute); cursor: default; }
+    .fc-qr-mini.clickable { color: var(--fc-steel-600); cursor: pointer; transition: transform 0.15s ease; }
+    .fc-qr-mini.clickable:hover { transform: scale(1.1); color: var(--fc-rust-600); }
+
+    .fc-video-label { font-size: 0.85rem; font-weight: 600; color: var(--fc-ink-mute); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+    .fc-video-container { position: relative; width: 100%; max-width: 520px; margin: 0 auto; aspect-ratio: 16/9; }
+    .fc-video-player { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: var(--fc-radius); background: #000; object-fit: cover; cursor: pointer; }
+    .fc-video-placeholder {
+        background: var(--fc-surface-sunken); border-radius: var(--fc-radius); padding: 40px 20px; text-align: center;
+        border: 2px dashed var(--fc-border-strong); color: var(--fc-ink-mute); aspect-ratio: 16/9;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 520px; margin: 0 auto;
+    }
+    .fc-video-placeholder svg { width: 44px; height: 44px; stroke: var(--fc-border-strong); margin-bottom: 10px; }
+
+    .fc-ex-desc { font-size: 0.95rem; color: var(--fc-ink-soft); margin: 14px 0; line-height: 1.55; }
+    .fc-ex-actions { display: flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: wrap; }
+    .fc-details-btn {
+        background: var(--fc-surface-sunken); border: 1px solid var(--fc-border); border-radius: var(--fc-radius-sm);
+        padding: 9px 18px; font-size: 0.92rem; color: var(--fc-ink); font-weight: 600; cursor: pointer;
+        display: flex; align-items: center; gap: 7px; transition: all 0.15s ease;
+    }
+    .fc-details-btn svg { width: 17px; height: 17px; stroke: currentColor; }
+    .fc-details-btn:hover { background: var(--fc-bg-alt); }
+    .fc-details-btn.active { background: var(--fc-steel-50); color: var(--fc-steel-700); border-color: var(--fc-steel-100); }
+
+    /* Modal QR */
+    .fc-modal { display: none; position: fixed; inset: 0; z-index: 2000; background: rgba(20,23,26,0.6); }
+    .fc-modal-content {
+        background: var(--fc-surface); margin: 6% auto; padding: 28px; border-radius: var(--fc-radius-lg);
+        width: 90%; max-width: 420px; text-align: center; position: relative; max-height: 88vh; overflow-y: auto;
+    }
+    .fc-modal-close { position: absolute; top: 14px; right: 18px; font-size: 26px; font-weight: 700; cursor: pointer; color: var(--fc-ink-mute); line-height: 1; }
+    .fc-modal-close:hover { color: var(--fc-ink); }
+    .fc-modal-title { font-family: var(--fc-font-display); font-size: 1.15rem; text-transform: uppercase; margin-bottom: 6px; }
+    .fc-modal-image { max-width: 240px; width: 100%; height: auto; margin: 18px auto; border-radius: var(--fc-radius-sm); border: 1px solid var(--fc-border); padding: 12px; }
+    .fc-modal-actions { margin-top: 16px; }
 </style>
 {% endblock %}
 
 {% block content %}
-    <div class="page-header">
-        <h1 class="page-title">Lista de Exercícios</h1>
-        <p class="page-subtitle">Gerencie todos os exercícios da academia</p>
+    <div class="fc-page-header">
+        <h1 class="fc-page-title">Lista de Exercícios</h1>
+        <p class="fc-page-subtitle">Gerencie todos os exercícios da academia</p>
     </div>
-    
-    <div class="filters-container">
-    <form class="search-box" method="get">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <input type="text" name="q" placeholder="Buscar exercícios..." value="{{ request.GET.q }}">
+
+    <div class="fc-filters">
+        <form class="fc-search-box" method="get">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" name="q" placeholder="Buscar exercícios..." value="{{ request.GET.q }}">
             <input type="hidden" name="grupo" value="{{ grupo_selecionado }}">
-    </form>
-        
-        <div class="filter-dropdown">
-            <button type="button" class="filter-btn" id="filterBtn">
+        </form>
+
+        <div class="fc-filter-dropdown">
+            <button type="button" class="fc-filter-btn" id="filterBtn">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
                 </svg>
                 <span id="filterText">Filtrar por Grupo</span>
-                <svg class="dropdown-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg class="arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <polyline points="6,9 12,15 18,9"></polyline>
                 </svg>
             </button>
-            <div class="filter-options" id="filterOptions">
-                <a href="?q={{ request.GET.q }}" class="filter-option {% if not grupo_selecionado %}active{% endif %}">
+            <div class="fc-filter-options" id="filterOptions">
+                <a href="?q={{ request.GET.q }}" class="fc-filter-option {% if not grupo_selecionado %}active{% endif %}">
                     Todos os Grupos
                 </a>
                 {% for grupo in grupos %}
-                <a href="?q={{ request.GET.q }}&grupo={{ grupo.id }}" class="filter-option {% if grupo_selecionado == grupo.id|stringformat:'s' %}active{% endif %}">
+                <a href="?q={{ request.GET.q }}&grupo={{ grupo.id }}" class="fc-filter-option {% if grupo_selecionado == grupo.id|stringformat:'s' %}active{% endif %}">
                     {{ grupo.name }}
                 </a>
                 {% endfor %}
             </div>
         </div>
     </div>
-        {% for aparelho in aparelhos %}
-        <div class="aparelho-card">
-            <div class="card-header">
-                <div class="card-title">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="10" fill="#ffe066"/>
-                        <path d="M8 12h8M12 8v8" stroke="#222" stroke-width="2" stroke-linecap="round"/>
+
+    {% if not aparelhos %}
+        <div class="fc-card fc-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="10" width="3" height="4" rx="1"/>
+                <rect x="6" y="7" width="2.5" height="10" rx="1"/>
+                <rect x="15.5" y="7" width="2.5" height="10" rx="1"/>
+                <rect x="19" y="10" width="3" height="4" rx="1"/>
+            </svg>
+            <div class="fc-empty-title">Nenhum exercício encontrado</div>
+            <div class="fc-empty-text">Ajuste os filtros ou cadastre um novo exercício.</div>
+        </div>
+    {% endif %}
+
+    {% for aparelho in aparelhos %}
+    <div class="fc-card fc-exercise-card">
+        <div class="fc-ex-header">
+            <div class="fc-ex-title">
+                <div class="fc-icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 12h8M12 8v8"/>
+                        <circle cx="12" cy="12" r="9"/>
                     </svg>
-                    <span>{{ aparelho.exercise_name }}</span>
                 </div>
-                <div class="card-actions-header">
-                    {% if aparelho.grupo_muscular %}
-                    <span class="grupo-muscular-tag">{{ aparelho.grupo_muscular.name }}</span>
-                    {% endif %}
-                    {% if aparelho.qr_code %}
-                    <svg class="qr qr-clickable" viewBox="0 0 24 24" fill="none" onclick="showQRCode('{{ aparelho.qr_code.url }}', '{{ aparelho.exercise_name }}', {{ aparelho.id }})" style="cursor: pointer;">
-                        <rect x="3" y="3" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
-                        <rect x="15" y="3" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
-                        <rect x="3" y="15" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
-                        <rect x="15" y="15" width="6" height="6" stroke="#1976d2" stroke-width="2"/>
-                    </svg>
-                    {% else %}
-                    <svg class="qr" viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="3" width="6" height="6" stroke="#bbb" stroke-width="2"/>
-                        <rect x="15" y="3" width="6" height="6" stroke="#bbb" stroke-width="2"/>
-                        <rect x="3" y="15" width="6" height="6" stroke="#bbb" stroke-width="2"/>
-                        <rect x="15" y="15" width="6" height="6" stroke="#bbb" stroke-width="2"/>
-                    </svg>
-                    {% endif %}
-                </div>
+                <span>{{ aparelho.exercise_name }}</span>
             </div>
-            <div class="video-box">
-                <div class="video-label">Vídeo do exercício</div>
-                
-                {% if aparelho.video %}
-                    <div class="video-container">
-                    <video class="video-player" controls preload="metadata" poster="">
-                        <source src="{{ aparelho.video.url }}" type="video/mp4">
-                        <source src="{{ aparelho.video.url }}" type="video/avi">
-                        <source src="{{ aparelho.video.url }}" type="video/mov">
-                        <source src="{{ aparelho.video.url }}" type="video/webm">
-                        Seu navegador não suporta a reprodução de vídeo.
-                    </video>
-                    </div>
+            <div class="fc-ex-actions-header">
+                {% if aparelho.grupo_muscular %}
+                <span class="fc-tag fc-tag--{{ aparelho.grupo_muscular.name|slugify }}">{{ aparelho.grupo_muscular.name }}</span>
+                {% endif %}
+                {% if aparelho.qr_code %}
+                <svg class="fc-qr-mini clickable" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     onclick="showQRCode('{{ aparelho.qr_code.url }}', '{{ aparelho.exercise_name }}', {{ aparelho.id }})">
+                    <rect x="3" y="3" width="6" height="6"/>
+                    <rect x="15" y="3" width="6" height="6"/>
+                    <rect x="3" y="15" width="6" height="6"/>
+                    <rect x="15" y="15" width="6" height="6"/>
+                </svg>
                 {% else %}
-                    <div class="video-placeholder">
-                        <svg viewBox="0 0 48 48" fill="none">
-                            <circle cx="24" cy="24" r="22" stroke="#ccc" stroke-width="2" fill="none"/>
-                            <polygon points="20,16 34,24 20,32" fill="#ccc"/>
-                        </svg>
-                        <div class="video-placeholder-text">Nenhum vídeo disponível</div>
-                    </div>
+                <svg class="fc-qr-mini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="6" height="6"/>
+                    <rect x="15" y="3" width="6" height="6"/>
+                    <rect x="3" y="15" width="6" height="6"/>
+                    <rect x="15" y="15" width="6" height="6"/>
+                </svg>
                 {% endif %}
             </div>
-            <div class="card-desc" id="instructions-{{ aparelho.id }}" style="display: none;">{{ aparelho.instructions }}</div>
-            <div class="card-actions">
-                <button class="details-btn" onclick="toggleInstructions('{{ aparelho.id }}')" id="btn-{{ aparelho.id }}">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M12 4.5C7.305 4.5 3.135 7.305 1.5 12c1.635 4.695 5.805 7.5 10.5 7.5s8.865-2.805 10.5-7.5C20.865 7.305 16.695 4.5 12 4.5z" stroke="#222" stroke-width="2"/>
-                        <circle cx="12" cy="12" r="3" stroke="#222" stroke-width="2"/>
+        </div>
+
+        <div class="fc-video-label">Vídeo do exercício</div>
+        {% if aparelho.video %}
+            <div class="fc-video-container">
+                <video class="fc-video-player" controls preload="metadata">
+                    <source src="{{ aparelho.video.url }}" type="video/mp4">
+                    <source src="{{ aparelho.video.url }}" type="video/webm">
+                    Seu navegador não suporta a reprodução de vídeo.
+                </video>
+            </div>
+        {% else %}
+            <div class="fc-video-placeholder">
+                <svg viewBox="0 0 48 48" fill="none">
+                    <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <polygon points="20,16 34,24 20,32" fill="currentColor"/>
+                </svg>
+                <div>Nenhum vídeo disponível</div>
+            </div>
+        {% endif %}
+
+        <div class="fc-ex-desc" id="instructions-{{ aparelho.id }}" style="display: none;">{{ aparelho.instructions }}</div>
+
+        <div class="fc-ex-actions">
+            <button class="fc-details-btn" onclick="toggleInstructions('{{ aparelho.id }}')" id="btn-{{ aparelho.id }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 4.5C7.305 4.5 3.135 7.305 1.5 12c1.635 4.695 5.805 7.5 10.5 7.5s8.865-2.805 10.5-7.5C20.865 7.305 16.695 4.5 12 4.5z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span id="text-{{ aparelho.id }}">Ver Detalhes</span>
+            </button>
+            <a class="fc-icon-btn fc-icon-btn--danger" title="Excluir" href="{% url 'aparelho_delete' aparelho.id %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                </svg>
+            </a>
+            <a class="fc-icon-btn" title="Editar" href="{% url 'aparelho_edit' aparelho.id %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 20h4l10-10a2.828 2.828 0 0 0-4-4L4 16v4z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Modal QR Code -->
+    <div id="qrModal" class="fc-modal">
+        <div class="fc-modal-content">
+            <span class="fc-modal-close" onclick="closeQRCode()">&times;</span>
+            <div class="fc-modal-title" id="qrModalTitle"></div>
+            <img id="qrModalImage" class="fc-modal-image" src="" alt="QR Code">
+            <div class="fc-modal-actions">
+                <a href="#" id="qrDownloadBtn" class="fc-btn fc-btn--primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7,10 12,15 17,10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
                     </svg>
-                    <span id="text-{{ aparelho.id }}">Ver Detalhes</span>
-                </button>
-                <a class="icon-btn delete" title="Excluir" href="{% url 'aparelho_delete' aparelho.id %}">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" stroke="#e74c3c" stroke-width="2"/>
-                        <path d="M10 11v6M14 11v6" stroke="#e74c3c" stroke-width="2"/>
-                    </svg>
-                </a>
-                <a class="icon-btn edit" title="Editar" href="{% url 'aparelho_edit' aparelho.id %}">
-                    <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M4 20h4l10-10a2.828 2.828 0 0 0-4-4L4 16v4z" stroke="#222" stroke-width="2"/>
-                    </svg>
+                    Download QR Code
                 </a>
             </div>
         </div>
-        {% endfor %}
-        
-        <!-- Modal para QR Code -->
-        <div id="qrModal" class="qr-modal">
-            <div class="qr-modal-content">
-                <span class="qr-modal-close" onclick="closeQRCode()">&times;</span>
-                <div class="qr-modal-title" id="qrModalTitle"></div>
-                <img id="qrModalImage" class="qr-modal-image" src="" alt="QR Code">
-                <div class="qr-modal-actions">
-                    <a href="#" id="qrDownloadBtn" class="btn-download">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7,10 12,15 17,10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
-                        </svg>
-                        Download QrCode
-                    </a>
-                </div>
-            </div>
-        </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Pausar todos os outros vídeos quando um vídeo começar a tocar
-            const videos = document.querySelectorAll('.video-player');
-            
-            videos.forEach(video => {
-                video.addEventListener('play', function() {
-                    // Pausar todos os outros vídeos
-                    videos.forEach(otherVideo => {
-                        if (otherVideo !== video && !otherVideo.paused) {
-                            otherVideo.pause();
-                        }
-                    });
-                });
-                
-                // Adicionar efeito de hover
-                video.addEventListener('mouseenter', function() {
-                    this.style.transform = 'scale(1.02)';
-                });
-                
-                video.addEventListener('mouseleave', function() {
-                    this.style.transform = 'scale(1)';
-                });
+    document.addEventListener('DOMContentLoaded', function () {
+        const videos = document.querySelectorAll('.fc-video-player');
+        videos.forEach(video => {
+            video.addEventListener('play', function () {
+                videos.forEach(other => { if (other !== video && !other.paused) other.pause(); });
             });
+        });
 
-            // Funcionalidade do filtro dropdown
-            const filterBtn = document.getElementById('filterBtn');
-            const filterOptions = document.getElementById('filterOptions');
-            const filterText = document.getElementById('filterText');
-            
-            // Toggle do dropdown
-            filterBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                filterOptions.classList.toggle('show');
-                filterBtn.classList.toggle('active');
-            });
-            
-            // Fechar dropdown ao clicar fora
-            document.addEventListener('click', function(e) {
-                if (!filterBtn.contains(e.target) && !filterOptions.contains(e.target)) {
-                    filterOptions.classList.remove('show');
-                    filterBtn.classList.remove('active');
-                }
-            });
-            
-            // Atualizar texto do botão quando uma opção for selecionada
-            const filterOptionsLinks = document.querySelectorAll('.filter-option');
-            filterOptionsLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    const selectedText = this.textContent.trim();
-                    filterText.textContent = selectedText;
-                    filterOptions.classList.remove('show');
-                    filterBtn.classList.remove('active');
-                });
-            });
-            
-            // Manter o estado do filtro após recarregar a página
-            const activeFilter = document.querySelector('.filter-option.active');
-            if (activeFilter) {
-                filterText.textContent = activeFilter.textContent.trim();
+        const filterBtn = document.getElementById('filterBtn');
+        const filterOptions = document.getElementById('filterOptions');
+        const filterText = document.getElementById('filterText');
+
+        filterBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            filterOptions.classList.toggle('show');
+            filterBtn.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!filterBtn.contains(e.target) && !filterOptions.contains(e.target)) {
+                filterOptions.classList.remove('show');
+                filterBtn.classList.remove('active');
             }
         });
 
-        // Função para controlar a exibição das instruções
-        function toggleInstructions(aparelhoId) {
-            const instructions = document.getElementById('instructions-' + aparelhoId);
-            const button = document.getElementById('btn-' + aparelhoId);
-            const text = document.getElementById('text-' + aparelhoId);
-            
-            if (instructions.style.display === 'none') {
-                instructions.style.display = 'block';
-                text.textContent = 'Ocultar Detalhes';
-                button.classList.add('active');
-            } else {
-                instructions.style.display = 'none';
-                text.textContent = 'Ver Detalhes';
-                button.classList.remove('active');
-            }
+        document.querySelectorAll('.fc-filter-option').forEach(link => {
+            link.addEventListener('click', function () {
+                filterText.textContent = this.textContent.trim();
+                filterOptions.classList.remove('show');
+                filterBtn.classList.remove('active');
+            });
+        });
+
+        const activeFilter = document.querySelector('.fc-filter-option.active');
+        if (activeFilter) filterText.textContent = activeFilter.textContent.trim();
+    });
+
+    function toggleInstructions(id) {
+        const instructions = document.getElementById('instructions-' + id);
+        const button = document.getElementById('btn-' + id);
+        const text = document.getElementById('text-' + id);
+        if (instructions.style.display === 'none') {
+            instructions.style.display = 'block';
+            text.textContent = 'Ocultar Detalhes';
+            button.classList.add('active');
+        } else {
+            instructions.style.display = 'none';
+            text.textContent = 'Ver Detalhes';
+            button.classList.remove('active');
         }
-        
-        // Funções para o modal de QR Code
-        function showQRCode(qrCodeUrl, exerciseName, exerciseId) {
-            document.getElementById('qrModalImage').src = qrCodeUrl;
-            document.getElementById('qrModalTitle').textContent = 'QR Code - ' + exerciseName;
-            
-            // Atualizar link de download
-            const downloadBtn = document.getElementById('qrDownloadBtn');
-            downloadBtn.href = `/aparelhos/download-qr/${exerciseId}/`;
-            
-            document.getElementById('qrModal').style.display = 'block';
-        }
-        
-        function closeQRCode() {
-            document.getElementById('qrModal').style.display = 'none';
-        }
-        
-        // Fechar modal ao clicar fora dele
-        window.onclick = function(event) {
-            const modal = document.getElementById('qrModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        }
-    </script>
+    }
+
+    function showQRCode(url, exerciseName, exerciseId) {
+        document.getElementById('qrModalImage').src = url;
+        document.getElementById('qrModalTitle').textContent = 'QR Code - ' + exerciseName;
+        document.getElementById('qrDownloadBtn').href = `/aparelhos/download-qr/${exerciseId}/`;
+        document.getElementById('qrModal').style.display = 'block';
+    }
+    function closeQRCode() {
+        document.getElementById('qrModal').style.display = 'none';
+    }
+    window.addEventListener('click', function (event) {
+        const modal = document.getElementById('qrModal');
+        if (event.target === modal) modal.style.display = 'none';
+    });
+</script>
 {% endblock %}
