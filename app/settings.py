@@ -192,6 +192,7 @@ CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
 
 
 
+
 if CLOUDINARY_URL:
     import cloudinary
     cloudinary.config(cloudinary_url=CLOUDINARY_URL)
@@ -204,6 +205,7 @@ if CLOUDINARY_URL:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+    STATICFILES_STORAGE = STORAGES["staticfiles"]["BACKEND"]
     print("✅ Usando Cloudinary para arquivos de mídia")
 else:
     STORAGES = {
@@ -214,7 +216,11 @@ else:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+    STATICFILES_STORAGE = STORAGES["staticfiles"]["BACKEND"]
     print("⚠️ CLOUDINARY_URL não definida — usando armazenamento local")
+
+
+
 
 
 
