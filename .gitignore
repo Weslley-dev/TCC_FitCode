@@ -131,7 +131,9 @@ dmypy.json
 # Django specific
 media/
 staticfiles/
-static/
+static/*
+!static/css/
+!static/css/**
 
 # IDE
 .vscode/
